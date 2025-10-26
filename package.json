@@ -1,7 +1,7 @@
 {
-  "name": "@chatpta/common-util",
-  "version": "3.1.15",
-  "repository": "https://github.com/chatpta/pkg-common-util",
+  "name": "@onspark/common-util",
+  "version": "0.0.1",
+  "repository": "https://github.com/onspark/pkg-common-util",
   "description": "Common utility for MVC framework",
   "main": "index.js",
   "scripts": {
@@ -11,7 +11,7 @@
     "validate",
     "data"
   ],
-  "author": "Chatpta team",
+  "author": "OnSPARK team",
   "license": "ISC",
   "devDependencies": {
     "mocha": "10.1.0",
