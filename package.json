@@ -1,0 +1,23 @@
+{
+  "name": "@chatpta/common-util",
+  "version": "3.1.15",
+  "repository": "https://github.com/chatpta/pkg-common-util",
+  "description": "Common utility for MVC framework",
+  "main": "index.js",
+  "scripts": {
+    "test": "export NODE_ENV=test && mocha --watch --recursive"
+  },
+  "keywords": [
+    "validate",
+    "data"
+  ],
+  "author": "Chatpta team",
+  "license": "ISC",
+  "devDependencies": {
+    "mocha": "10.1.0",
+    "supertest": "^6.1.6"
+  },
+  "dependencies": {
+    "express": "^4.17.2"
+  }
+}
