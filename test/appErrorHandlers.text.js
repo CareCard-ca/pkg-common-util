@@ -28,7 +28,7 @@ describe( "AppErrorHandlers", function () {
                 if ( err ) return;
 
                 // Assert
-                assert.deepStrictEqual( response?.body?.error, "validation_failure" );
+                assert.deepStrictEqual( response?.body?.error?.code, "VALIDATION_FAILURE" );
                 done();
             } );
     } );
@@ -43,7 +43,7 @@ describe( "AppErrorHandlers", function () {
                 if ( err ) return;
 
                 // Assert
-                assert.deepStrictEqual( response?.body?.error, "record_exist" );
+                assert.deepStrictEqual( response?.body?.error?.code, "RECORD_EXIST" );
                 done();
             } );
     } );
@@ -58,7 +58,7 @@ describe( "AppErrorHandlers", function () {
                 if ( err ) return;
 
                 // Assert
-                assert.deepStrictEqual( response?.body?.error, "wrong_credentials" );
+                assert.deepStrictEqual( response?.body?.error?.code, "WRONG_CREDENTIALS" );
                 done();
             } );
     } );
@@ -73,7 +73,7 @@ describe( "AppErrorHandlers", function () {
                 if ( err ) return;
 
                 // Assert
-                assert.deepStrictEqual( response?.body?.error, "login_required" );
+                assert.deepStrictEqual( response?.body?.error?.code, "LOGIN_REQUIRED" );
                 done();
             } );
     } );
@@ -88,7 +88,7 @@ describe( "AppErrorHandlers", function () {
                 if ( err ) return;
 
                 // Assert
-                assert.deepStrictEqual( response?.body?.error, "record_not_found" );
+                assert.deepStrictEqual( response?.body?.error?.code, "RECORD_NOT_FOUND" );
                 done();
             } );
     } );
@@ -103,7 +103,7 @@ describe( "AppErrorHandlers", function () {
                 if ( err ) return;
 
                 // Assert
-                assert.deepStrictEqual( response?.body?.error, "record_save_failure" );
+                assert.deepStrictEqual( response?.body?.error?.code, "RECORD_NOT_SAVED" );
                 done();
             } );
     } );
@@ -118,7 +118,7 @@ describe( "AppErrorHandlers", function () {
                 if ( err ) return;
 
                 // Assert
-                assert.deepStrictEqual( response?.body?.error, "update_failed" );
+                assert.deepStrictEqual( response?.body?.error?.code, "UPDATE_FAILED" );
                 done();
             } );
     } );
@@ -133,7 +133,7 @@ describe( "AppErrorHandlers", function () {
                 if ( err ) return;
 
                 // Assert
-                assert.deepStrictEqual( response?.body?.error, "transaction_failed" );
+                assert.deepStrictEqual( response?.body?.error?.code, "TRANSACTION_FAILED" );
                 done();
             } );
     } );
@@ -148,7 +148,7 @@ describe( "AppErrorHandlers", function () {
                 if ( err ) return;
 
                 // Assert
-                assert.deepStrictEqual( response?.body?.error, "wrong_credentials" );
+                assert.deepStrictEqual( response?.body?.error?.code, "USED_TOKEN" );
                 done();
             } );
     } );
@@ -163,7 +163,7 @@ describe( "AppErrorHandlers", function () {
                 if ( err ) return;
 
                 // Assert
-                assert.deepStrictEqual( response?.body?.error, "bad_visitor_token" );
+                assert.deepStrictEqual( response?.body?.error?.code, "BAD_VISITOR_TOKEN" );
                 done();
             } );
     } );
@@ -178,7 +178,7 @@ describe( "AppErrorHandlers", function () {
                 if ( err ) return;
 
                 // Assert
-                assert.deepStrictEqual( response?.body?.error, "file_format_not_supported" );
+                assert.deepStrictEqual( response?.body?.error?.code, "FILE_FORMAT_NOT_SUPPORTED" );
                 done();
             } );
     } );
@@ -193,7 +193,7 @@ describe( "AppErrorHandlers", function () {
                 if ( err ) return;
 
                 // Assert
-                assert.deepStrictEqual( response?.body?.error, "not_authorized" );
+                assert.deepStrictEqual( response?.body?.error?.code, "NOT_AUTHORIZED" );
                 done();
             } );
     } );
@@ -208,7 +208,7 @@ describe( "AppErrorHandlers", function () {
                 if ( err ) return;
 
                 // Assert
-                assert.deepStrictEqual( response?.body?.error,  "bad_input" );
+                assert.deepStrictEqual( response?.body?.error?.code,  "BAD_INPUT" );
                 done();
             } );
     } );
@@ -223,7 +223,7 @@ describe( "AppErrorHandlers", function () {
                 if ( err ) return;
 
                 // Assert
-                assert.deepStrictEqual( response?.body?.error, "input_not_uuid"  );
+                assert.deepStrictEqual( response?.body?.error?.code, "INPUT_NOT_UUID"  );
                 done();
             } );
     } );
@@ -238,7 +238,7 @@ describe( "AppErrorHandlers", function () {
                 if ( err ) return;
 
                 // Assert
-                assert.deepStrictEqual( response?.body?.error, "file_too_large"  );
+                assert.deepStrictEqual( response?.body?.error?.code, "FILE_TOO_LARGE"  );
                 done();
             } );
     } );
@@ -253,7 +253,7 @@ describe( "AppErrorHandlers", function () {
                 if ( err ) return;
 
                 // Assert
-                assert.deepStrictEqual( response?.body?.error, "invalid_time_value"  );
+                assert.deepStrictEqual( response?.body?.error?.code, "INVALID_TIME_VALUE"  );
                 done();
             } );
     } );

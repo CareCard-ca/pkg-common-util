@@ -1,6 +1,6 @@
 {
   "name": "@onspark/common-util",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "repository": "https://github.com/onspark/pkg-common-util",
   "description": "Common utility for MVC framework",
   "main": "index.js",
@@ -14,10 +14,10 @@
   "author": "OnSPARK team",
   "license": "ISC",
   "devDependencies": {
-    "mocha": "10.1.0",
-    "supertest": "^6.1.6"
+    "mocha": "11.7.5",
+    "supertest": "7.1.4"
   },
   "dependencies": {
-    "express": "^4.17.2"
+    "express": "5.1.0"
   }
 }
