@@ -1,7 +1,7 @@
 {
-  "name": "@onspark/common-util",
-  "version": "1.0.0",
-  "repository": "https://github.com/onspark/pkg-common-util",
+  "name": "@carecard/common-util",
+  "version": "2.0.1",
+  "repository": "https://github.com/CareCard-ca/pkg-common-util",
   "description": "Common utility for MVC framework",
   "main": "index.js",
   "scripts": {
@@ -11,7 +11,7 @@
     "validate",
     "data"
   ],
-  "author": "OnSPARK team",
+  "author": "CareCard team",
   "license": "ISC",
   "devDependencies": {
     "mocha": "11.7.5",
