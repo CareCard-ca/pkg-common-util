@@ -17,6 +17,51 @@ function testApp( throwErrorFunction ) {
 
 describe( "AppErrorHandlers", function () {
 
+    it( "throwAccountSuspendedError", function ( done ) {
+
+        // Act
+        request( testApp( errHandler.throwAccountSuspendedError ) )
+            .get( '/' )
+            .expect( 403 )
+            .end( ( err, response ) => {
+                if ( err ) return;
+
+                // Assert
+                assert.deepStrictEqual( response?.body?.error?.code, "ACCOUNT_SUSPENDED"  );
+                done();
+            } );
+    } );
+
+    it( "throwAccountBlockedError", function ( done ) {
+
+        // Act
+        request( testApp( errHandler.throwAccountBlockedError ) )
+            .get( '/' )
+            .expect( 403 )
+            .end( ( err, response ) => {
+                if ( err ) return;
+
+                // Assert
+                assert.deepStrictEqual( response?.body?.error?.code, "ACCOUNT_BLOCKED"  );
+                done();
+            } );
+    } );
+
+    it( "throwAccountInactiveError", function ( done ) {
+
+        // Act
+        request( testApp( errHandler.throwAccountInactiveError ) )
+            .get( '/' )
+            .expect( 403 )
+            .end( ( err, response ) => {
+                if ( err ) return;
+
+                // Assert
+                assert.deepStrictEqual( response?.body?.error?.code, "ACCOUNT_INACTIVE"  );
+                done();
+            } );
+    } );
+
 
     it( "throwValidationFailureError", function ( done ) {
 
