@@ -1,6 +1,6 @@
 {
   "name": "@carecard/common-util",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "repository": "https://github.com/CareCard-ca/pkg-common-util",
   "description": "Common utility for MVC framework",
   "main": "index.js",

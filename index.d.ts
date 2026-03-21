@@ -16,47 +16,47 @@ export const util: {
  */
 export const error: {
   /** Throws an Account_Suspended error. */
-  throwAccountSuspendedError: (userMessage?: string, details?: any) => never;
+  throwAccountSuspendedError: (params?: { userMessage?: string, details?: any }) => never;
   /** Throws an Account_Blocked error. */
-  throwAccountBlockedError: (userMessage?: string, details?: any) => never;
+  throwAccountBlockedError: (params?: { userMessage?: string, details?: any }) => never;
   /** Throws an Account_Inactive error. */
-  throwAccountInactiveError: (userMessage?: string, details?: any) => never;
+  throwAccountInactiveError: (params?: { userMessage?: string, details?: any }) => never;
   /** Middleware to handle 404 Not Found. */
   notFound404: (req: any, res: any, next: any) => void;
   /** Central application error handler middleware. */
   appErrorHandler: (err: any, req: any, res: any, next: any) => void;
   /** Throws a Validation_Failure error. */
-  throwValidationFailureError: (userMessage?: string, details?: any) => never;
+  throwValidationFailureError: (params?: { userMessage?: string, details?: any }) => never;
   /** Throws a Record_Exist error. */
-  throwRecordExistError: (userMessage?: string, details?: any) => never;
+  throwRecordExistError: (params?: { userMessage?: string, details?: any }) => never;
   /** Throws a Wrong_Credentials error. */
-  throwWrongCredentialsError: (userMessage?: string, details?: any) => never;
+  throwWrongCredentialsError: (params?: { userMessage?: string, details?: any }) => never;
   /** Throws a Login_Required error. */
-  throwLoginRequiredError: (userMessage?: string, details?: any) => never;
+  throwLoginRequiredError: (params?: { userMessage?: string, details?: any }) => never;
   /** Throws a Record_NotFound error. */
-  throwRecordNotFoundError: (userMessage?: string, details?: any) => never;
+  throwRecordNotFoundError: (params?: { userMessage?: string, details?: any }) => never;
   /** Throws a Record_NotSaved error. */
-  throwRecordNotSavedError: (userMessage?: string, details?: any) => never;
+  throwRecordNotSavedError: (params?: { userMessage?: string, details?: any }) => never;
   /** Throws an Update_Failed error. */
-  throwUpdateFailedError: (userMessage?: string, details?: any) => never;
+  throwUpdateFailedError: (params?: { userMessage?: string, details?: any }) => never;
   /** Throws a Transaction_Failed error. */
-  throwTransactionFailedError: (userMessage?: string, details?: any) => never;
+  throwTransactionFailedError: (params?: { userMessage?: string, details?: any }) => never;
   /** Throws a Used_Token error. */
-  throwUsedTokenError: (userMessage?: string, details?: any) => never;
+  throwUsedTokenError: (params?: { userMessage?: string, details?: any }) => never;
   /** Throws a Bad_Visitor_Token error. */
-  throwBadVisitorTokenError: (userMessage?: string, details?: any) => never;
+  throwBadVisitorTokenError: (params?: { userMessage?: string, details?: any }) => never;
   /** Throws a File_Format_Not_Supported error. */
-  throwFileFormatNotSupportedError: (userMessage?: string, details?: any) => never;
+  throwFileFormatNotSupportedError: (params?: { userMessage?: string, details?: any }) => never;
   /** Throws a Not_Authorized error. */
-  throwNotAuthorizedError: (userMessage?: string, details?: any) => never;
+  throwNotAuthorizedError: (params?: { userMessage?: string, details?: any }) => never;
   /** Throws a Bad_Input error. */
-  throwBadInputError: (userMessage?: string, details?: any) => never;
+  throwBadInputError: (params?: { userMessage?: string, details?: any }) => never;
   /** Throws an Input_Not_Uuid error. */
-  throwInputNotUuidError: (userMessage?: string, details?: any) => never;
+  throwInputNotUuidError: (params?: { userMessage?: string, details?: any }) => never;
   /** Throws a File_Too_Large error. */
-  throwFileTooLargeError: (userMessage?: string, details?: any) => never;
+  throwFileTooLargeError: (params?: { userMessage?: string, details?: any }) => never;
   /** Throws an Invalid_Time_Value error. */
-  throwInvalidTimeValueError: (userMessage?: string, details?: any) => never;
+  throwInvalidTimeValueError: (params?: { userMessage?: string, details?: any }) => never;
 };
 
 /**
