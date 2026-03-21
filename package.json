@@ -1,11 +1,13 @@
 {
   "name": "@carecard/common-util",
-  "version": "2.0.2",
+  "version": "3.0.3",
   "repository": "https://github.com/CareCard-ca/pkg-common-util",
   "description": "Common utility for MVC framework",
   "main": "index.js",
+  "types": "index.d.ts",
   "scripts": {
-    "test": "export NODE_ENV=test && mocha --watch --recursive"
+    "test": "export NODE_ENV=test && mocha --watch --recursive",
+    "test:types": "tsc --noEmit && mocha -r ts-node/register test/types.test.ts"
   },
   "keywords": [
     "validate",
@@ -14,8 +16,12 @@
   "author": "CareCard team",
   "license": "ISC",
   "devDependencies": {
+    "@types/mocha": "10.0.10",
+    "@types/node": "25.5.0",
     "mocha": "11.7.5",
-    "supertest": "7.1.4"
+    "supertest": "7.1.4",
+    "ts-node": "10.9.2",
+    "typescript": "5.9.3"
   },
   "dependencies": {
     "express": "5.1.0"
