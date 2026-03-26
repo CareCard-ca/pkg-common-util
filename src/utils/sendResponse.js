@@ -43,6 +43,10 @@ const sendResponse = ({
         : {}
   };
 
+  if (statusCode === 204) {
+    return res.status(204).send();
+  }
+
   const response = {
     success,
     statusCode,

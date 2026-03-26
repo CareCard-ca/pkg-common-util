@@ -218,5 +218,23 @@ describe('Standard Response System', function () {
 
       sendResponse({ req, res });
     });
+
+    it('should return 204 No Content and no body when statusCode is 204', function (done) {
+      const req = {
+        requestId: 'req-123',
+        traceId: 'trace-456'
+      };
+      const res = {
+        status(code) {
+          assert.strictEqual(code, 204);
+          return this;
+        },
+        send() {
+          done();
+        }
+      };
+
+      sendResponse({ req, res, statusCode: 204 });
+    });
   });
 });

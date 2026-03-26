@@ -1,15 +1,61 @@
-import assert from 'assert';
-import { describe, it } from 'mocha';
-import { util, error, resCode, requestContext, sendResponse, createError } from '../index';
+const assert = require('assert');
 // @ts-ignore
-import * as src from '../src/index';
-import {
-  ApiResponse,
-  ApiResponseMeta,
-  ApiError,
-  SendResponseParams,
-  CreateErrorParams
-} from '../src/types/response.types';
+const { util, error, resCode, requestContext, sendResponse, createError } = require('../index');
+// @ts-ignore
+const src = require('../src/index');
+
+interface ApiResponseMeta {
+  version: string;
+  service: string;
+  environment: string;
+  timestamp: string;
+  requestId: string;
+  traceId: string;
+  client?: {
+    appId?: string;
+    ip?: string;
+  };
+  pagination?: {
+    page: number;
+    limit: number;
+    total: number;
+  };
+  [key: string]: any;
+}
+
+interface ApiError {
+  code: string;
+  message?: string;
+  details?: string;
+  fields?: Record<string, string>;
+}
+
+interface ApiResponse<T = any> {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: T | null;
+  error: ApiError | null;
+  meta: ApiResponseMeta;
+}
+
+interface SendResponseParams<T = any> {
+  req: any;
+  res: any;
+  statusCode?: number;
+  success?: boolean;
+  message?: string;
+  data?: T | null;
+  error?: ApiError | null;
+  meta?: Partial<ApiResponseMeta>;
+}
+
+interface CreateErrorParams {
+  code: string;
+  details?: string;
+  message?: string;
+  fields?: Record<string, string>;
+}
 
 describe('pkg-common-util TypeScript Type Definitions', () => {
   it('should verify src index exports', () => {
@@ -86,7 +132,7 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
               (err as any).details.foo === 'bar'
             );
           },
-          `Failed to verify ${name}`
+          `Failed to verify ${String(name)}`
         );
 
         // Test without params to cover default values and branches
@@ -99,7 +145,7 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
               (err as any).details === null
             );
           },
-          `Failed to verify ${name} without params`
+          `Failed to verify ${String(name)} without params`
         );
       });
     });
@@ -218,7 +264,7 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
   });
 
   describe('Standardized API Response System', () => {
-    it('should verify requestContext middleware', (done) => {
+    it('should verify requestContext middleware', (done: any) => {
       const req: any = { headers: {}, socket: { remoteAddress: '127.0.0.1' } };
       requestContext(req, {}, () => {
         assert.ok(req.requestId);
@@ -227,7 +273,7 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
       });
     });
 
-    it('should verify sendResponse utility', (done) => {
+    it('should verify sendResponse utility', (done: any) => {
       const req = { requestId: 'req-1', traceId: 'trace-1', client: {} };
       const res: any = {
         status: function (code: number) {
@@ -258,7 +304,7 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
       done();
     });
 
-    it('should verify sendResponse utility with defaults', (done) => {
+    it('should verify sendResponse utility with defaults', (done: any) => {
       const oldApiVersion = process.env.API_VERSION;
       const oldServiceName = process.env.SERVICE_NAME;
       const oldNodeEnv = process.env.NODE_ENV;
