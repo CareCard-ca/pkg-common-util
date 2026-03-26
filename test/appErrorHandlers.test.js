@@ -302,4 +302,58 @@ describe( "AppErrorHandlers", function () {
                 done();
             } );
     } );
+
+    it( "notFound404", function ( done ) {
+        const app = express();
+        app.use( errHandler.notFound404 );
+
+        request( app )
+            .get( '/some-random-route' )
+            .expect( 404 )
+            .end( ( err, response ) => {
+                if ( err ) return;
+                assert.deepStrictEqual( response?.body?.error?.code, "NOT_FOUND" );
+                done();
+            } );
+    } );
+
+    it( "appErrorHandler default case", function ( done ) {
+        const app = express();
+        app.use( ( req, res, next ) => {
+            const err = new Error( "Some_Unknown_Error" );
+            err.code = "UNKNOWN_ERROR";
+            next( err );
+        } );
+        app.use( errHandler.appErrorHandler );
+
+        request( app )
+            .get( '/' )
+            .expect( 500 )
+            .end( ( err, response ) => {
+                if ( err ) return;
+                assert.strictEqual( response?.statusCode, 500 );
+                assert.deepStrictEqual( response?.body?.error?.code, "UNKNOWN_ERROR" );
+                done();
+            } );
+    } );
+
+    it( "appErrorHandler default case without code", function ( done ) {
+        const app = express();
+        app.use( ( req, res, next ) => {
+            const err = new Error( "Some_Other_Error" );
+            next( err );
+        } );
+        app.use( errHandler.appErrorHandler );
+
+        request( app )
+            .get( '/' )
+            .expect( 500 )
+            .end( ( err, response ) => {
+                if ( err ) return;
+                assert.strictEqual( response?.statusCode, 500 );
+                assert.deepStrictEqual( response?.body?.error?.code, null );
+                done();
+            } );
+    } );
+
 } );
