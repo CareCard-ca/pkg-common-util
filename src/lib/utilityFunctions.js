@@ -1,10 +1,14 @@
 // Create new object only with properties given in array.
 function extractObjectWithProperties(obj, arrayOfProperties) {
-  let returnObj = {};
+  const returnObj = {};
+
+  if (!obj || !Array.isArray(arrayOfProperties)) {
+    return returnObj;
+  }
 
   arrayOfProperties.forEach((nameOfProperty) => {
-    if (obj?.[nameOfProperty]) {
-      returnObj[nameOfProperty] = obj?.[nameOfProperty];
+    if (Object.prototype.hasOwnProperty.call(obj, nameOfProperty)) {
+      returnObj[nameOfProperty] = obj[nameOfProperty];
     }
   });
 
