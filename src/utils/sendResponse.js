@@ -37,7 +37,7 @@ const sendResponse = ({
     timestamp: new Date().toISOString(),
     requestId: req.requestId || '',
     traceId: req.traceId || '',
-    client: req.client || {}
+    client: (req.client && typeof req.client === 'object' && req.client.constructor === Object) ? req.client : {}
   };
 
   const response = {

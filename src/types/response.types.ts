@@ -62,5 +62,6 @@ export interface SendResponseParams<T = any> {
 export interface CreateErrorParams {
   code: string;
   details?: string;
+  message?: string;
   fields?: Record<string, string>;
 }

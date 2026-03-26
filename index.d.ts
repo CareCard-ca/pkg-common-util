@@ -173,5 +173,6 @@ export function sendResponse<T = any>(params: {
 export function createError(params: {
   code: string;
   details?: string;
+  message?: string;
   fields?: Record<string, string>;
 }): ApiError;

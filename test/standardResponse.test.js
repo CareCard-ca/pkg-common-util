@@ -85,6 +85,7 @@ describe('Standard Response System', function () {
             assert.deepStrictEqual(error, {
                 code: 'VALIDATION_ERROR',
                 details: 'Invalid input',
+                message: undefined,
                 fields: { email: 'Invalid format' }
             });
         });

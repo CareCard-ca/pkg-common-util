@@ -1,4 +1,8 @@
 'use strict';
+
+const sendResponse = require('../utils/sendResponse');
+const createError = require('../utils/createError');
+
 /**
  * These are application level error handlers. All error responses should be send using these functions.
  * These should be use in app.js file, not in controller files.
@@ -29,119 +33,84 @@ module.exports = {
 
 
 function notFound404(req, res, next) {
-    res.status(404);
-    const response = {
-        error:
-            {
-                code: 'NOT_FOUND',
-                message: 'Not found',
-                details: null
-            }
-    }
-
-    res.send(response)
+    return sendResponse({
+        req,
+        res,
+        statusCode: 404,
+        success: false,
+        message: 'Not found',
+        error: createError({
+            code: 'NOT_FOUND',
+            message: 'Not found',
+            details: null
+        })
+    });
 }
 
 function appErrorHandler(err, req, res, next) {
-    const response =
-        {
-            error:
-                {
-                    code: err.code ?? null,
-                    message: err.userMessage ?? null,
-                    details: err.details ?? null
-                }
-        };
+    let statusCode = 500;
+    const errorMessage = err?.message || 'Internal Server Error';
 
     switch (err?.message) {
-
         case "Account_Suspended":
         case "Account_Blocked":
         case "Account_Inactive":
-            res.status(403);
-            res.send(response)
+            statusCode = 403;
             break;
 
         case "Validation_Failure":
-            res.status(401);
-            res.send(response)
-            break;
-
         case "Used_Token":
         case "Wrong_Credentials":
-            res.status(401);
-            res.send(response)
-            break;
-
         case "Bad_Visitor_Token":
-            res.status(401);
-            res.send(response)
+        case "Login_Required":
+        case "Not_Authorized":
+            statusCode = 401;
             break;
 
         case "Record_NotSaved":
-            res.status(400);
-            res.send(response)
+        case "Update_Failed":
+        case "Transaction_Failed":
+        case "Bad_Input":
+        case "Input_Not_Uuid":
+            statusCode = 400;
             break;
 
         case "Record_Exist":
-            res.status(409);
-            res.send(response)
+            statusCode = 409;
             break;
 
         case "Record_NotFound":
-            res.status(404);
-            res.send(response)
-            break;
-
-        case "Update_Failed":
-            res.status(400);
-            res.send(response)
-            break;
-
-        case "Login_Required":
-            res.status(401);
-            res.send(response)
-            break;
-
-        case "Transaction_Failed":
-            res.status(400);
-            res.send(response)
+            statusCode = 404;
             break;
 
         case "File_Format_Not_Supported":
-            res.status(415);
-            res.send(response)
-            break;
-
-        case "Not_Authorized":
-            res.status(401);
-            res.send(response)
-            break;
-
-        case "Bad_Input":
-            res.status(400);
-            res.send(response);
-            break;
-
-        case  "Input_Not_Uuid" :
-            res.status(400);
-            res.send(response)
+            statusCode = 415;
             break;
 
         case "File too large":
-            res.status(413);
-            res.send(response)
+            statusCode = 413;
             break;
 
         case "Invalid time value":
-            res.status(403);
-            res.send(response)
+            statusCode = 403;
             break;
 
         default:
-            res.status(500);
-            res.send(response)
+            statusCode = 500;
     }
+
+    return sendResponse({
+        req,
+        res,
+        statusCode,
+        success: false,
+        message: errorMessage,
+        error: createError({
+            code: err?.code ?? null,
+            message: err?.userMessage ?? null,
+            details: err?.details ?? null
+        })
+    });
 }
 
 function throwAccountSuspendedError(params = {}) {

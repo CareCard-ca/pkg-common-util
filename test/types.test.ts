@@ -28,6 +28,7 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
         const mockRes = {
             status: function(code: number) { this.statusCode = code; return this; },
             send: function(body: any) { this.body = body; return this; },
+            json: function(body: any) { this.body = body; return this; },
             statusCode: 0,
             body: null as any
         };
@@ -100,6 +101,14 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
             const err = new Error('Unknown');
             error.appErrorHandler(err, {}, res, () => {});
             assert.strictEqual(res.statusCode, 500);
+        });
+
+        it('should verify appErrorHandler with null error', () => {
+            const res = { ...mockRes };
+            // @ts-ignore
+            error.appErrorHandler(null, {}, res, () => {});
+            assert.strictEqual(res.statusCode, 500);
+            assert.strictEqual(res.body.message, 'Internal Server Error');
         });
 
         it('should verify appErrorHandler for all common error types', () => {
