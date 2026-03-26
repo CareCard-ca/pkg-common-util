@@ -68,6 +68,19 @@ export function throwInputNotUuidError(params?: { userMessage?: string; details?
 export function throwFileTooLargeError(params?: { userMessage?: string; details?: any }): never;
 /** Throws an Invalid_Time_Value error. */
 export function throwInvalidTimeValueError(params?: { userMessage?: string; details?: any }): never;
+/** Throws a Not_Found error. */
+export function throwNotFoundError(params?: { userMessage?: string; details?: any }): never;
+/** Throws a Record_Save_Failure error. */
+export function throwRecordSaveFailureError(params?: {
+  userMessage?: string;
+  details?: any;
+}): never;
+/** Throws an Application_Error error. */
+export function throwApplicationError(params?: { userMessage?: string; details?: any }): never;
+/** Throws a Network_Error error. */
+export function throwNetworkError(params?: { userMessage?: string; details?: any }): never;
+/** Throws an Unexpected_Error error. */
+export function throwUnexpectedError(params?: { userMessage?: string; details?: any }): never;
 
 /**
  * Application-level error handlers and throwers.
@@ -95,6 +108,11 @@ export const error: {
   throwInputNotUuidError: typeof throwInputNotUuidError;
   throwFileTooLargeError: typeof throwFileTooLargeError;
   throwInvalidTimeValueError: typeof throwInvalidTimeValueError;
+  throwNotFoundError: typeof throwNotFoundError;
+  throwRecordSaveFailureError: typeof throwRecordSaveFailureError;
+  throwApplicationError: typeof throwApplicationError;
+  throwNetworkError: typeof throwNetworkError;
+  throwUnexpectedError: typeof throwUnexpectedError;
 };
 
 /** Sets 200 OK status and optionally an ETag header. */
@@ -188,3 +206,38 @@ export function createError(params: {
   message?: string;
   fields?: Record<string, string>;
 }): ApiError;
+
+/**
+ * Standard API error codes.
+ */
+export enum ApiErrorType {
+  VALIDATION_FAILURE = 'VALIDATION_FAILURE',
+  WRONG_CREDENTIALS = 'WRONG_CREDENTIALS',
+  RECORD_NOT_FOUND = 'RECORD_NOT_FOUND',
+  RECORD_NOT_SAVED = 'RECORD_NOT_SAVED',
+  RECORD_SAVE_FAILURE = 'RECORD_SAVE_FAILURE',
+  APPLICATION_ERROR = 'APPLICATION_ERROR',
+  NOT_FOUND = 'NOT_FOUND',
+  LOGIN_REQUIRED = 'LOGIN_REQUIRED',
+  NETWORK_ERROR = 'NETWORK_ERROR',
+  UNEXPECTED_ERROR = 'UNEXPECTED_ERROR',
+  ACCOUNT_SUSPENDED = 'ACCOUNT_SUSPENDED',
+  ACCOUNT_BLOCKED = 'ACCOUNT_BLOCKED',
+  ACCOUNT_INACTIVE = 'ACCOUNT_INACTIVE',
+  RECORD_EXIST = 'RECORD_EXIST',
+  UPDATE_FAILED = 'UPDATE_FAILED',
+  TRANSACTION_FAILED = 'TRANSACTION_FAILED',
+  USED_TOKEN = 'USED_TOKEN',
+  BAD_VISITOR_TOKEN = 'BAD_VISITOR_TOKEN',
+  FILE_FORMAT_NOT_SUPPORTED = 'FILE_FORMAT_NOT_SUPPORTED',
+  NOT_AUTHORIZED = 'NOT_AUTHORIZED',
+  BAD_INPUT = 'BAD_INPUT',
+  INPUT_NOT_UUID = 'INPUT_NOT_UUID',
+  FILE_TOO_LARGE = 'FILE_TOO_LARGE',
+  INVALID_TIME_VALUE = 'INVALID_TIME_VALUE'
+}
+
+/**
+ * Extracts error message from standardized error data.
+ */
+export function getApiErrorMessage(errorData: any, t: (key: string) => string): string;

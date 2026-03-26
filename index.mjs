@@ -1,5 +1,55 @@
 import commonUtil from './index.js';
 
-export const { util, error, resCode, requestContext, sendResponse, createError } = commonUtil;
+export const {
+  // Legacy objects
+  util,
+  error,
+  resCode,
+
+  // Top-level utility functions
+  extractObjectWithProperties,
+
+  // Top-level error handlers/throwers
+  throwAccountSuspendedError,
+  throwAccountBlockedError,
+  throwAccountInactiveError,
+  throwNotFoundError,
+  throwRecordSaveFailureError,
+  throwApplicationError,
+  throwNetworkError,
+  throwUnexpectedError,
+  notFound404,
+  appErrorHandler,
+  throwValidationFailureError,
+  throwRecordExistError,
+  throwWrongCredentialsError,
+  throwLoginRequiredError,
+  throwRecordNotFoundError,
+  throwRecordNotSavedError,
+  throwUpdateFailedError,
+  throwTransactionFailedError,
+  throwUsedTokenError,
+  throwBadVisitorTokenError,
+  throwFileFormatNotSupportedError,
+  throwNotAuthorizedError,
+  throwBadInputError,
+  throwInputNotUuidError,
+  throwFileTooLargeError,
+  throwInvalidTimeValueError,
+
+  // Top-level response status functions
+  setOk200,
+  setCreated201,
+  setBadRequest400ClientError,
+
+  // Core functions
+  requestContext,
+  sendResponse,
+  createError,
+
+  // Constants and utils
+  ApiErrorType,
+  getApiErrorMessage
+} = commonUtil;
 
 export default commonUtil;
