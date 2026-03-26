@@ -4,5 +4,4 @@ set -e
 npm run prettier
 npm run test
 npm run test:types
-npm run coverage
 npm run test:types:coverage

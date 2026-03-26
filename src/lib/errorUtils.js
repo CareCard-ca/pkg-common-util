@@ -27,10 +27,6 @@ function getApiErrorMessage(errorData, t) {
     message = errorData.message;
   }
 
-  if (message) {
-    return message;
-  }
-
   // Try to get error code
   let errorCode;
   if (errorData.error) {
@@ -41,10 +37,37 @@ function getApiErrorMessage(errorData, t) {
     }
   }
 
+  // If we have a recognized error code, try to translate it first
+  // Unless we have a message that doesn't look like an error code
+  if (errorCode) {
+    const translated = translateCode(errorCode, t);
+    if (translated && translated !== errorCode && translated !== t('errors.unexpected_error')) {
+      // If we have a translation, and it's not the code itself, return it
+      // But wait, if the message is specific, we might still want it.
+      // For now, let's just return the translated message if it's found.
+      return translated;
+    }
+  }
+
+  if (message) {
+    return message;
+  }
+
   if (!errorCode) {
     return t('errors.unexpected_error');
   }
 
+  return translateCode(errorCode, t) || t('errors.unexpected_error');
+}
+
+/**
+ * Helper to translate error code.
+ * @param {string} errorCode
+ * @param {Function} t
+ * @returns {string|null}
+ */
+function translateCode(errorCode, t) {
+  if (!errorCode) return null;
   const code = errorCode.toLowerCase();
 
   switch (code) {
@@ -119,7 +142,7 @@ function getApiErrorMessage(errorData, t) {
 
     case ApiErrorType.UNEXPECTED_ERROR.toLowerCase():
     default:
-      return t('errors.unexpected_error');
+      return null;
   }
 }
 

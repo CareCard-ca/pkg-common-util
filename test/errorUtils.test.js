@@ -24,6 +24,26 @@ describe('ErrorUtils', function () {
       assert.strictEqual(result, 'Direct error message');
     });
 
+    it('should return translated message even if message is present in errorData.error', function () {
+      const errorData = {
+        error: {
+          code: ApiErrorType.VALIDATION_FAILURE,
+          message: 'Generic English Message'
+        }
+      };
+      const result = getApiErrorMessage(errorData, t);
+      assert.strictEqual(result, 'translated_errors.validation_failure');
+    });
+    it('should return message from errorData.error.message if code is unknown', function () {
+      const errorData = {
+        error: {
+          code: 'UNKNOWN_CODE',
+          message: 'Specific Backend Message'
+        }
+      };
+      const result = getApiErrorMessage(errorData, t);
+      assert.strictEqual(result, 'Specific Backend Message');
+    });
     it('should return top-level message if errorData.error.message is not available', function () {
       const errorData = {
         message: 'Top-level message'

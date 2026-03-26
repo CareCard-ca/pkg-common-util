@@ -5,9 +5,9 @@
  * @returns A new object with the extracted properties.
  */
 export function extractObjectWithProperties(
-  obj: any,
+  obj: unknown,
   arrayOfProperties: string[]
-): Record<string, any>;
+): Record<string, unknown>;
 
 /**
  * Utility functions for object manipulation.
@@ -18,69 +18,99 @@ export const util: {
 };
 
 /** Throws an Account_Suspended error. */
-export function throwAccountSuspendedError(params?: { userMessage?: string; details?: any }): never;
+export function throwAccountSuspendedError(params?: {
+  userMessage?: string;
+  details?: unknown;
+}): never;
 /** Throws an Account_Blocked error. */
-export function throwAccountBlockedError(params?: { userMessage?: string; details?: any }): never;
+export function throwAccountBlockedError(params?: {
+  userMessage?: string;
+  details?: unknown;
+}): never;
 /** Throws an Account_Inactive error. */
-export function throwAccountInactiveError(params?: { userMessage?: string; details?: any }): never;
+export function throwAccountInactiveError(params?: {
+  userMessage?: string;
+  details?: unknown;
+}): never;
 /** Middleware to handle 404 Not Found. */
-export function notFound404(req: any, res: any, next: any): void;
+export function notFound404(req: unknown, res: unknown, next: unknown): void;
 /** Central application error handler middleware. */
-export function appErrorHandler(err: any, req: any, res: any, next: any): void;
+export function appErrorHandler(err: unknown, req: unknown, res: unknown, next: unknown): void;
 /** Throws a Validation_Failure error. */
 export function throwValidationFailureError(params?: {
   userMessage?: string;
-  details?: any;
+  details?: unknown;
 }): never;
 /** Throws a Record_Exist error. */
-export function throwRecordExistError(params?: { userMessage?: string; details?: any }): never;
+export function throwRecordExistError(params?: { userMessage?: string; details?: unknown }): never;
 /** Throws a Wrong_Credentials error. */
-export function throwWrongCredentialsError(params?: { userMessage?: string; details?: any }): never;
+export function throwWrongCredentialsError(params?: {
+  userMessage?: string;
+  details?: unknown;
+}): never;
 /** Throws a Login_Required error. */
-export function throwLoginRequiredError(params?: { userMessage?: string; details?: any }): never;
+export function throwLoginRequiredError(params?: {
+  userMessage?: string;
+  details?: unknown;
+}): never;
 /** Throws a Record_NotFound error. */
-export function throwRecordNotFoundError(params?: { userMessage?: string; details?: any }): never;
+export function throwRecordNotFoundError(params?: {
+  userMessage?: string;
+  details?: unknown;
+}): never;
 /** Throws a Record_NotSaved error. */
-export function throwRecordNotSavedError(params?: { userMessage?: string; details?: any }): never;
+export function throwRecordNotSavedError(params?: {
+  userMessage?: string;
+  details?: unknown;
+}): never;
 /** Throws an Update_Failed error. */
-export function throwUpdateFailedError(params?: { userMessage?: string; details?: any }): never;
+export function throwUpdateFailedError(params?: { userMessage?: string; details?: unknown }): never;
 /** Throws a Transaction_Failed error. */
 export function throwTransactionFailedError(params?: {
   userMessage?: string;
-  details?: any;
+  details?: unknown;
 }): never;
 /** Throws a Used_Token error. */
-export function throwUsedTokenError(params?: { userMessage?: string; details?: any }): never;
+export function throwUsedTokenError(params?: { userMessage?: string; details?: unknown }): never;
 /** Throws a Bad_Visitor_Token error. */
-export function throwBadVisitorTokenError(params?: { userMessage?: string; details?: any }): never;
+export function throwBadVisitorTokenError(params?: {
+  userMessage?: string;
+  details?: unknown;
+}): never;
 /** Throws a File_Format_Not_Supported error. */
 export function throwFileFormatNotSupportedError(params?: {
   userMessage?: string;
-  details?: any;
+  details?: unknown;
 }): never;
 /** Throws a Not_Authorized error. */
-export function throwNotAuthorizedError(params?: { userMessage?: string; details?: any }): never;
+export function throwNotAuthorizedError(params?: {
+  userMessage?: string;
+  details?: unknown;
+}): never;
 /** Throws a Bad_Input error. */
-export function throwBadInputError(params?: { userMessage?: string; details?: any }): never;
+export function throwBadInputError(params?: { userMessage?: string; details?: unknown }): never;
 /** Throws an Input_Not_Uuid error. */
-export function throwInputNotUuidError(params?: { userMessage?: string; details?: any }): never;
+export function throwInputNotUuidError(params?: { userMessage?: string; details?: unknown }): never;
 /** Throws a File_Too_Large error. */
-export function throwFileTooLargeError(params?: { userMessage?: string; details?: any }): never;
+export function throwFileTooLargeError(params?: { userMessage?: string; details?: unknown }): never;
 /** Throws an Invalid_Time_Value error. */
-export function throwInvalidTimeValueError(params?: { userMessage?: string; details?: any }): never;
+export function throwInvalidTimeValueError(params?: {
+  userMessage?: string;
+  details?: unknown;
+}): never;
 /** Throws a Not_Found error. */
-export function throwNotFoundError(params?: { userMessage?: string; details?: any }): never;
+export function throwNotFoundError(params?: { userMessage?: string; details?: unknown }): never;
 /** Throws a Record_Save_Failure error. */
 export function throwRecordSaveFailureError(params?: {
   userMessage?: string;
-  details?: any;
+  details?: unknown;
 }): never;
 /** Throws an Application_Error error. */
-export function throwApplicationError(params?: { userMessage?: string; details?: any }): never;
+export function throwApplicationError(params?: { userMessage?: string; details?: unknown }): never;
 /** Throws a Network_Error error. */
-export function throwNetworkError(params?: { userMessage?: string; details?: any }): never;
+export function throwNetworkError(params?: { userMessage?: string; details?: unknown }): never;
 /** Throws an Unexpected_Error error. */
-export function throwUnexpectedError(params?: { userMessage?: string; details?: any }): never;
+export function throwUnexpectedError(params?: { userMessage?: string; details?: unknown }): never;
 
 /**
  * Application-level error handlers and throwers.
@@ -116,11 +146,11 @@ export const error: {
 };
 
 /** Sets 200 OK status and optionally an ETag header. */
-export function setOk200(res: any, ETag?: string): any;
+export function setOk200(res: unknown, ETag?: string): unknown;
 /** Sets 201 Created status. */
-export function setCreated201(res: any): any;
+export function setCreated201(res: unknown): unknown;
 /** Sets 400 Bad Request status. */
-export function setBadRequest400ClientError(res: any): any;
+export function setBadRequest400ClientError(res: unknown): unknown;
 
 /**
  * Utility functions for setting HTTP response status codes and headers.
@@ -153,7 +183,7 @@ export interface ApiResponseMeta {
     limit: number;
     total: number;
   };
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 /**
@@ -169,7 +199,7 @@ export interface ApiError {
 /**
  * Standard API response body.
  */
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean;
   statusCode: number;
   message: string;
@@ -181,21 +211,21 @@ export interface ApiResponse<T = any> {
 /**
  * Express middleware to generate and attach request context.
  */
-export function requestContext(req: any, res: any, next: any): void;
+export function requestContext(req: unknown, res: unknown, next: unknown): void;
 
 /**
  * Standardized API response utility.
  */
-export function sendResponse<T = any>(params: {
-  req: any;
-  res: any;
+export function sendResponse<T = unknown>(params: {
+  req: unknown;
+  res: unknown;
   statusCode?: number;
   success?: boolean;
   message?: string;
   data?: T | null;
   error?: ApiError | null;
   meta?: Partial<ApiResponseMeta>;
-}): any;
+}): unknown;
 
 /**
  * Helper for standardized errors.
@@ -240,4 +270,4 @@ export enum ApiErrorType {
 /**
  * Extracts error message from standardized error data.
  */
-export function getApiErrorMessage(errorData: any, t: (key: string) => string): string;
+export function getApiErrorMessage(errorData: unknown, t: (key: string) => string): string;
