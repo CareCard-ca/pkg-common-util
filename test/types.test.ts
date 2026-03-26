@@ -1,8 +1,6 @@
-const assert = require('assert');
-// @ts-ignore
-const { util, error, resCode, requestContext, sendResponse, createError } = require('../index');
-// @ts-ignore
-const src = require('../src/index');
+import assert from 'assert';
+import { util, error, resCode, requestContext, sendResponse, createError } from '../index';
+import * as src from '../src/index';
 
 interface ApiResponseMeta {
   version: string;
@@ -191,7 +189,6 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
 
     it('should verify appErrorHandler with null error', () => {
       const res = { ...mockRes };
-      // @ts-ignore
       error.appErrorHandler(null, {}, res, () => {});
       assert.strictEqual(res.statusCode, 500);
       assert.strictEqual(res.body.message, 'Internal Server Error');
