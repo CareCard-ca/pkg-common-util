@@ -219,7 +219,7 @@ describe('Standard Response System', function () {
       sendResponse({ req, res });
     });
 
-    it('should return 204 No Content and no body when statusCode is 204', function (done) {
+    it('should return 204 No Content and no body when statusCode is 204, even if data is provided', function (done) {
       const req = {
         requestId: 'req-123',
         traceId: 'trace-456'
@@ -229,12 +229,17 @@ describe('Standard Response System', function () {
           assert.strictEqual(code, 204);
           return this;
         },
-        send() {
+        send(body) {
+          assert.strictEqual(arguments.length, 0);
+          assert.strictEqual(body, undefined);
           done();
+        },
+        json(body) {
+          assert.fail('res.json() should not be called for 204 status code');
         }
       };
 
-      sendResponse({ req, res, statusCode: 204 });
+      sendResponse({ req, res, statusCode: 204, data: { foo: 'bar' } });
     });
   });
 });
