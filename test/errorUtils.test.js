@@ -107,6 +107,8 @@ describe('ErrorUtils', function () {
         { code: ApiErrorType.INPUT_NOT_UUID, expected: 'translated_errors.input_not_uuid' },
         { code: ApiErrorType.FILE_TOO_LARGE, expected: 'translated_errors.file_too_large' },
         { code: ApiErrorType.INVALID_TIME_VALUE, expected: 'translated_errors.invalid_time_value' },
+        { code: ApiErrorType.UNKNOWN_ERROR, expected: 'translated_errors.unknown_error' },
+        { code: ApiErrorType.PARSE_ERROR, expected: 'translated_errors.parse_error' },
         { code: ApiErrorType.UNEXPECTED_ERROR, expected: 'translated_errors.unexpected_error' },
         { code: 'UNKNOWN_CODE', expected: 'translated_errors.unexpected_error' }
       ];

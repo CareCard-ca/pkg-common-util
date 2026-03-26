@@ -140,6 +140,12 @@ function translateCode(errorCode, t) {
     case ApiErrorType.INVALID_TIME_VALUE.toLowerCase():
       return t('errors.invalid_time_value');
 
+    case ApiErrorType.UNKNOWN_ERROR.toLowerCase():
+      return t('errors.unknown_error');
+
+    case ApiErrorType.PARSE_ERROR.toLowerCase():
+      return t('errors.parse_error');
+
     case ApiErrorType.UNEXPECTED_ERROR.toLowerCase():
     default:
       return null;
