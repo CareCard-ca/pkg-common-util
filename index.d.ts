@@ -4,7 +4,10 @@
  * @param arrayOfProperties - An array of property names to extract.
  * @returns A new object with the extracted properties.
  */
-export function extractObjectWithProperties(obj: any, arrayOfProperties: string[]): Record<string, any>;
+export function extractObjectWithProperties(
+  obj: any,
+  arrayOfProperties: string[]
+): Record<string, any>;
 
 /**
  * Utility functions for object manipulation.
@@ -15,47 +18,56 @@ export const util: {
 };
 
 /** Throws an Account_Suspended error. */
-export function throwAccountSuspendedError(params?: { userMessage?: string, details?: any }): never;
+export function throwAccountSuspendedError(params?: { userMessage?: string; details?: any }): never;
 /** Throws an Account_Blocked error. */
-export function throwAccountBlockedError(params?: { userMessage?: string, details?: any }): never;
+export function throwAccountBlockedError(params?: { userMessage?: string; details?: any }): never;
 /** Throws an Account_Inactive error. */
-export function throwAccountInactiveError(params?: { userMessage?: string, details?: any }): never;
+export function throwAccountInactiveError(params?: { userMessage?: string; details?: any }): never;
 /** Middleware to handle 404 Not Found. */
 export function notFound404(req: any, res: any, next: any): void;
 /** Central application error handler middleware. */
 export function appErrorHandler(err: any, req: any, res: any, next: any): void;
 /** Throws a Validation_Failure error. */
-export function throwValidationFailureError(params?: { userMessage?: string, details?: any }): never;
+export function throwValidationFailureError(params?: {
+  userMessage?: string;
+  details?: any;
+}): never;
 /** Throws a Record_Exist error. */
-export function throwRecordExistError(params?: { userMessage?: string, details?: any }): never;
+export function throwRecordExistError(params?: { userMessage?: string; details?: any }): never;
 /** Throws a Wrong_Credentials error. */
-export function throwWrongCredentialsError(params?: { userMessage?: string, details?: any }): never;
+export function throwWrongCredentialsError(params?: { userMessage?: string; details?: any }): never;
 /** Throws a Login_Required error. */
-export function throwLoginRequiredError(params?: { userMessage?: string, details?: any }): never;
+export function throwLoginRequiredError(params?: { userMessage?: string; details?: any }): never;
 /** Throws a Record_NotFound error. */
-export function throwRecordNotFoundError(params?: { userMessage?: string, details?: any }): never;
+export function throwRecordNotFoundError(params?: { userMessage?: string; details?: any }): never;
 /** Throws a Record_NotSaved error. */
-export function throwRecordNotSavedError(params?: { userMessage?: string, details?: any }): never;
+export function throwRecordNotSavedError(params?: { userMessage?: string; details?: any }): never;
 /** Throws an Update_Failed error. */
-export function throwUpdateFailedError(params?: { userMessage?: string, details?: any }): never;
+export function throwUpdateFailedError(params?: { userMessage?: string; details?: any }): never;
 /** Throws a Transaction_Failed error. */
-export function throwTransactionFailedError(params?: { userMessage?: string, details?: any }): never;
+export function throwTransactionFailedError(params?: {
+  userMessage?: string;
+  details?: any;
+}): never;
 /** Throws a Used_Token error. */
-export function throwUsedTokenError(params?: { userMessage?: string, details?: any }): never;
+export function throwUsedTokenError(params?: { userMessage?: string; details?: any }): never;
 /** Throws a Bad_Visitor_Token error. */
-export function throwBadVisitorTokenError(params?: { userMessage?: string, details?: any }): never;
+export function throwBadVisitorTokenError(params?: { userMessage?: string; details?: any }): never;
 /** Throws a File_Format_Not_Supported error. */
-export function throwFileFormatNotSupportedError(params?: { userMessage?: string, details?: any }): never;
+export function throwFileFormatNotSupportedError(params?: {
+  userMessage?: string;
+  details?: any;
+}): never;
 /** Throws a Not_Authorized error. */
-export function throwNotAuthorizedError(params?: { userMessage?: string, details?: any }): never;
+export function throwNotAuthorizedError(params?: { userMessage?: string; details?: any }): never;
 /** Throws a Bad_Input error. */
-export function throwBadInputError(params?: { userMessage?: string, details?: any }): never;
+export function throwBadInputError(params?: { userMessage?: string; details?: any }): never;
 /** Throws an Input_Not_Uuid error. */
-export function throwInputNotUuidError(params?: { userMessage?: string, details?: any }): never;
+export function throwInputNotUuidError(params?: { userMessage?: string; details?: any }): never;
 /** Throws a File_Too_Large error. */
-export function throwFileTooLargeError(params?: { userMessage?: string, details?: any }): never;
+export function throwFileTooLargeError(params?: { userMessage?: string; details?: any }): never;
 /** Throws an Invalid_Time_Value error. */
-export function throwInvalidTimeValueError(params?: { userMessage?: string, details?: any }): never;
+export function throwInvalidTimeValueError(params?: { userMessage?: string; details?: any }): never;
 
 /**
  * Application-level error handlers and throwers.

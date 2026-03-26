@@ -1,14 +1,8 @@
-const requestContext = require('./src/middleware/requestContext');
-const sendResponse = require('./src/utils/sendResponse');
-const createError = require('./src/utils/createError');
+'use strict';
 
-module.exports = {
-    util: require( './src/lib/untilityFunctions' ),
-    error: require( './src/lib/appErrorHandlers' ),
-    resCode: require( './src/lib/responseStatus' ),
+/**
+ * @carecard/common-util
+ * Standardized API response and utility functions for Express.js and Next.js microservices.
+ */
 
-    // New standardized API response system
-    requestContext,
-    sendResponse,
-    createError
-}
+module.exports = require('./src/index');

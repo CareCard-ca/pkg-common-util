@@ -1,6 +1,6 @@
 /**
  * Standardized API response utility.
- * 
+ *
  * Automatically injects:
  * - version (from env: API_VERSION)
  * - service (from env: SERVICE_NAME)
@@ -9,7 +9,7 @@
  * - requestId
  * - traceId
  * - client info
- * 
+ *
  * @param {Object} params
  * @param {import('express').Request} params.req
  * @param {import('express').Response} params.res
@@ -37,7 +37,10 @@ const sendResponse = ({
     timestamp: new Date().toISOString(),
     requestId: req.requestId || '',
     traceId: req.traceId || '',
-    client: (req.client && typeof req.client === 'object' && req.client.constructor === Object) ? req.client : {}
+    client:
+      req.client && typeof req.client === 'object' && req.client.constructor === Object
+        ? req.client
+        : {}
   };
 
   const response = {

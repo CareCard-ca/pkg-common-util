@@ -1,6 +1,6 @@
 /**
  * Helper for standardized errors.
- * 
+ *
  * @param {Object} params
  * @param {string} params.code
  * @param {string} [params.details]

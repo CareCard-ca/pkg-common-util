@@ -5,23 +5,9 @@
   "statements": 100,
   "functions": 100,
   "branches": 100,
-  "include": [
-    "index.js",
-    "lib/**/*.js",
-    "src/**/*.js",
-    "src/**/*.ts"
-  ],
-  "exclude": [
-    "**/*.d.ts",
-    "src/types/*.ts",
-    "test/**/*.js",
-    "test/**/*.ts"
-  ],
-  "reporter": [
-    "text",
-    "lcov",
-    "text-summary"
-  ],
+  "include": ["index.js", "lib/**/*.js", "src/**/*.js", "src/**/*.ts"],
+  "exclude": ["**/*.d.ts", "src/types/*.ts", "test/**/*.js", "test/**/*.ts"],
+  "reporter": ["text", "lcov", "text-summary"],
   "sourceMap": true,
   "instrument": true
 }
