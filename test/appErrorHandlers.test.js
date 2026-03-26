@@ -2,7 +2,7 @@ const { describe, it } = require( "mocha" );
 const request = require( 'supertest' );
 const assert = require( 'assert' );
 const express = require( 'express' );
-const errHandler = require( '../lib/appErrorHandlers' );
+const errHandler = require( '../src/lib/appErrorHandlers' );
 
 function testApp( throwErrorFunction ) {
     const app = express();

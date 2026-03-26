@@ -7,6 +7,9 @@ import { ApiResponse, ApiResponseMeta, ApiError, SendResponseParams, CreateError
 
 describe('pkg-common-util TypeScript Type Definitions', () => {
     it('should verify src index exports', () => {
+        assert.ok(src.util);
+        assert.ok(src.error);
+        assert.ok(src.resCode);
         assert.ok(src.requestContext);
         assert.ok(src.sendResponse);
         assert.ok(src.createError);
