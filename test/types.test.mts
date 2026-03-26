@@ -1,6 +1,6 @@
 import assert from 'assert';
-import { util, error, resCode, requestContext, sendResponse, createError } from '../index';
-import * as src from '../src/index';
+import { util, error, resCode, requestContext, sendResponse, createError } from '../index.js';
+import * as src from '../src/index.js';
 
 interface ApiResponseMeta {
   version: string;
