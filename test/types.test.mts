@@ -1,4 +1,4 @@
-import assert from 'assert';
+import * as assert from 'assert';
 import { util, error, resCode, requestContext, sendResponse, createError } from '../index.js';
 import * as src from '../src/index.js';
 
