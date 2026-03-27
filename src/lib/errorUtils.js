@@ -67,7 +67,6 @@ function getApiErrorMessage(errorData, t) {
  * @returns {string|null}
  */
 function translateCode(errorCode, t) {
-  if (!errorCode) return null;
   const code = errorCode.toLowerCase();
 
   switch (code) {

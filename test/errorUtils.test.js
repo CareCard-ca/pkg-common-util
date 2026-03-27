@@ -137,5 +137,17 @@ describe('ErrorUtils', function () {
       const result = getApiErrorMessage(errorData, t);
       assert.strictEqual(result, 'translated_errors.unexpected_error');
     });
+
+    it('should handle error code as null or empty in getApiErrorMessage', function () {
+      const errorData = { error: null };
+      const result = getApiErrorMessage(errorData, t);
+      assert.strictEqual(result, 'translated_errors.unexpected_error');
+    });
+
+    it('should handle error code as empty string', function () {
+      const errorData = { error: '' };
+      const result = getApiErrorMessage(errorData, t);
+      assert.strictEqual(result, 'translated_errors.unexpected_error');
+    });
   });
 });

@@ -1,6 +1,17 @@
 import * as assert from 'assert';
-import { util, error, resCode, requestContext, sendResponse, createError } from '../index.js';
-import * as src from '../src/index.js';
+import commonUtil from '../index.js';
+const {
+  util,
+  error,
+  resCode,
+  requestContext,
+  sendResponse,
+  createError,
+  caseConverter,
+  keysToCamelCase,
+  keysToSnakeCase
+} = commonUtil;
+import src from '../src/index.js';
 
 interface ApiResponseMeta {
   version: string;
@@ -60,9 +71,22 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
     assert.ok(src.util);
     assert.ok(src.error);
     assert.ok(src.resCode);
+    assert.ok(src.caseConverter);
     assert.ok(src.requestContext);
     assert.ok(src.sendResponse);
     assert.ok(src.createError);
+  });
+
+  it('should verify caseConverter functions', () => {
+    const input = { first_name: 'John' };
+    const camel = keysToCamelCase(input);
+    assert.deepStrictEqual(camel, { firstName: 'John' });
+
+    const snake = keysToSnakeCase(camel);
+    assert.deepStrictEqual(snake, { first_name: 'John' });
+
+    assert.ok(caseConverter.keysToCamelCase);
+    assert.ok(caseConverter.keysToSnakeCase);
   });
 
   it('should verify util functions', () => {

@@ -21,6 +21,6 @@
       "@carecard/common-util": ["./index.d.ts"]
     }
   },
-  "include": ["index.d.ts", "test/**/*.ts"],
+  "include": ["index.d.ts", "test/**/*.ts", "test/**/*.mts"],
   "exclude": ["node_modules"]
 }

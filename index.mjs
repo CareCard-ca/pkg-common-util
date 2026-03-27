@@ -5,9 +5,12 @@ export const {
   util,
   error,
   resCode,
+  caseConverter,
 
   // Top-level utility functions
   extractObjectWithProperties,
+  keysToCamelCase,
+  keysToSnakeCase,
 
   // Top-level error handlers/throwers
   throwAccountSuspendedError,

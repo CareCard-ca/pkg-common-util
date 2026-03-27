@@ -10,11 +10,36 @@ export function extractObjectWithProperties(
 ): Record<string, unknown>;
 
 /**
+ * Converts all keys of an object or array of objects to camelCase.
+ * Handles nested objects and arrays.
+ * @param input - The source object or array.
+ * @returns A new object or array with camelCase keys.
+ */
+export function keysToCamelCase<T>(input: T): T;
+
+/**
+ * Converts all keys of an object or array of objects to snake_case.
+ * Handles nested objects and arrays.
+ * @param input - The source object or array.
+ * @returns A new object or array with snake_case keys.
+ */
+export function keysToSnakeCase<T>(input: T): T;
+
+/**
  * Utility functions for object manipulation.
  * @deprecated Use direct imports instead.
  */
 export const util: {
   extractObjectWithProperties: typeof extractObjectWithProperties;
+};
+
+/**
+ * Key case conversion utilities.
+ * @deprecated Use direct imports instead.
+ */
+export const caseConverter: {
+  keysToCamelCase: typeof keysToCamelCase;
+  keysToSnakeCase: typeof keysToSnakeCase;
 };
 
 /** Throws an Account_Suspended error. */
@@ -273,3 +298,52 @@ export enum ApiErrorType {
  * Extracts error message from standardized error data.
  */
 export function getApiErrorMessage(errorData: unknown, t: (key: string) => string): string;
+
+/**
+ * Default export containing all utility and error handling functions.
+ */
+declare const commonUtil: {
+  util: typeof util;
+  error: typeof error;
+  resCode: typeof resCode;
+  caseConverter: typeof caseConverter;
+  extractObjectWithProperties: typeof extractObjectWithProperties;
+  keysToCamelCase: typeof keysToCamelCase;
+  keysToSnakeCase: typeof keysToSnakeCase;
+  throwAccountSuspendedError: typeof throwAccountSuspendedError;
+  throwAccountBlockedError: typeof throwAccountBlockedError;
+  throwAccountInactiveError: typeof throwAccountInactiveError;
+  notFound404: typeof notFound404;
+  appErrorHandler: typeof appErrorHandler;
+  throwValidationFailureError: typeof throwValidationFailureError;
+  throwRecordExistError: typeof throwRecordExistError;
+  throwWrongCredentialsError: typeof throwWrongCredentialsError;
+  throwLoginRequiredError: typeof throwLoginRequiredError;
+  throwRecordNotFoundError: typeof throwRecordNotFoundError;
+  throwRecordNotSavedError: typeof throwRecordNotSavedError;
+  throwUpdateFailedError: typeof throwUpdateFailedError;
+  throwTransactionFailedError: typeof throwTransactionFailedError;
+  throwUsedTokenError: typeof throwUsedTokenError;
+  throwBadVisitorTokenError: typeof throwBadVisitorTokenError;
+  throwFileFormatNotSupportedError: typeof throwFileFormatNotSupportedError;
+  throwNotAuthorizedError: typeof throwNotAuthorizedError;
+  throwBadInputError: typeof throwBadInputError;
+  throwInputNotUuidError: typeof throwInputNotUuidError;
+  throwFileTooLargeError: typeof throwFileTooLargeError;
+  throwInvalidTimeValueError: typeof throwInvalidTimeValueError;
+  throwNotFoundError: typeof throwNotFoundError;
+  throwRecordSaveFailureError: typeof throwRecordSaveFailureError;
+  throwApplicationError: typeof throwApplicationError;
+  throwNetworkError: typeof throwNetworkError;
+  throwUnexpectedError: typeof throwUnexpectedError;
+  setOk200: typeof setOk200;
+  setCreated201: typeof setCreated201;
+  setBadRequest400ClientError: typeof setBadRequest400ClientError;
+  requestContext: typeof requestContext;
+  sendResponse: typeof sendResponse;
+  createError: typeof createError;
+  ApiErrorType: typeof ApiErrorType;
+  getApiErrorMessage: typeof getApiErrorMessage;
+};
+
+export default commonUtil;
