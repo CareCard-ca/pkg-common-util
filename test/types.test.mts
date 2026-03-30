@@ -351,7 +351,12 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
       const response: ApiResponse = res.body;
       assert.strictEqual(response.message, 'Test');
       assert.strictEqual(response.meta.requestId, 'req-1');
-      assert.deepStrictEqual(response.meta.pagination, { page: 1, pageSize: 10, total: 100, totalPages: 10 });
+      assert.deepStrictEqual(response.meta.pagination, {
+        page: 1,
+        pageSize: 10,
+        total: 100,
+        totalPages: 10
+      });
       done();
     });
 
