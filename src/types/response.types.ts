@@ -27,48 +27,12 @@ export interface ApiResponseMeta {
 }
 
 /**
- * Meta information (alias for ApiResponseMeta for dashboard consistency)
- */
-export interface ApiMeta {
-  version?: string;
-  service?: string;
-  environment?: string;
-  timestamp?: string;
-  requestId?: string;
-  traceId?: string;
-  pagination?: ApiPagination;
-  [key: string]: any;
-}
-
-/**
- * Standard API error object.
- */
-export interface ApiErrorObject {
-  code: string;
-  message?: string;
-  details?: any;
-  fields?: Record<string, string>;
-}
-
-/**
- * Standard API response body.
- */
-export interface StandardizedResponse<T = any> {
-  success: boolean;
-  statusCode: number;
-  message: string;
-  data: T | null;
-  error?: ApiErrorObject | null;
-  meta?: ApiMeta | null;
-}
-
-/**
  * Standard API error object.
  */
 export interface ApiError {
   code: string;
-  message?: string;
   details?: string;
+  message?: string;
   fields?: Record<string, string>;
 }
 

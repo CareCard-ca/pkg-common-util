@@ -187,8 +187,6 @@ export const resCode: {
   setBadRequest400ClientError: typeof setBadRequest400ClientError;
 };
 
-// --- New Standardized API Response System ---
-
 /**
  * Pagination information
  */
@@ -214,65 +212,53 @@ export interface ApiResponseMeta {
     ip?: string;
   };
   pagination?: ApiPagination;
-  [key: string]: unknown;
-}
-
-/**
- * Meta information (alias for ApiResponseMeta for dashboard consistency)
- */
-export interface ApiMeta {
-  version?: string;
-  service?: string;
-  environment?: string;
-  timestamp?: string;
-  requestId?: string;
-  traceId?: string;
-  pagination?: ApiPagination;
-  [key: string]: unknown;
+  [key: string]: any;
 }
 
 /**
  * Standard API error object.
  */
-export interface ApiErrorObject {
+export interface ApiError {
   code: string;
+  details?: string;
   message?: string;
-  details?: unknown;
   fields?: Record<string, string>;
 }
 
 /**
  * Standard API response body.
  */
-export interface StandardizedResponse<T = unknown> {
-  success: boolean;
-  statusCode: number;
-  message: string;
-  data: T | null;
-  error?: ApiErrorObject | null;
-  meta?: ApiMeta | null;
-}
-
-/**
- * Standard API error object. (Backward compatibility)
- */
-export interface ApiError {
-  code: string;
-  message?: string;
-  details?: string;
-  fields?: Record<string, string>;
-}
-
-/**
- * Standard API response body. (Backward compatibility)
- */
-export interface ApiResponse<T = unknown> {
+export interface ApiResponse<T = any> {
   success: boolean;
   statusCode: number;
   message: string;
   data: T | null;
   error: ApiError | null;
   meta: ApiResponseMeta;
+}
+
+/**
+ * Parameters for sendResponse utility.
+ */
+export interface SendResponseParams<T = any> {
+  req: any;
+  res: any;
+  statusCode?: number;
+  success?: boolean;
+  message?: string;
+  data?: T | null;
+  error?: ApiError | null;
+  meta?: Partial<ApiResponseMeta>;
+}
+
+/**
+ * Parameters for createError utility.
+ */
+export interface CreateErrorParams {
+  code: string;
+  details?: string;
+  message?: string;
+  fields?: Record<string, string>;
 }
 
 /**

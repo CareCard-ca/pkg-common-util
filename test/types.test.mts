@@ -13,14 +13,14 @@ const {
 } = commonUtil;
 import src from '../src/index.js';
 
-interface ApiPagination {
+export interface ApiPagination {
   total: number;
   page: number;
   pageSize: number;
   totalPages: number;
 }
 
-interface ApiResponseMeta {
+export interface ApiResponseMeta {
   version: string;
   service: string;
   environment: string;
@@ -35,41 +35,14 @@ interface ApiResponseMeta {
   [key: string]: any;
 }
 
-interface ApiMeta {
-  version?: string;
-  service?: string;
-  environment?: string;
-  timestamp?: string;
-  requestId?: string;
-  traceId?: string;
-  pagination?: ApiPagination;
-  [key: string]: any;
-}
-
-interface ApiErrorObject {
+export interface ApiError {
   code: string;
-  message?: string;
-  details?: any;
-  fields?: Record<string, string>;
-}
-
-interface StandardizedResponse<T = any> {
-  success: boolean;
-  statusCode: number;
-  message: string;
-  data: T | null;
-  error?: ApiErrorObject | null;
-  meta?: ApiMeta | null;
-}
-
-interface ApiError {
-  code: string;
-  message?: string;
   details?: string;
+  message?: string;
   fields?: Record<string, string>;
 }
 
-interface ApiResponse<T = any> {
+export interface ApiResponse<T = any> {
   success: boolean;
   statusCode: number;
   message: string;
@@ -78,7 +51,7 @@ interface ApiResponse<T = any> {
   meta: ApiResponseMeta;
 }
 
-interface SendResponseParams<T = any> {
+export interface SendResponseParams<T = any> {
   req: any;
   res: any;
   statusCode?: number;
@@ -89,7 +62,7 @@ interface SendResponseParams<T = any> {
   meta?: Partial<ApiResponseMeta>;
 }
 
-interface CreateErrorParams {
+export interface CreateErrorParams {
   code: string;
   details?: string;
   message?: string;
@@ -430,20 +403,6 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
         customField: 'customValue'
       };
       assert.strictEqual(meta.customField, 'customValue');
-    });
-
-    it('should verify StandardizedResponse type', () => {
-      const resp: StandardizedResponse<string> = {
-        success: true,
-        statusCode: 200,
-        message: 'OK',
-        data: 'test',
-        error: null,
-        meta: {
-          version: '1.0.0'
-        }
-      };
-      assert.strictEqual(resp.data, 'test');
     });
   });
 });
