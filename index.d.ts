@@ -190,6 +190,16 @@ export const resCode: {
 // --- New Standardized API Response System ---
 
 /**
+ * Pagination information
+ */
+export interface ApiPagination {
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+/**
  * Standard API response metadata.
  */
 export interface ApiResponseMeta {
@@ -203,16 +213,48 @@ export interface ApiResponseMeta {
     appId?: string;
     ip?: string;
   };
-  pagination?: {
-    page: number;
-    limit: number;
-    total: number;
-  };
+  pagination?: ApiPagination;
+  [key: string]: unknown;
+}
+
+/**
+ * Meta information (alias for ApiResponseMeta for dashboard consistency)
+ */
+export interface ApiMeta {
+  version?: string;
+  service?: string;
+  environment?: string;
+  timestamp?: string;
+  requestId?: string;
+  traceId?: string;
+  pagination?: ApiPagination;
   [key: string]: unknown;
 }
 
 /**
  * Standard API error object.
+ */
+export interface ApiErrorObject {
+  code: string;
+  message?: string;
+  details?: unknown;
+  fields?: Record<string, string>;
+}
+
+/**
+ * Standard API response body.
+ */
+export interface StandardizedResponse<T = unknown> {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: T | null;
+  error?: ApiErrorObject | null;
+  meta?: ApiMeta | null;
+}
+
+/**
+ * Standard API error object. (Backward compatibility)
  */
 export interface ApiError {
   code: string;
@@ -222,7 +264,7 @@ export interface ApiError {
 }
 
 /**
- * Standard API response body.
+ * Standard API response body. (Backward compatibility)
  */
 export interface ApiResponse<T = unknown> {
   success: boolean;

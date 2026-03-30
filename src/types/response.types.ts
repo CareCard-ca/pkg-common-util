@@ -1,4 +1,14 @@
 /**
+ * Pagination information
+ */
+export interface ApiPagination {
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+/**
  * Standard API response metadata.
  */
 export interface ApiResponseMeta {
@@ -12,12 +22,44 @@ export interface ApiResponseMeta {
     appId?: string;
     ip?: string;
   };
-  pagination?: {
-    page: number;
-    limit: number;
-    total: number;
-  };
+  pagination?: ApiPagination;
   [key: string]: any;
+}
+
+/**
+ * Meta information (alias for ApiResponseMeta for dashboard consistency)
+ */
+export interface ApiMeta {
+  version?: string;
+  service?: string;
+  environment?: string;
+  timestamp?: string;
+  requestId?: string;
+  traceId?: string;
+  pagination?: ApiPagination;
+  [key: string]: any;
+}
+
+/**
+ * Standard API error object.
+ */
+export interface ApiErrorObject {
+  code: string;
+  message?: string;
+  details?: any;
+  fields?: Record<string, string>;
+}
+
+/**
+ * Standard API response body.
+ */
+export interface StandardizedResponse<T = any> {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: T | null;
+  error?: ApiErrorObject | null;
+  meta?: ApiMeta | null;
 }
 
 /**

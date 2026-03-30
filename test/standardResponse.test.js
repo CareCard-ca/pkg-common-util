@@ -140,7 +140,7 @@ describe('Standard Response System', function () {
         },
         json(body) {
           assert.strictEqual(body.meta.requestId, 'overridden-id');
-          assert.deepStrictEqual(body.meta.pagination, { page: 1, limit: 10, total: 100 });
+          assert.deepStrictEqual(body.meta.pagination, { page: 1, pageSize: 10, total: 100, totalPages: 10 });
           done();
         }
       };
@@ -150,7 +150,7 @@ describe('Standard Response System', function () {
         res,
         meta: {
           requestId: 'overridden-id',
-          pagination: { page: 1, limit: 10, total: 100 }
+          pagination: { page: 1, pageSize: 10, total: 100, totalPages: 10 }
         }
       });
     });

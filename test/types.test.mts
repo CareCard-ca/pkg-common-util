@@ -13,6 +13,13 @@ const {
 } = commonUtil;
 import src from '../src/index.js';
 
+interface ApiPagination {
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
 interface ApiResponseMeta {
   version: string;
   service: string;
@@ -24,12 +31,35 @@ interface ApiResponseMeta {
     appId?: string;
     ip?: string;
   };
-  pagination?: {
-    page: number;
-    limit: number;
-    total: number;
-  };
+  pagination?: ApiPagination;
   [key: string]: any;
+}
+
+interface ApiMeta {
+  version?: string;
+  service?: string;
+  environment?: string;
+  timestamp?: string;
+  requestId?: string;
+  traceId?: string;
+  pagination?: ApiPagination;
+  [key: string]: any;
+}
+
+interface ApiErrorObject {
+  code: string;
+  message?: string;
+  details?: any;
+  fields?: Record<string, string>;
+}
+
+interface StandardizedResponse<T = any> {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: T | null;
+  error?: ApiErrorObject | null;
+  meta?: ApiMeta | null;
 }
 
 interface ApiError {
@@ -312,7 +342,7 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
         res,
         message: 'Test',
         meta: {
-          pagination: { page: 1, limit: 10, total: 100 }
+          pagination: { page: 1, pageSize: 10, total: 100, totalPages: 10 }
         }
       };
 
@@ -321,7 +351,7 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
       const response: ApiResponse = res.body;
       assert.strictEqual(response.message, 'Test');
       assert.strictEqual(response.meta.requestId, 'req-1');
-      assert.deepStrictEqual(response.meta.pagination, { page: 1, limit: 10, total: 100 });
+      assert.deepStrictEqual(response.meta.pagination, { page: 1, pageSize: 10, total: 100, totalPages: 10 });
       done();
     });
 
@@ -388,12 +418,27 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
         },
         pagination: {
           page: 1,
-          limit: 10,
-          total: 100
+          pageSize: 10,
+          total: 100,
+          totalPages: 10
         },
         customField: 'customValue'
       };
       assert.strictEqual(meta.customField, 'customValue');
+    });
+
+    it('should verify StandardizedResponse type', () => {
+      const resp: StandardizedResponse<string> = {
+        success: true,
+        statusCode: 200,
+        message: 'OK',
+        data: 'test',
+        error: null,
+        meta: {
+          version: '1.0.0'
+        }
+      };
+      assert.strictEqual(resp.data, 'test');
     });
   });
 });
