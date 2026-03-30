@@ -12,17 +12,17 @@ export interface ApiPagination {
  * Standard API response metadata.
  */
 export interface ApiResponseMeta {
-  version: string;
-  service: string;
-  environment: string;
-  timestamp: string;
-  requestId: string;
-  traceId: string;
+  version?: string;
+  service?: string;
+  environment?: string;
+  timestamp?: string;
+  requestId?: string;
+  traceId?: string;
   client?: {
     appId?: string;
     ip?: string;
   };
-  pagination?: ApiPagination;
+  pagination?: ApiPagination | null;
   [key: string]: any;
 }
 
@@ -30,7 +30,7 @@ export interface ApiResponseMeta {
  * Standard API error object.
  */
 export interface ApiError {
-  code: string;
+  code?: string;
   details?: string;
   message?: string;
   fields?: Record<string, string>;
@@ -44,8 +44,8 @@ export interface ApiResponse<T = any> {
   statusCode: number;
   message: string;
   data: T | null;
-  error: ApiError | null;
-  meta: ApiResponseMeta;
+  error?: ApiError | null;
+  meta?: ApiResponseMeta;
 }
 
 /**
@@ -66,7 +66,7 @@ export interface SendResponseParams<T = any> {
  * Parameters for createError utility.
  */
 export interface CreateErrorParams {
-  code: string;
+  code?: string;
   details?: string;
   message?: string;
   fields?: Record<string, string>;

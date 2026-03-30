@@ -28,7 +28,8 @@ const sendResponse = ({
   message = '',
   data = null,
   error = null,
-  meta = {}
+  pagination = null,
+  meta = {},
 }) => {
   const standardMeta = {
     version: process.env.API_VERSION || '1.0.0',
@@ -40,7 +41,8 @@ const sendResponse = ({
     client:
       req.client && typeof req.client === 'object' && req.client.constructor === Object
         ? req.client
-        : {}
+        : {},
+    pagination: pagination
   };
 
   if (statusCode === 204) {

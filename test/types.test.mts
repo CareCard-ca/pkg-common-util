@@ -13,6 +13,9 @@ const {
 } = commonUtil;
 import src from '../src/index.js';
 
+/**
+ * Pagination information
+ */
 export interface ApiPagination {
   total: number;
   page: number;
@@ -20,37 +23,49 @@ export interface ApiPagination {
   totalPages: number;
 }
 
+/**
+ * Standard API response metadata.
+ */
 export interface ApiResponseMeta {
-  version: string;
-  service: string;
-  environment: string;
-  timestamp: string;
-  requestId: string;
-  traceId: string;
+  version?: string;
+  service?: string;
+  environment?: string;
+  timestamp?: string;
+  requestId?: string;
+  traceId?: string;
   client?: {
     appId?: string;
     ip?: string;
   };
-  pagination?: ApiPagination;
+  pagination?: ApiPagination | null;
   [key: string]: any;
 }
 
+/**
+ * Standard API error object.
+ */
 export interface ApiError {
-  code: string;
+  code?: string;
   details?: string;
   message?: string;
   fields?: Record<string, string>;
 }
 
+/**
+ * Standard API response body.
+ */
 export interface ApiResponse<T = any> {
   success: boolean;
   statusCode: number;
   message: string;
   data: T | null;
-  error: ApiError | null;
-  meta: ApiResponseMeta;
+  error?: ApiError | null;
+  meta?: ApiResponseMeta;
 }
 
+/**
+ * Parameters for sendResponse utility.
+ */
 export interface SendResponseParams<T = any> {
   req: any;
   res: any;
@@ -62,6 +77,9 @@ export interface SendResponseParams<T = any> {
   meta?: Partial<ApiResponseMeta>;
 }
 
+/**
+ * Parameters for createError utility.
+ */
 export interface CreateErrorParams {
   code: string;
   details?: string;
@@ -323,8 +341,9 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
       assert.strictEqual(res.statusCode, 200);
       const response: ApiResponse = res.body;
       assert.strictEqual(response.message, 'Test');
-      assert.strictEqual(response.meta.requestId, 'req-1');
-      assert.deepStrictEqual(response.meta.pagination, {
+      assert.ok(response.meta);
+      assert.strictEqual(response.meta!.requestId, 'req-1');
+      assert.deepStrictEqual(response.meta!.pagination, {
         page: 1,
         pageSize: 10,
         total: 100,
