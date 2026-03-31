@@ -443,6 +443,26 @@ describe('AppErrorHandlers', function () {
       });
   });
 
+  it('appErrorHandler should handle Postgres error 42501 as Forbidden (403)', function (done) {
+    const app = express();
+    app.use((req, res, next) => {
+      const err = new Error('insufficient_privilege');
+      err.code = '42501';
+      next(err);
+    });
+    app.use(errHandler.appErrorHandler);
+
+    request(app)
+      .get('/')
+      .expect(403)
+      .end((err, response) => {
+        if (err) return done(err);
+        assert.strictEqual(response?.statusCode, 403);
+        assert.deepStrictEqual(response?.body?.error?.code, '42501');
+        done();
+      });
+  });
+
   describe('appErrorHandler legacy messages', function () {
     const legacyCases = [
       { message: 'Account_Suspended', expectedStatus: 403 },
@@ -464,7 +484,8 @@ describe('AppErrorHandlers', function () {
       { message: 'Record_NotFound', expectedStatus: 404 },
       { message: 'Not found', expectedStatus: 404 },
       { message: 'File_Format_Not_Supported', expectedStatus: 415 },
-      { message: 'File too large', expectedStatus: 413 }
+      { message: 'File too large', expectedStatus: 413 },
+      { message: '42501', expectedStatus: 403 }
     ];
 
     legacyCases.forEach(({ message, expectedStatus }) => {
