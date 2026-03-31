@@ -66,6 +66,7 @@ function appErrorHandler(err, req, res, next) {
     case ApiErrorType.ACCOUNT_INACTIVE:
     case 'Invalid time value':
     case ApiErrorType.INVALID_TIME_VALUE:
+    case '42501':
       statusCode = 403;
       break;
 
