@@ -26,12 +26,11 @@
  * @param ETag
  * @returns {*}
  */
-function setOk200( res, ETag ) {
+function setOk200(res, ETag) {
+  res.set({ ETag: ETag });
+  res.status(200);
 
-    res.set( { ETag: ETag } );
-    res.status( 200 );
-
-    return res;
+  return res;
 }
 
 /**
@@ -50,9 +49,9 @@ function setOk200( res, ETag ) {
  * @param res
  * @returns {*}
  */
-function setCreated201( res ) {
-    res.status( 201 );
-    return res;
+function setCreated201(res) {
+  res.status(201);
+  return res;
 }
 
 /**
@@ -64,14 +63,13 @@ function setCreated201( res ) {
  * @param res
  * @returns {*}
  */
-function setBadRequest400ClientError( res ) {
-    res.status( 400 );
-    return res;
+function setBadRequest400ClientError(res) {
+  res.status(400);
+  return res;
 }
 
 module.exports = {
-    setOk200,
-    setCreated201,
-    setBadRequest400ClientError
+  setOk200,
+  setCreated201,
+  setBadRequest400ClientError
 };
-

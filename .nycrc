@@ -1,0 +1,13 @@
+{
+  "extends": "@istanbuljs/nyc-config-typescript",
+  "all": true,
+  "lines": 100,
+  "statements": 100,
+  "functions": 100,
+  "branches": 100,
+  "include": ["index.js", "src/**/*.js", "src/**/*.ts"],
+  "exclude": ["**/*.d.ts", "src/types/*.ts", "test/**/*.js", "test/**/*.ts"],
+  "reporter": ["text", "lcov", "text-summary"],
+  "sourceMap": true,
+  "instrument": true
+}
