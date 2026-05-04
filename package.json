@@ -1,23 +1,67 @@
 {
-  "name": "@chatpta/common-util",
-  "version": "3.1.15",
-  "repository": "https://github.com/chatpta/pkg-common-util",
-  "description": "Common utility for MVC framework",
+  "name": "@carecard/common-util",
+  "version": "3.1.13",
+  "description": "Standardized API response and utility functions for Express.js and Next.js microservices",
   "main": "index.js",
+  "module": "index.mjs",
+  "types": "index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./index.mjs",
+      "require": "./index.js",
+      "types": "./index.d.ts"
+    }
+  },
+  "files": [
+    "index.js",
+    "index.mjs",
+    "index.d.ts",
+    "src"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CareCard-ca/pkg-common-util"
+  },
   "scripts": {
-    "test": "export NODE_ENV=test && mocha --watch --recursive"
+    "test": "export NODE_ENV=test && mocha --recursive",
+    "test:types": "tsc --noEmit && mocha -r ts-node/register test/types.test.mts",
+    "test:coverage": "export NODE_ENV=test && nyc mocha --recursive",
+    "test:types:coverage": "tsc --noEmit && export NODE_ENV=test && nyc mocha -r ts-node/register 'test/**/*.{js,ts,mts}'",
+    "coverage": "export NODE_ENV=test && nyc mocha --recursive -r ts-node/register 'test/**/*.{js,ts,mts}' && nyc check-coverage",
+    "prettier": "prettier --write .",
+    "prettier:check": "prettier --check .",
+    "prepare": "husky"
   },
   "keywords": [
-    "validate",
-    "data"
+    "express",
+    "nextjs",
+    "api-response",
+    "standardization",
+    "utility",
+    "request-context",
+    "tracing"
   ],
-  "author": "Chatpta team",
+  "author": "CareCard team",
   "license": "ISC",
   "devDependencies": {
-    "mocha": "10.1.0",
-    "supertest": "^6.1.6"
+    "@istanbuljs/nyc-config-typescript": "1.0.2",
+    "@types/mocha": "10.0.10",
+    "@types/node": "25.5.0",
+    "express": "5.1.0",
+    "husky": "9.1.7",
+    "mocha": "^11.3.0",
+    "nyc": "17.1.0",
+    "prettier": "^3.8.1",
+    "source-map-support": "0.5.21",
+    "supertest": "7.1.4",
+    "ts-node": "10.9.2",
+    "typescript": "5.9.3"
   },
-  "dependencies": {
-    "express": "^4.17.2"
+  "peerDependencies": {
+    "express": "^4.0.0 || ^5.0.0"
   }
 }

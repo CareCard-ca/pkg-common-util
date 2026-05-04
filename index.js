@@ -1,5 +1,8 @@
-module.exports = {
-    util: require( './lib/untilityFunctions' ),
-    error: require( './lib/appErrorHandlers' ),
-    resCode: require( './lib/responseStatus' )
-}
+'use strict';
+
+/**
+ * @carecard/common-util
+ * Standardized API response and utility functions for Express.js and Next.js microservices.
+ */
+
+module.exports = require('./src/index');
