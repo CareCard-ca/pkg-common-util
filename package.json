@@ -27,11 +27,11 @@
     "url": "https://github.com/CareCard-ca/pkg-common-util"
   },
   "scripts": {
-    "test": "export NODE_ENV=test && mocha --recursive",
+    "test": "mocha --recursive",
     "test:types": "tsc --noEmit && mocha -r ts-node/register test/types.test.mts",
-    "test:coverage": "export NODE_ENV=test && nyc mocha --recursive",
-    "test:types:coverage": "tsc --noEmit && export NODE_ENV=test && nyc mocha -r ts-node/register 'test/**/*.{js,ts,mts}'",
-    "coverage": "export NODE_ENV=test && nyc mocha --recursive -r ts-node/register 'test/**/*.{js,ts,mts}' && nyc check-coverage",
+    "test:coverage": "nyc mocha --recursive",
+    "test:types:coverage": "tsc --noEmit && nyc mocha -r ts-node/register 'test/**/*.{js,ts,mts}'",
+    "coverage": "nyc mocha --recursive -r ts-node/register 'test/**/*.{js,ts,mts}' && nyc check-coverage",
     "prettier": "prettier --write .",
     "prettier:check": "prettier --check .",
     "prepare": "husky"
