@@ -8,5 +8,5 @@ module.exports = {
   useTabs: false,
   endOfLine: 'auto',
   importOrderSeparation: true,
-  importOrderSortSpecifiers: true,
+  importOrderSortSpecifiers: true
 };
