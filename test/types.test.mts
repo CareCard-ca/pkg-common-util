@@ -46,9 +46,9 @@ export interface ApiResponseMeta {
  */
 export interface ApiError {
   code?: string;
-  details?: string;
+  details?: unknown;
   message?: string;
-  fields?: Record<string, string>;
+  fields?: Record<string, unknown> | null;
 }
 
 /**
@@ -56,10 +56,13 @@ export interface ApiError {
  */
 export interface ApiResponse<T = any> {
   success: boolean;
+  status?: 'success' | 'error';
   statusCode: number;
+  code?: string;
   message: string;
   data: T | null;
   error?: ApiError | null;
+  details?: unknown;
   meta?: ApiResponseMeta;
 }
 
@@ -71,9 +74,12 @@ export interface SendResponseParams<T = any> {
   res: any;
   statusCode?: number;
   success?: boolean;
+  code?: string;
   message?: string;
   data?: T | null;
   error?: ApiError | null;
+  details?: unknown;
+  pagination?: ApiPagination | null;
   meta?: Partial<ApiResponseMeta>;
 }
 
@@ -82,9 +88,9 @@ export interface SendResponseParams<T = any> {
  */
 export interface CreateErrorParams {
   code: string;
-  details?: string;
+  details?: unknown;
   message?: string;
-  fields?: Record<string, string>;
+  fields?: Record<string, unknown> | null;
 }
 
 describe('pkg-common-util TypeScript Type Definitions', () => {
@@ -220,8 +226,8 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
       const res2 = { ...mockRes };
       error.appErrorHandler(new Error('Account_Suspended'), {}, res2, () => {});
       assert.strictEqual(res2.statusCode, 403);
-      assert.strictEqual(res2.body.error.code, null);
-      assert.strictEqual(res2.body.error.message, null);
+      assert.strictEqual(res2.body.error.code, 'UNEXPECTED_ERROR');
+      assert.strictEqual(res2.body.error.message, 'Account_Suspended');
       assert.strictEqual(res2.body.error.details, null);
     });
 
@@ -236,7 +242,7 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
       const res = { ...mockRes };
       error.appErrorHandler(null, {}, res, () => {});
       assert.strictEqual(res.statusCode, 500);
-      assert.strictEqual(res.body.message, 'Internal Server Error');
+      assert.strictEqual(res.body.message, 'Internal server error');
     });
 
     it('should verify appErrorHandler for all common error types', () => {

@@ -113,7 +113,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
 ## API Reference
 
-### `sendResponse({ req, res, statusCode, success, message, data, error, meta })`
+### `sendResponse({ req, res, statusCode, success, code, message, data, error, details, pagination, meta })`
 
 Sends a standardized JSON response.
 
@@ -134,10 +134,13 @@ Helper to create a standardized error object for `sendResponse`.
 ```json
 {
   "success": true,
+  "status": "success",
   "statusCode": 200,
+  "code": "OK",
   "message": "Success message",
   "data": { ... },
   "error": null,
+  "details": null,
   "meta": {
     "version": "1.0.0",
     "service": "my-service",

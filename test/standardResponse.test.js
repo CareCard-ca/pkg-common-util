@@ -175,7 +175,12 @@ describe('Standard Response System', function () {
         json(body) {
           assert.strictEqual(body.success, false);
           assert.strictEqual(body.statusCode, 500);
-          assert.deepStrictEqual(body.error, error);
+          assert.deepStrictEqual(body.error, {
+            code: 'INTERNAL_ERROR',
+            details: 'Database connection failed',
+            message: 'An error occurred',
+            fields: null
+          });
           assert.strictEqual(body.data, null);
           done();
         }

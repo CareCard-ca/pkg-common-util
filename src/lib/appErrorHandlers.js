@@ -43,6 +43,7 @@ function notFound404(req, res, next) {
     res,
     statusCode: 404,
     success: false,
+    code: ApiErrorType.NOT_FOUND,
     message: 'Not found',
     error: createError({
       code: ApiErrorType.NOT_FOUND,
@@ -53,11 +54,28 @@ function notFound404(req, res, next) {
 }
 
 function appErrorHandler(err, req, res, next) {
-  const errorMessage = err?.message || 'Internal Server Error';
-  const errorCode = err?.code;
-  let statusCode;
+  const statusCode = getErrorStatusCode(err);
+  const code = getErrorCode(err, statusCode);
+  const message = getErrorMessage(err, statusCode);
+  const details = statusCode >= 500 ? null : (err?.details ?? null);
 
-  switch (errorCode || err?.message) {
+  return sendResponse({
+    req,
+    res,
+    statusCode,
+    success: false,
+    code,
+    message,
+    error: createError({
+      code,
+      message,
+      details
+    })
+  });
+}
+
+function getErrorStatusCode(err) {
+  switch (err?.code || err?.message) {
     case 'Account_Suspended':
     case 'Account_Blocked':
     case 'Account_Inactive':
@@ -67,8 +85,7 @@ function appErrorHandler(err, req, res, next) {
     case 'Invalid time value':
     case ApiErrorType.INVALID_TIME_VALUE:
     case '42501':
-      statusCode = 403;
-      break;
+      return 403;
 
     case 'Validation_Failure':
     case 'Used_Token':
@@ -82,8 +99,7 @@ function appErrorHandler(err, req, res, next) {
     case ApiErrorType.BAD_VISITOR_TOKEN:
     case ApiErrorType.LOGIN_REQUIRED:
     case ApiErrorType.NOT_AUTHORIZED:
-      statusCode = 401;
-      break;
+      return 401;
 
     case 'Record_NotSaved':
     case 'Update_Failed':
@@ -95,54 +111,59 @@ function appErrorHandler(err, req, res, next) {
     case ApiErrorType.TRANSACTION_FAILED:
     case ApiErrorType.BAD_INPUT:
     case ApiErrorType.INPUT_NOT_UUID:
-      statusCode = 400;
-      break;
+      return 400;
 
     case 'Record_Exist':
     case ApiErrorType.RECORD_EXIST:
-      statusCode = 409;
-      break;
+      return 409;
 
     case 'Record_NotFound':
     case 'Not found':
     case ApiErrorType.RECORD_NOT_FOUND:
     case ApiErrorType.NOT_FOUND:
-      statusCode = 404;
-      break;
+      return 404;
 
     case 'File_Format_Not_Supported':
     case ApiErrorType.FILE_FORMAT_NOT_SUPPORTED:
-      statusCode = 415;
-      break;
+      return 415;
 
     case 'File too large':
     case ApiErrorType.FILE_TOO_LARGE:
-      statusCode = 413;
-      break;
+      return 413;
 
     case ApiErrorType.RECORD_SAVE_FAILURE:
     case ApiErrorType.APPLICATION_ERROR:
     case ApiErrorType.NETWORK_ERROR:
     case ApiErrorType.UNEXPECTED_ERROR:
-      statusCode = 500;
-      break;
+      return 500;
 
     default:
-      statusCode = 500;
+      return 500;
+  }
+}
+
+function getErrorCode(err, statusCode) {
+  if (err?.code === '42501') {
+    return ApiErrorType.NOT_AUTHORIZED;
   }
 
-  return sendResponse({
-    req,
-    res,
-    statusCode,
-    success: false,
-    message: errorMessage,
-    error: createError({
-      code: err?.code ?? null,
-      message: err?.userMessage ?? null,
-      details: err?.details ?? null
-    })
-  });
+  if (Object.values(ApiErrorType).includes(err?.code)) {
+    return err.code;
+  }
+
+  if (statusCode === 404 && err?.message === 'Not found') {
+    return ApiErrorType.NOT_FOUND;
+  }
+
+  return ApiErrorType.UNEXPECTED_ERROR;
+}
+
+function getErrorMessage(err, statusCode) {
+  if (statusCode >= 500) {
+    return 'Internal server error';
+  }
+
+  return err?.userMessage || err?.message || 'Request failed';
 }
 
 function throwAccountSuspendedError(params = {}) {
