@@ -400,7 +400,7 @@ describe('AppErrorHandlers', function () {
       .end((err, response) => {
         if (err) return done(err);
         assert.strictEqual(response?.statusCode, 500);
-        assert.deepStrictEqual(response?.body?.error?.code, null);
+        assert.deepStrictEqual(response?.body?.error?.code, 'UNEXPECTED_ERROR');
         done();
       });
   });
@@ -418,7 +418,7 @@ describe('AppErrorHandlers', function () {
       .expect(500)
       .end((err, response) => {
         if (err) return done(err);
-        assert.strictEqual(response?.body?.message, 'Internal Server Error');
+        assert.strictEqual(response?.body?.message, 'Internal server error');
         done();
       });
   });
@@ -458,7 +458,7 @@ describe('AppErrorHandlers', function () {
       .end((err, response) => {
         if (err) return done(err);
         assert.strictEqual(response?.statusCode, 403);
-        assert.deepStrictEqual(response?.body?.error?.code, '42501');
+        assert.deepStrictEqual(response?.body?.error?.code, 'NOT_AUTHORIZED');
         done();
       });
   });
