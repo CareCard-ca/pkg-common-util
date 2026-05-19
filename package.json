@@ -24,7 +24,12 @@
   "sideEffects": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/CareCard-ca/pkg-common-util"
+    "url": "git+https://github.com/CareCard-ca/pkg-common-util.git"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/",
+    "provenance": true
   },
   "scripts": {
     "test": "mocha --recursive",
