@@ -1,6 +1,6 @@
 {
   "name": "@carecard/common-util",
-  "version": "3.1.14",
+  "version": "3.1.15",
   "description": "Standardized API response and utility functions for Express.js and Next.js microservices",
   "main": "index.js",
   "module": "index.mjs",
@@ -24,7 +24,12 @@
   "sideEffects": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/CareCard-ca/pkg-common-util"
+    "url": "git+https://github.com/CareCard-ca/pkg-common-util.git"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/",
+    "provenance": true
   },
   "scripts": {
     "test": "mocha --recursive",
