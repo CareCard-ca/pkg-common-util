@@ -220,9 +220,9 @@ export interface ApiResponseMeta {
  */
 export interface ApiError {
   code?: string;
-  details?: string;
+  details?: unknown;
   message?: string;
-  fields?: Record<string, string>;
+  fields?: Record<string, unknown> | null;
 }
 
 /**
@@ -230,10 +230,13 @@ export interface ApiError {
  */
 export interface ApiResponse<T = any> {
   success: boolean;
+  status?: 'success' | 'error';
   statusCode: number;
+  code?: string;
   message: string;
   data: T | null;
   error?: ApiError | null;
+  details?: unknown;
   meta?: ApiResponseMeta;
 }
 
@@ -245,9 +248,12 @@ export interface SendResponseParams<T = any> {
   res: any;
   statusCode?: number;
   success?: boolean;
+  code?: string;
   message?: string;
   data?: T | null;
   error?: ApiError | null;
+  details?: unknown;
+  pagination?: ApiPagination | null;
   meta?: Partial<ApiResponseMeta>;
 }
 
@@ -256,9 +262,9 @@ export interface SendResponseParams<T = any> {
  */
 export interface CreateErrorParams {
   code?: string;
-  details?: string;
+  details?: unknown;
   message?: string;
-  fields?: Record<string, string>;
+  fields?: Record<string, unknown> | null;
 }
 
 /**
@@ -274,9 +280,12 @@ export function sendResponse<T = unknown>(params: {
   res: unknown;
   statusCode?: number;
   success?: boolean;
+  code?: string;
   message?: string;
   data?: T | null;
   error?: ApiError | null;
+  details?: unknown;
+  pagination?: ApiPagination | null;
   meta?: Partial<ApiResponseMeta>;
 }): unknown;
 
@@ -285,9 +294,9 @@ export function sendResponse<T = unknown>(params: {
  */
 export function createError(params: {
   code: string;
-  details?: string;
+  details?: unknown;
   message?: string;
-  fields?: Record<string, string>;
+  fields?: Record<string, unknown> | null;
 }): ApiError;
 
 /**
