@@ -1,4 +1,0 @@
-interface:
-  display_name: 'Package Common Util'
-  short_description: 'CareCard common utility workflow'
-  default_prompt: 'Use $pkg-common-util when changing @carecard/common-util.'
