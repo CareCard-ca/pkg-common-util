@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Package Common Util API Contract Library'
+  short_description: 'Use when changing pkg-common-util response shape, error mapping, middleware, request context, status helpers, case conversion, exports, or tests.'
+  default_prompt: 'Use $pkg-common-util-api-contract-library when this task matches the skill scope.'
