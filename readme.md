@@ -168,6 +168,11 @@ signal, and public auth flows use narrow system contexts. Error responses
 should report safe authentication or authorization failures without leaking RLS
 policy details, JWT payloads, or database context values.
 
+Docs that mention `ms-auth` controller internals should use concise action
+names such as `loginUser`, `registerUser`, `getUserDetail`, and `renewJwt`.
+Access level is conveyed by route middleware and endpoint placement, not by
+`public`/`protected`/`admin`/`Handler` suffixes.
+
 ## License
 
 ISC
