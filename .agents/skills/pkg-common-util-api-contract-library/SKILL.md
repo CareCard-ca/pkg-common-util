@@ -1,6 +1,6 @@
 ---
 name: pkg-common-util-api-contract-library
-description: Use when changing pkg-common-util response shape, error mapping, middleware, request context, status helpers, case conversion, exports, or tests.
+description: 'Use when changing pkg-common-util response shape, error mapping, middleware, request context, status helpers, case conversion, exports, or tests.'
 ---
 
 # Package Common Util
