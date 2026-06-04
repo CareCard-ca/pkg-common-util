@@ -159,6 +159,20 @@ Helper to create a standardized error object for `sendResponse`.
 - `SERVICE_NAME`: Used in `meta.service` (default: `unknown-service`)
 - `NODE_ENV`: Used in `meta.environment` (default: `development`)
 
+## Auth And RLS Error Boundaries
+
+Services should use shared response/error helpers without exposing auth-table
+or SQL internals. `ms-auth` now enforces its auth tables with forced RLS:
+normal users are self-row only, JWT `roles: ["ad"]` is the auth super-admin
+signal, and public auth flows use narrow system contexts. Error responses
+should report safe authentication or authorization failures without leaking RLS
+policy details, JWT payloads, or database context values.
+
+Docs that mention `ms-auth` controller internals should use concise action
+names such as `loginUser`, `registerUser`, `getUserDetail`, and `renewJwt`.
+Access level is conveyed by route middleware and endpoint placement, not by
+`public`/`protected`/`admin`/`Handler` suffixes.
+
 ## License
 
 ISC
