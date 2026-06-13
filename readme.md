@@ -167,6 +167,9 @@ normal users are self-row only, JWT `roles: ["ad"]` is the auth super-admin
 signal, and public auth flows use narrow system contexts. Error responses
 should report safe authentication or authorization failures without leaking RLS
 policy details, JWT payloads, or database context values.
+PostgreSQL RLS failures with SQLSTATE `42501` are reported as
+`NOT_AUTHORIZED` with the user-facing message
+`Not permitted to perform the action` and no response details.
 
 Docs that mention `ms-auth` controller internals should use concise action
 names such as `loginUser`, `registerUser`, `getUserDetail`, and `renewJwt`.

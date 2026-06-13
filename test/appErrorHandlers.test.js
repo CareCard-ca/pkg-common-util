@@ -446,8 +446,12 @@ describe('AppErrorHandlers', function () {
   it('appErrorHandler should handle Postgres error 42501 as Forbidden (403)', function (done) {
     const app = express();
     app.use((req, res, next) => {
-      const err = new Error('insufficient_privilege');
+      const err = new Error('violates row-level security policy for table "user_roles"');
       err.code = '42501';
+      err.details = {
+        sql: 'INSERT INTO carecard.user_roles ...',
+        table: 'carecard.user_roles'
+      };
       next(err);
     });
     app.use(errHandler.appErrorHandler);
@@ -459,6 +463,36 @@ describe('AppErrorHandlers', function () {
         if (err) return done(err);
         assert.strictEqual(response?.statusCode, 403);
         assert.deepStrictEqual(response?.body?.error?.code, 'NOT_AUTHORIZED');
+        assert.strictEqual(response?.body?.message, 'Not permitted to perform the action');
+        assert.strictEqual(response?.body?.error?.message, 'Not permitted to perform the action');
+        assert.strictEqual(response?.body?.details, null);
+        assert.strictEqual(response?.body?.error?.details, null);
+        done();
+      });
+  });
+
+  it('appErrorHandler should handle legacy Postgres 42501 message as Forbidden (403)', function (done) {
+    const app = express();
+    app.use((req, res, next) => {
+      const err = new Error('42501');
+      err.details = {
+        sql: 'SELECT * FROM carecard.audit_log'
+      };
+      next(err);
+    });
+    app.use(errHandler.appErrorHandler);
+
+    request(app)
+      .get('/')
+      .expect(403)
+      .end((err, response) => {
+        if (err) return done(err);
+        assert.strictEqual(response?.statusCode, 403);
+        assert.deepStrictEqual(response?.body?.error?.code, 'NOT_AUTHORIZED');
+        assert.strictEqual(response?.body?.message, 'Not permitted to perform the action');
+        assert.strictEqual(response?.body?.error?.message, 'Not permitted to perform the action');
+        assert.strictEqual(response?.body?.details, null);
+        assert.strictEqual(response?.body?.error?.details, null);
         done();
       });
   });
