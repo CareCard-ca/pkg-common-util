@@ -4,6 +4,9 @@ const sendResponse = require('../utils/sendResponse');
 const createError = require('../utils/createError');
 const { ApiErrorType } = require('./errorConstants');
 
+const POSTGRES_RLS_ERROR_CODE = '42501';
+const RLS_NOT_PERMITTED_MESSAGE = 'Not permitted to perform the action';
+
 /**
  * These are application level error handlers. All error responses should be send using these functions.
  * These should be use in app.js file, not in controller files.
@@ -57,7 +60,7 @@ function appErrorHandler(err, req, res, next) {
   const statusCode = getErrorStatusCode(err);
   const code = getErrorCode(err, statusCode);
   const message = getErrorMessage(err, statusCode);
-  const details = statusCode >= 500 ? null : (err?.details ?? null);
+  const details = getErrorDetails(err, statusCode);
 
   return sendResponse({
     req,
@@ -84,7 +87,7 @@ function getErrorStatusCode(err) {
     case ApiErrorType.ACCOUNT_INACTIVE:
     case 'Invalid time value':
     case ApiErrorType.INVALID_TIME_VALUE:
-    case '42501':
+    case POSTGRES_RLS_ERROR_CODE:
       return 403;
 
     case 'Validation_Failure':
@@ -143,7 +146,7 @@ function getErrorStatusCode(err) {
 }
 
 function getErrorCode(err, statusCode) {
-  if (err?.code === '42501') {
+  if (isPostgresRlsError(err)) {
     return ApiErrorType.NOT_AUTHORIZED;
   }
 
@@ -159,11 +162,27 @@ function getErrorCode(err, statusCode) {
 }
 
 function getErrorMessage(err, statusCode) {
+  if (isPostgresRlsError(err)) {
+    return RLS_NOT_PERMITTED_MESSAGE;
+  }
+
   if (statusCode >= 500) {
     return 'Internal server error';
   }
 
   return err?.userMessage || err?.message || 'Request failed';
+}
+
+function getErrorDetails(err, statusCode) {
+  if (statusCode >= 500 || isPostgresRlsError(err)) {
+    return null;
+  }
+
+  return err?.details ?? null;
+}
+
+function isPostgresRlsError(err) {
+  return err?.code === POSTGRES_RLS_ERROR_CODE || err?.message === POSTGRES_RLS_ERROR_CODE;
 }
 
 function throwAccountSuspendedError(params = {}) {
