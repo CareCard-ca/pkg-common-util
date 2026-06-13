@@ -102,6 +102,9 @@ migrated into these skills; do not depend on that folder being present.
 - Error responses must be safe for users and useful for callers.
 - Do not expose stack traces, SQL, secrets, tokens, credentials, private keys, or
   sensitive personal data in error responses.
+- PostgreSQL RLS failures with SQLSTATE `42501` must map to HTTP 403,
+  `NOT_AUTHORIZED`, message `Not permitted to perform the action`, and null
+  response details.
 - Keep validation, authentication, authorization, not-found, conflict, bad
   input, file, network, and unexpected errors mapped to stable
   machine-readable codes.
