@@ -55,16 +55,16 @@
   "license": "ISC",
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "1.0.2",
-    "@types/mocha": "10.0.10",
-    "@types/node": "25.9.1",
     "@types/express": "5.0.6",
+    "@types/mocha": "10.0.10",
+    "@types/node": "25.9.3",
+    "eslint": "9.39.4",
     "express": "5.2.1",
     "husky": "9.1.7",
+    "lint-staged": "17.0.7",
     "mocha": "11.7.6",
     "nyc": "18.0.0",
-    "prettier": "3.8.3",
-    "eslint": "9.39.4",
-    "lint-staged": "17.0.5",
+    "prettier": "3.8.4",
     "source-map-support": "0.5.21",
     "supertest": "7.2.2",
     "ts-node": "10.9.2",
@@ -72,5 +72,10 @@
   },
   "peerDependencies": {
     "express": "4.0.0 || ^5.0.0"
+  },
+  "overrides": {
+    "diff": "8.0.4",
+    "serialize-javascript": "7.0.5",
+    "js-yaml": "4.2.0"
   }
 }

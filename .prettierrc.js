@@ -6,7 +6,5 @@ module.exports = {
   trailingComma: 'all',
   printWidth: 140,
   useTabs: false,
-  endOfLine: 'auto',
-  importOrderSeparation: true,
-  importOrderSortSpecifiers: true
+  endOfLine: 'auto'
 };
