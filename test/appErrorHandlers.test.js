@@ -449,8 +449,8 @@ describe('AppErrorHandlers', function () {
       const err = new Error('violates row-level security policy for table "user_roles"');
       err.code = '42501';
       err.details = {
-        sql: 'INSERT INTO carecard.user_roles ...',
-        table: 'carecard.user_roles'
+        sql: 'INSERT INTO institutions.user_roles ...',
+        table: 'institutions.user_roles'
       };
       next(err);
     });
@@ -476,7 +476,7 @@ describe('AppErrorHandlers', function () {
     app.use((req, res, next) => {
       const err = new Error('42501');
       err.details = {
-        sql: 'SELECT * FROM carecard.audit_log'
+        sql: 'SELECT * FROM audit.change_log'
       };
       next(err);
     });
