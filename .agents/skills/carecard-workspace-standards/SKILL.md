@@ -215,7 +215,7 @@ build artifacts, logs, or `.DS_Store`.
 Most JavaScript `ms-*` services use CommonJS, Mocha, Supertest, Docker Compose
 database tests, `@carecard/*` packages, and `sub-apps`
 controller/router/model patterns. TypeScript services such as `ms-messages`
-and `ms-template-ts` use Jest or TypeScript tooling and should keep their
+use Jest or TypeScript tooling and should keep their
 existing TypeScript style.
 
 - Keep environment-specific files explicit: `.env.development`, `.env.test`,
@@ -380,7 +380,7 @@ the authenticated dashboard.
 
 ## Auth Service RLS Contract
 
-- `ms-auth` follows the shared PostgreSQL/RLS pattern from `ms-template-js`: auth tables live in the `carecard` schema, RLS is enabled and forced on every auth table, and application runtime queries use the unprivileged database role.
+- `ms-auth` follows the shared PostgreSQL/RLS pattern: auth tables live in the `carecard` schema, RLS is enabled and forced on every auth table, and application runtime queries use the unprivileged database role.
 - Auth table policies allow normal JWT users to access only self-owned rows. Do not add redundant `user_id = <jwt sub>` SQL predicates to duplicate self-row checks when RLS owns the authorization decision.
 - A JWT payload containing `roles: ["ad"]` is the auth-service super-admin signal and can perform any action on auth tables. Dashboard code may map that role to `super_admin`, but backend auth RLS must not require a separate database role row for that bypass.
 - Public auth flows such as registration, login, confirmation, recovery, visitor creation, and service user lookup must use narrow system contexts (`system_create`, `system_login`, `system_confirm`, `system_recovery`, `system_visitor`, `system_service`) instead of privileged runtime queries.
