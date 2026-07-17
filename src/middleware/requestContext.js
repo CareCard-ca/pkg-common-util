@@ -1,14 +1,4 @@
-const getUuid = () => {
-  try {
-    const crypto = require('crypto');
-    if (crypto.randomUUID) {
-      return crypto.randomUUID();
-    }
-    return '00000000-0000-0000-0000-000000000000';
-  } catch (e) {
-    return '00000000-0000-0000-0000-000000000000';
-  }
-};
+const { randomUUID } = require('crypto');
 
 /**
  * Express middleware to generate and attach request context.
@@ -23,7 +13,7 @@ const getUuid = () => {
  * @param {import('express').NextFunction} next
  */
 const requestContext = (req, res, next) => {
-  const requestId = getUuid();
+  const requestId = randomUUID();
   req.requestId = requestId;
   req.traceId = req.headers['x-trace-id'] || requestId;
 
