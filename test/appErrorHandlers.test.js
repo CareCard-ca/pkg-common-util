@@ -562,29 +562,35 @@ describe('AppErrorHandlers', function () {
       ];
 
       throwFunctions.forEach((fn) => {
-        try {
-          fn({ userMessage: 'test message', details: { foo: 'bar' } });
-        } catch (error) {
-          assert.strictEqual(error.userMessage, 'test message');
-          assert.deepStrictEqual(error.details, { foo: 'bar' });
-        }
+        assert.throws(
+          () => fn({ userMessage: 'test message', details: { foo: 'bar' } }),
+          (error) => {
+            assert.strictEqual(error.userMessage, 'test message');
+            assert.deepStrictEqual(error.details, { foo: 'bar' });
+            return true;
+          }
+        );
       });
     });
 
     it('should cover throwNotAuthorizedError with params', function () {
-      try {
-        errHandler.throwNotAuthorizedError({ userMessage: 'test', details: 'test' });
-      } catch (error) {
-        assert.strictEqual(error.userMessage, 'test');
-      }
+      assert.throws(
+        () => errHandler.throwNotAuthorizedError({ userMessage: 'test', details: 'test' }),
+        (error) => {
+          assert.strictEqual(error.userMessage, 'test');
+          return true;
+        }
+      );
     });
 
     it('should cover throwFileFormatNotSupportedError with params', function () {
-      try {
-        errHandler.throwFileFormatNotSupportedError({ userMessage: 'test', details: 'test' });
-      } catch (error) {
-        assert.strictEqual(error.userMessage, 'test');
-      }
+      assert.throws(
+        () => errHandler.throwFileFormatNotSupportedError({ userMessage: 'test', details: 'test' }),
+        (error) => {
+          assert.strictEqual(error.userMessage, 'test');
+          return true;
+        }
+      );
     });
   });
 });
