@@ -4,7 +4,7 @@ const { describe, it, beforeEach, afterEach } = require('mocha');
 const assert = require('assert');
 const crypto = require('crypto');
 
-describe('requestContext Fallback', function () {
+describe('requestContext failure propagation', function () {
   const originalRandomUUID = crypto.randomUUID;
 
   beforeEach(function () {
@@ -23,7 +23,7 @@ describe('requestContext Fallback', function () {
     delete require.cache[require.resolve('../src/middleware/requestContext')];
   });
 
-  it('should return zeroed UUID when crypto.randomUUID is not available', function () {
+  it('should propagate when the required crypto.randomUUID API is unavailable', function () {
     // Mock randomUUID to be undefined
     Object.defineProperty(crypto, 'randomUUID', {
       value: undefined,
@@ -40,13 +40,12 @@ describe('requestContext Fallback', function () {
       nextCalled = true;
     };
 
-    requestContext(req, res, next);
-
-    assert.strictEqual(nextCalled, true);
-    assert.strictEqual(req.requestId, '00000000-0000-0000-0000-000000000000');
+    assert.throws(() => requestContext(req, res, next), TypeError);
+    assert.strictEqual(nextCalled, false);
+    assert.strictEqual(req.requestId, undefined);
   });
 
-  it('should return zeroed UUID when crypto.randomUUID throws', function () {
+  it('should propagate crypto.randomUUID failures', function () {
     // Mock randomUUID to throw
     Object.defineProperty(crypto, 'randomUUID', {
       value: () => {
@@ -65,9 +64,8 @@ describe('requestContext Fallback', function () {
       nextCalled = true;
     };
 
-    requestContext(req, res, next);
-
-    assert.strictEqual(nextCalled, true);
-    assert.strictEqual(req.requestId, '00000000-0000-0000-0000-000000000000');
+    assert.throws(() => requestContext(req, res, next), /Mock error/);
+    assert.strictEqual(nextCalled, false);
+    assert.strictEqual(req.requestId, undefined);
   });
 });
