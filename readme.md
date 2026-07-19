@@ -1,5 +1,7 @@
 # @carecard/common-util
 
+Non-negotiable root-cause solution rule: Always identify and solve the verified root cause with a correct, durable, production-quality solution. Never treat a temporary workaround, resource increase, retry, suppression, bypass, or symptom-only patch as completion. Validate the root-cause fix against the real failing workflow and prove the end state.
+
 Standardized API response system, request context middleware, and utility functions for Express.js and Next.js microservices.
 
 ## Development Rule
