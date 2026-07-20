@@ -216,6 +216,23 @@ export interface ApiResponseMeta {
 }
 
 /**
+ * W3C trace metadata active for the current service request.
+ */
+export interface TraceMetadata {
+  traceId: string;
+  spanId: string;
+  parentSpanId?: string;
+  traceFlags: string;
+}
+
+/**
+ * Headers used to continue the active W3C trace in a downstream service.
+ */
+export interface TracePropagationHeaders {
+  traceparent?: string;
+}
+
+/**
  * Standard API error object.
  */
 export interface ApiError {
@@ -271,6 +288,16 @@ export interface CreateErrorParams {
  * Express middleware to generate and attach request context.
  */
 export function requestContext(req: unknown, res: unknown, next: unknown): void;
+
+/**
+ * Returns the W3C trace metadata active in the current asynchronous request context.
+ */
+export function getActiveTraceMetadata(): Partial<TraceMetadata>;
+
+/**
+ * Returns a traceparent header for a downstream request when trace context is active.
+ */
+export function createTracePropagationHeaders(): TracePropagationHeaders;
 
 /**
  * Standardized API response utility.
@@ -377,6 +404,8 @@ declare const commonUtil: {
   setCreated201: typeof setCreated201;
   setBadRequest400ClientError: typeof setBadRequest400ClientError;
   requestContext: typeof requestContext;
+  createTracePropagationHeaders: typeof createTracePropagationHeaders;
+  getActiveTraceMetadata: typeof getActiveTraceMetadata;
   sendResponse: typeof sendResponse;
   createError: typeof createError;
   ApiErrorType: typeof ApiErrorType;

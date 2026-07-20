@@ -47,6 +47,8 @@ export const {
 
   // Core functions
   requestContext,
+  createTracePropagationHeaders,
+  getActiveTraceMetadata,
   sendResponse,
   createError,
 
