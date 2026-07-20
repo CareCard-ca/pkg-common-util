@@ -4,6 +4,8 @@ const {
   util,
   error,
   resCode,
+  createTracePropagationHeaders,
+  getActiveTraceMetadata,
   requestContext,
   sendResponse,
   createError,
@@ -99,6 +101,8 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
     assert.ok(src.error);
     assert.ok(src.resCode);
     assert.ok(src.caseConverter);
+    assert.ok(src.createTracePropagationHeaders);
+    assert.ok(src.getActiveTraceMetadata);
     assert.ok(src.requestContext);
     assert.ok(src.sendResponse);
     assert.ok(src.createError);
@@ -314,11 +318,25 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
   describe('Standardized API Response System', () => {
     it('should verify requestContext middleware', (done: any) => {
       const req: any = { headers: {}, socket: { remoteAddress: '127.0.0.1' } };
-      requestContext(req, {}, () => {
-        assert.ok(req.requestId);
-        assert.ok(req.traceId);
-        done();
-      });
+      const responseHeaders: Record<string, string> = {};
+      requestContext(
+        req,
+        {
+          setHeader(name: string, value: string) {
+            responseHeaders[name] = value;
+          }
+        },
+        () => {
+          assert.ok(req.requestId);
+          assert.ok(req.traceId);
+          assert.strictEqual(getActiveTraceMetadata().traceId, req.traceId);
+          assert.strictEqual(
+            createTracePropagationHeaders().traceparent,
+            responseHeaders.traceparent
+          );
+          done();
+        }
+      );
     });
 
     it('should verify sendResponse utility', (done: any) => {

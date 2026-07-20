@@ -17,8 +17,8 @@ Non-negotiable code organization rule: Functions with the same or equivalent beh
 ## Features
 
 - **Standardized Response Format**: Consistent JSON structure for all API responses.
-- **Request Context Middleware**: Automatic generation of `requestId` and `traceId`.
-- **Distributed Tracing Support**: Header-based trace propagation (`x-trace-id`).
+- **Request Context Middleware**: Automatic generation of a service-owned `requestId` and W3C trace metadata.
+- **Distributed Tracing Support**: Standards-based propagation through W3C `traceparent`.
 - **Type Safety**: Full TypeScript support with included type definitions.
 - **Next.js & Express Compatibility**: Works seamlessly across different Node.js frameworks.
 - **Microservice Ready**: Built-in metadata for service identification, environment, and versioning.
@@ -41,9 +41,27 @@ const { requestContext } = require('@carecard/common-util');
 
 const app = express();
 
-// Attach request context (generates requestId, traceId, extracts client info)
+// Attach request context (generates a local requestId and continues or creates a W3C trace)
 app.use(requestContext);
 ```
+
+#### Calling Another Service
+
+```javascript
+const { createTracePropagationHeaders } = require('@carecard/common-util');
+
+const response = await fetch('http://ms-auth/api/v1/app-auth/server-auth/jwt/introspect', {
+  method: 'POST',
+  headers: {
+    ...createTracePropagationHeaders(),
+    authorization: serviceAuthorization
+  }
+});
+```
+
+`createTracePropagationHeaders()` continues the active request trace by using
+the current service span as the downstream parent. It returns an empty object
+when called outside request context.
 
 #### Sending Responses
 
@@ -133,9 +151,15 @@ Sends a standardized JSON response.
 
 Middleware that attaches:
 
-- `req.requestId`: UUID v4 unique to the request.
-- `req.traceId`: Propagated from `x-trace-id` header or newly generated.
+- `req.requestId`: Service-owned UUID v4 unique to this service request.
+- `req.traceId`: W3C trace ID continued from `traceparent` or newly generated.
+- `req.spanId`: The current service span ID.
+- `req.parentSpanId`: The upstream span ID when supplied.
+- `req.traceFlags`: W3C trace flags.
 - `req.client`: Object containing `appId` (from `x-app-id`) and `ip`.
+
+Request IDs are never accepted as cross-service correlation identifiers. Use
+the W3C trace ID to correlate responses and centralized logs across services.
 
 ### `createError({ code, message, details, fields })`
 
