@@ -23,7 +23,7 @@ export interface ApiResponseMeta {
     ip?: string;
   };
   pagination?: ApiPagination | null;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 /**
@@ -39,7 +39,7 @@ export interface ApiError {
 /**
  * Standard API response body.
  */
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean;
   statusCode: number;
   message: string;
@@ -48,12 +48,24 @@ export interface ApiResponse<T = any> {
   meta?: ApiResponseMeta;
 }
 
+export interface ApiRequestContext {
+  requestId?: string;
+  traceId?: string;
+  client?: Record<string, unknown>;
+}
+
+export interface ApiResponseWriter {
+  status(statusCode: number): ApiResponseWriter;
+  json(body: unknown): unknown;
+  send(body?: unknown): unknown;
+}
+
 /**
  * Parameters for sendResponse utility.
  */
-export interface SendResponseParams<T = any> {
-  req: any;
-  res: any;
+export interface SendResponseParams<T = unknown> {
+  req: ApiRequestContext;
+  res: ApiResponseWriter;
   statusCode?: number;
   success?: boolean;
   message?: string;
