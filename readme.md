@@ -1,5 +1,9 @@
 # @carecard/common-util
 
+Non-negotiable test order invariance rule: Every test must pass independently of which tests run before or after it, and the suite must pass in every execution order. Each test must establish the state it needs, isolate mutable state, and clean up state it owns; it must never rely on another test's setup, mutations, or cleanup. Default test, CI, and Husky commands must use the test framework's ordinary ordering and must not force randomized ordering. Random-order execution is an explicit diagnostic only, and every failure it exposes must be fixed at the root cause.
+
+Non-negotiable root-cause solution rule: Always identify and solve the verified root cause, use the stronger solution, and deliver a correct, durable, production-quality result. Never treat a temporary workaround, resource increase, retry, suppression, bypass, or symptom-only patch as completion. Validate the root-cause fix against the real failing workflow and prove the end state.
+
 Standardized API response system, request context middleware, and utility functions for Express.js and Next.js microservices.
 
 ## Development Rule
@@ -10,13 +14,15 @@ Non-negotiable repository isolation rule: Every repository must run its Husky ho
 
 Non-negotiable error and warning rule: Never suppress, silence, hide, downgrade, filter, ignore, skip, or bypass errors or warnings from code, tests, tools, compilers, linters, or validation. Fix the root cause, then rerun the affected check and require a clean result. Expected error-path tests may assert errors, but must not conceal unexpected failures.
 
+Non-negotiable TypeScript type rule: Never use the TypeScript type `any`; always use specific domain types, generics, existing project types, or `unknown` with explicit narrowing in all TypeScript-family files (`.ts`, `.tsx`, `.mts`, `.cts`, and `.d.ts`).
+
 Non-negotiable code organization rule: Functions with the same or equivalent behavior must use the same or clearly corresponding descriptive names across CareCard repositories, and equivalent functionality must live in files with the same names within each repository's established architecture. No backward compatibility names, aliases, or duplicate locations are allowed.
 
 ## Features
 
 - **Standardized Response Format**: Consistent JSON structure for all API responses.
-- **Request Context Middleware**: Automatic generation of `requestId` and `traceId`.
-- **Distributed Tracing Support**: Header-based trace propagation (`x-trace-id`).
+- **Request Context Middleware**: Automatic generation of a service-owned `requestId` and W3C trace metadata.
+- **Distributed Tracing Support**: Standards-based propagation through W3C `traceparent`.
 - **Type Safety**: Full TypeScript support with included type definitions.
 - **Next.js & Express Compatibility**: Works seamlessly across different Node.js frameworks.
 - **Microservice Ready**: Built-in metadata for service identification, environment, and versioning.
@@ -39,9 +45,27 @@ const { requestContext } = require('@carecard/common-util');
 
 const app = express();
 
-// Attach request context (generates requestId, traceId, extracts client info)
+// Attach request context (generates a local requestId and continues or creates a W3C trace)
 app.use(requestContext);
 ```
+
+#### Calling Another Service
+
+```javascript
+const { createTracePropagationHeaders } = require('@carecard/common-util');
+
+const response = await fetch('http://ms-auth/api/v1/app-auth/server-auth/jwt/introspect', {
+  method: 'POST',
+  headers: {
+    ...createTracePropagationHeaders(),
+    authorization: serviceAuthorization
+  }
+});
+```
+
+`createTracePropagationHeaders()` continues the active request trace by using
+the current service span as the downstream parent. It returns an empty object
+when called outside request context.
 
 #### Sending Responses
 
@@ -131,9 +155,15 @@ Sends a standardized JSON response.
 
 Middleware that attaches:
 
-- `req.requestId`: UUID v4 unique to the request.
-- `req.traceId`: Propagated from `x-trace-id` header or newly generated.
+- `req.requestId`: Service-owned UUID v4 unique to this service request.
+- `req.traceId`: W3C trace ID continued from `traceparent` or newly generated.
+- `req.spanId`: The current service span ID.
+- `req.parentSpanId`: The upstream span ID when supplied.
+- `req.traceFlags`: W3C trace flags.
 - `req.client`: Object containing `appId` (from `x-app-id`) and `ip`.
+
+Request IDs are never accepted as cross-service correlation identifiers. Use
+the W3C trace ID to correlate responses and centralized logs across services.
 
 ### `createError({ code, message, details, fields })`
 
@@ -189,3 +219,21 @@ Access level is conveyed by route middleware and endpoint placement, not by
 ## License
 
 ISC
+
+## Fail-Closed Test Lifecycle Audit
+
+The current package tests own no HTTP listener, database pool, Kafka client,
+background timer, or child process after completion. Mocha's test timeout fails
+a stalled async test, the suites run without bail or forced exit, and npm
+preserves each command's nonzero status. Keep natural process exit as the open
+handle regression check; validation must not hide failures with retries, forced
+success, skipped tests, or output suppression.
+
+Do not add unpublished executable validation code to a `pkg-*` repository. If a
+future test owns a long-lived resource or demonstrates a post-suite hang, add a
+contract-tested process watchdog through the coordinated package version,
+publish, and consumer propagation workflow. That watchdog must return
+immediately when no helper remains, allow only a bounded 250 ms settlement
+window for already-stopping helpers, fail persistent descendants, preserve
+failures and output, use exit code `124` only for a real outer deadline, and
+remain a final guard rather than a substitute for explicit cleanup.

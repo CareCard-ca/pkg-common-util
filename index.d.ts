@@ -212,7 +212,24 @@ export interface ApiResponseMeta {
     ip?: string;
   };
   pagination?: ApiPagination | null;
-  [key: string]: any;
+  [key: string]: unknown;
+}
+
+/**
+ * W3C trace metadata active for the current service request.
+ */
+export interface TraceMetadata {
+  traceId: string;
+  spanId: string;
+  parentSpanId?: string;
+  traceFlags: string;
+}
+
+/**
+ * Headers used to continue the active W3C trace in a downstream service.
+ */
+export interface TracePropagationHeaders {
+  traceparent?: string;
 }
 
 /**
@@ -228,7 +245,7 @@ export interface ApiError {
 /**
  * Standard API response body.
  */
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean;
   status?: 'success' | 'error';
   statusCode: number;
@@ -240,12 +257,24 @@ export interface ApiResponse<T = any> {
   meta?: ApiResponseMeta;
 }
 
+export interface ApiRequestContext {
+  requestId?: string;
+  traceId?: string;
+  client?: Record<string, unknown>;
+}
+
+export interface ApiResponseWriter {
+  status(statusCode: number): ApiResponseWriter;
+  json(body: unknown): unknown;
+  send(body?: unknown): unknown;
+}
+
 /**
  * Parameters for sendResponse utility.
  */
-export interface SendResponseParams<T = any> {
-  req: any;
-  res: any;
+export interface SendResponseParams<T = unknown> {
+  req: ApiRequestContext;
+  res: ApiResponseWriter;
   statusCode?: number;
   success?: boolean;
   code?: string;
@@ -271,6 +300,16 @@ export interface CreateErrorParams {
  * Express middleware to generate and attach request context.
  */
 export function requestContext(req: unknown, res: unknown, next: unknown): void;
+
+/**
+ * Returns the W3C trace metadata active in the current asynchronous request context.
+ */
+export function getActiveTraceMetadata(): Partial<TraceMetadata>;
+
+/**
+ * Returns a traceparent header for a downstream request when trace context is active.
+ */
+export function createTracePropagationHeaders(): TracePropagationHeaders;
 
 /**
  * Standardized API response utility.
@@ -377,6 +416,8 @@ declare const commonUtil: {
   setCreated201: typeof setCreated201;
   setBadRequest400ClientError: typeof setBadRequest400ClientError;
   requestContext: typeof requestContext;
+  createTracePropagationHeaders: typeof createTracePropagationHeaders;
+  getActiveTraceMetadata: typeof getActiveTraceMetadata;
   sendResponse: typeof sendResponse;
   createError: typeof createError;
   ApiErrorType: typeof ApiErrorType;

@@ -1,21 +1,43 @@
 const assert = require('assert').strict;
 const { describe, it } = require('mocha');
-const { requestContext, sendResponse, createError } = require('../index');
+const { createError, getActiveTraceMetadata, requestContext, sendResponse } = require('../index');
 
 describe('Standard Response System', function () {
   describe('requestContext Middleware', function () {
-    it('should attach requestId, traceId and client info to req', function (done) {
+    it('should keep request identity local while accepting W3C trace context', function (done) {
       const req = {
         headers: {
-          'x-trace-id': 'test-trace-id',
+          traceparent: '00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01',
+          'x-request-id': 'caller-owned-request-id',
+          'x-trace-id': 'obsolete-trace-id',
           'x-app-id': 'test-app-id'
         },
         ip: '127.0.0.1'
       };
-      const res = {};
+      const responseHeaders = {};
+      const res = {
+        setHeader(name, value) {
+          responseHeaders[name] = value;
+        }
+      };
       const next = () => {
-        assert.ok(req.requestId);
-        assert.strictEqual(req.traceId, 'test-trace-id');
+        assert.match(req.requestId, /^[0-9a-f-]{36}$/);
+        assert.notStrictEqual(req.requestId, 'caller-owned-request-id');
+        assert.strictEqual(req.traceId, '4bf92f3577b34da6a3ce929d0e0e4736');
+        assert.notStrictEqual(req.traceId, 'obsolete-trace-id');
+        assert.match(req.spanId, /^[0-9a-f]{16}$/);
+        assert.strictEqual(req.parentSpanId, '00f067aa0ba902b7');
+        assert.strictEqual(req.traceFlags, '01');
+        assert.strictEqual(
+          responseHeaders.traceparent,
+          `00-${req.traceId}-${req.spanId}-${req.traceFlags}`
+        );
+        assert.deepStrictEqual(getActiveTraceMetadata(), {
+          traceId: req.traceId,
+          spanId: req.spanId,
+          parentSpanId: req.parentSpanId,
+          traceFlags: req.traceFlags
+        });
         assert.strictEqual(req.client.appId, 'test-app-id');
         assert.strictEqual(req.client.ip, '127.0.0.1');
         done();
@@ -29,10 +51,18 @@ describe('Standard Response System', function () {
         headers: {},
         ip: '127.0.0.1'
       };
-      const res = {};
+      const responseHeaders = {};
+      const res = {
+        setHeader(name, value) {
+          responseHeaders[name] = value;
+        }
+      };
       const next = () => {
-        assert.ok(req.requestId);
-        assert.ok(req.traceId);
+        assert.match(req.requestId, /^[0-9a-f-]{36}$/);
+        assert.match(req.traceId, /^[0-9a-f]{32}$/);
+        assert.match(req.spanId, /^[0-9a-f]{16}$/);
+        assert.strictEqual(req.parentSpanId, undefined);
+        assert.strictEqual(responseHeaders.traceparent, `00-${req.traceId}-${req.spanId}-01`);
         done();
       };
 
