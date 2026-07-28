@@ -7,6 +7,7 @@ const responseStatus = require('./lib/responseStatus');
 const errorConstants = require('./lib/errorConstants');
 const errorUtils = require('./lib/errorUtils');
 const keysCaseConverter = require('./lib/keysCaseConverter');
+const { createTracePropagationHeaders, getActiveTraceMetadata } = require('./lib/traceContext');
 
 module.exports = {
   // Nested exports (Legacy/Deprecated)
@@ -23,6 +24,8 @@ module.exports = {
 
   // Core utilities
   requestContext,
+  createTracePropagationHeaders,
+  getActiveTraceMetadata,
   sendResponse,
   createError,
 
