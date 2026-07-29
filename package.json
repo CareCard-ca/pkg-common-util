@@ -1,6 +1,6 @@
 {
   "name": "@carecard/common-util",
-  "version": "3.14.0",
+  "version": "3.15.0",
   "description": "Standardized API response and utility functions for Express.js and Next.js microservices",
   "main": "index.js",
   "module": "index.mjs",
@@ -10,12 +10,20 @@
       "import": "./index.mjs",
       "require": "./index.js",
       "types": "./index.d.ts"
+    },
+    "./logging": {
+      "import": "./logging.mjs",
+      "require": "./logging.js",
+      "types": "./logging.d.ts"
     }
   },
   "files": [
     "index.js",
     "index.mjs",
     "index.d.ts",
+    "logging.js",
+    "logging.mjs",
+    "logging.d.ts",
     "src"
   ],
   "engines": {
