@@ -23,6 +23,7 @@ Non-negotiable code organization rule: Functions with the same or equivalent beh
 - **Standardized Response Format**: Consistent JSON structure for all API responses.
 - **Request Context Middleware**: Automatic generation of a service-owned `requestId` and W3C trace metadata.
 - **Distributed Tracing Support**: Standards-based propagation through W3C `traceparent`.
+- **Structured Application Logging**: Dependency-free NDJSON with redaction, correlation, and bounded development files.
 - **Type Safety**: Full TypeScript support with included type definitions.
 - **Next.js & Express Compatibility**: Works seamlessly across different Node.js frameworks.
 - **Microservice Ready**: Built-in metadata for service identification, environment, and versioning.
@@ -147,6 +148,45 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
 ## API Reference
 
+### Centralized application logging
+
+Import the server-only logging contract from its dedicated subpath so browser
+bundles never include Node.js filesystem or crypto modules:
+
+```javascript
+const {
+  createApplicationLogger,
+  createHttpRequestLogger,
+  installFatalProcessLogging
+} = require('@carecard/common-util/logging');
+
+const logger = createApplicationLogger({
+  service: 'ms-example',
+  serviceVersion: process.env.MS_VERSION
+});
+
+app.use(createHttpRequestLogger(logger));
+installFatalProcessLogging(logger);
+```
+
+Every call emits one versioned NDJSON record. Production writes to standard
+output or standard error for collection by the platform. Development also
+writes `logs/application.ndjson` and retains two rotated files; each file is
+bounded at 10 MiB. Configure `LOG_FILE_PATH`, `LOG_LEVEL`, and
+`LOG_IDENTITY_HMAC_KEY` through the runtime environment.
+
+`LOG_IDENTITY_HMAC_KEY` is mandatory and must contain at least 32 characters in
+production. Logs must never contain raw user IDs, email addresses, IP
+addresses, user-agent strings, authorization material, cookies, secrets,
+tokens, request bodies, headers, or query strings. User identities are
+HMAC-SHA256 pseudonyms, and other sensitive values are redacted before
+serialization. Keep the same HMAC key across services in one environment so an
+authorized operator can correlate an actor without recovering the source ID.
+
+`installFatalProcessLogging` uses Node.js `uncaughtExceptionMonitor`; it observes
+fatal errors without installing an exception handler or changing the process
+crash contract.
+
 ### `sendResponse({ req, res, statusCode, success, code, message, data, error, details, pagination, meta })`
 
 Sends a standardized JSON response.
@@ -198,6 +238,9 @@ Helper to create a standardized error object for `sendResponse`.
 - `API_VERSION`: Used in `meta.version` (default: `1.0.0`)
 - `SERVICE_NAME`: Used in `meta.service` (default: `unknown-service`)
 - `NODE_ENV`: Used in `meta.environment` (default: `development`)
+- `LOG_LEVEL`: Minimum structured log severity (`debug`, `info`, `warn`, or `error`)
+- `LOG_FILE_PATH`: Development NDJSON location
+- `LOG_IDENTITY_HMAC_KEY`: Shared secret for one-way user identity pseudonyms
 
 ## Auth And RLS Error Boundaries
 

@@ -4,6 +4,8 @@ const { runIndexedMochaTests } = require('../scripts/testParallel/runIndexedMoch
 
 const parallelTestFiles = [
   'test/appErrorHandlers.test.js',
+  'test/applicationLogging.test.js',
+  'test/applicationLoggingDocumentation.test.js',
   'test/config/repositoryIsolation.test.js',
   'test/config/tddGuidanceDocs.test.js',
   'test/errorUtils.test.js',
@@ -15,6 +17,7 @@ const parallelTestFiles = [
   'test/traceContext.test.js',
   'test/traceDocumentation.test.js',
   'test/traceEsmExports.test.mjs',
+  'test/loggingEsmExports.test.mjs',
   'test/utilityFunctions.test.js'
 ];
 

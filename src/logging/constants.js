@@ -1,0 +1,20 @@
+'use strict';
+
+const LOG_LEVEL_PRIORITIES = Object.freeze({
+  debug: 10,
+  info: 20,
+  warn: 30,
+  error: 40
+});
+
+module.exports = {
+  DEFAULT_FILE_MAX_BYTES: 10 * 1024 * 1024,
+  DEFAULT_FILE_RETENTION_COUNT: 2,
+  LOG_LEVEL_PRIORITIES,
+  MAX_ARRAY_ITEMS: 50,
+  MAX_LOG_BYTES: 64 * 1024,
+  MAX_OBJECT_ENTRIES: 100,
+  MAX_SANITIZE_DEPTH: 6,
+  MAX_STRING_LENGTH: 16 * 1024,
+  SCHEMA_VERSION: 1
+};
