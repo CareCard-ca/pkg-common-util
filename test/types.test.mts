@@ -14,6 +14,13 @@ const {
   keysToSnakeCase
 } = commonUtil;
 import src from '../src/index.js';
+import {
+  createApplicationLogger,
+  createHttpRequestLogger,
+  installFatalProcessLogging,
+  type ApplicationLogRecord,
+  type ApplicationLogger
+} from '../logging.js';
 
 /**
  * Pagination information
@@ -156,6 +163,22 @@ function createMockResponse() {
 }
 
 describe('pkg-common-util TypeScript Type Definitions', () => {
+  it('should verify application logging type definitions', () => {
+    const records: ApplicationLogRecord[] = [];
+    const logger: ApplicationLogger = createApplicationLogger({
+      environment: 'test',
+      service: 'ms-test',
+      sink: (_destination, line) => records.push(JSON.parse(line) as ApplicationLogRecord)
+    });
+    const middleware = createHttpRequestLogger(logger);
+    const uninstall = installFatalProcessLogging(logger);
+
+    logger.info('typed message', { operation: 'type.test' });
+    assert.strictEqual(typeof middleware, 'function');
+    assert.strictEqual(records[0].operation, 'type.test');
+    uninstall();
+  });
+
   it('should verify src index exports', () => {
     assert.ok(src.util);
     assert.ok(src.error);
