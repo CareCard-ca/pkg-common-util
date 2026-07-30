@@ -1,6 +1,6 @@
 {
   "name": "@carecard/common-util",
-  "version": "3.14.0",
+  "version": "3.17.0",
   "description": "Standardized API response and utility functions for Express.js and Next.js microservices",
   "main": "index.js",
   "module": "index.mjs",
@@ -10,12 +10,20 @@
       "import": "./index.mjs",
       "require": "./index.js",
       "types": "./index.d.ts"
+    },
+    "./logging": {
+      "import": "./logging.mjs",
+      "require": "./logging.js",
+      "types": "./logging.d.ts"
     }
   },
   "files": [
     "index.js",
     "index.mjs",
     "index.d.ts",
+    "logging.js",
+    "logging.mjs",
+    "logging.d.ts",
     "src"
   ],
   "engines": {
@@ -56,6 +64,8 @@
   "license": "ISC",
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "1.0.2",
+    "@opentelemetry/api": "1.9.1",
+    "@opentelemetry/context-async-hooks": "2.10.0",
     "@types/express": "5.0.6",
     "@types/mocha": "10.0.10",
     "@types/node": "25.9.3",
@@ -72,11 +82,19 @@
     "typescript": "6.0.3"
   },
   "peerDependencies": {
+    "@opentelemetry/api": "1.9.1",
     "express": "4.0.0 || ^5.0.0"
   },
+  "peerDependenciesMeta": {
+    "@opentelemetry/api": {
+      "optional": true
+    }
+  },
   "overrides": {
+    "body-parser": "2.3.0",
+    "brace-expansion": "5.0.8",
     "diff": "8.0.4",
     "serialize-javascript": "7.0.5",
-    "js-yaml": "4.2.0"
+    "js-yaml": "4.3.0"
   }
 }
