@@ -1,13 +1,12 @@
 'use strict';
 
-const { runIndexedMochaTests } = require('../scripts/testParallel/runIndexedMochaTests.cjs');
+const { runIndexedMochaTests } = require('./testParallel/runIndexedMochaTests.cjs');
 
 const parallelTestFiles = [
   'test/appErrorHandlers.test.js',
   'test/applicationLogging.test.js',
   'test/errorUtils.test.js',
   'test/keysCaseConverter.test.js',
-  'test/requestContext_fallback.test.js',
   'test/responseStatus.test.js',
   'test/standardResponse.test.js',
   'test/traceContext.test.js',

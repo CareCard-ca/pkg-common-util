@@ -290,7 +290,7 @@ export interface SendResponseParams<T = unknown> {
  * Parameters for createError utility.
  */
 export interface CreateErrorParams {
-  code?: string;
+  code: string;
   details?: unknown;
   message?: string;
   fields?: Record<string, unknown> | null;

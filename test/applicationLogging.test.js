@@ -1,12 +1,16 @@
 'use strict';
 
 const assert = require('assert').strict;
+const { spawnSync } = require('child_process');
 const { createHmac } = require('crypto');
 const { EventEmitter } = require('events');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const { afterEach, describe, it } = require('mocha');
+const express = require('express');
+const request = require('supertest');
+const { requestContext } = require('../index');
 const {
   createApplicationLogger,
   createHttpRequestLogger,
@@ -214,7 +218,7 @@ describe('application logging', function () {
     assert.strictEqual(fs.statSync(logFilePath).mode & 0o777, 0o600);
   });
 
-  it('records one safe HTTP completion event without query strings or client headers', function () {
+  it('records one safe HTTP completion event without query strings or client headers', async function () {
     const { logger, writes } = createLoggerFixture();
     const middleware = createHttpRequestLogger(logger, {
       nowMilliseconds: (() => {
@@ -222,49 +226,44 @@ describe('application logging', function () {
         return () => values.shift();
       })()
     });
-    const response = new EventEmitter();
-    response.statusCode = 204;
-    const request = {
-      baseUrl: '/users',
-      headers: { authorization: 'Bearer token', 'user-agent': 'private-agent' },
-      method: 'GET',
-      originalUrl: '/users/123?token=secret',
-      requestId: 'request-http',
-      route: { path: '/:id' },
-      socket: { remoteAddress: '127.0.0.1' }
-    };
-    let nextCalled = false;
+    const application = express();
+    const users = express.Router();
+    users.use(requestContext, middleware);
+    users.get('/:id', (_request, response) => response.status(204).send());
+    application.use('/users', users);
 
-    middleware(request, response, () => {
-      nextCalled = true;
-    });
-    response.emit('finish');
+    const response = await request(application)
+      .get('/users/123?token=secret')
+      .set('authorization', 'Bearer token')
+      .set('user-agent', 'private-agent');
 
+    assert.strictEqual(response.status, 204);
     const record = JSON.parse(writes[0].line);
-    assert.strictEqual(nextCalled, true);
     assert.deepStrictEqual(record.http, {
       durationMs: 37,
       method: 'GET',
       route: '/users/:id',
       statusCode: 204
     });
-    assert.strictEqual(record.requestId, 'request-http');
+    assert.match(record.requestId, /^[0-9a-f-]{36}$/u);
     assert.strictEqual(writes[0].line.includes('secret'), false);
     assert.strictEqual(writes[0].line.includes('127.0.0.1'), false);
     assert.strictEqual(writes[0].line.includes('private-agent'), false);
   });
 
-  it('records client and server HTTP failures at their matching severity', function () {
+  it('records client and server HTTP failures at their matching severity', async function () {
     const { logger, writes } = createLoggerFixture();
     const middleware = createHttpRequestLogger(logger, { nowMilliseconds: () => 100 });
+    const application = express();
+    application.use(middleware);
+    application.post('/client-failure', (_request, response) => response.status(404).send());
+    application.post('/server-failure', (_request, response) => response.status(500).send());
 
-    for (const statusCode of [404, 500]) {
-      const response = new EventEmitter();
-      response.statusCode = statusCode;
-      middleware({ method: 'POST', path: '/fallback?secret=value' }, response, () => {});
-      response.emit('finish');
-    }
+    const clientFailure = await request(application).post('/client-failure?secret=value');
+    const serverFailure = await request(application).post('/server-failure?secret=value');
 
+    assert.strictEqual(clientFailure.status, 404);
+    assert.strictEqual(serverFailure.status, 500);
     assert.deepStrictEqual(
       writes.map(({ destination, line }) => [destination, JSON.parse(line).level]),
       [
@@ -272,7 +271,7 @@ describe('application logging', function () {
         ['stderr', 'error']
       ]
     );
-    assert.strictEqual(JSON.parse(writes[0].line).http.route, '/fallback');
+    assert.strictEqual(JSON.parse(writes[0].line).http.route, '/client-failure');
   });
 
   it('normalizes message, metadata, HTTP, and request-route input variants', function () {
@@ -365,8 +364,6 @@ describe('application logging', function () {
     const processTarget = new EventEmitter();
     const uninstall = installFatalProcessLogging(logger, { processTarget });
 
-    assert.strictEqual(processTarget.listenerCount('uncaughtException'), 0);
-    assert.strictEqual(processTarget.listenerCount('uncaughtExceptionMonitor'), 1);
     processTarget.emit(
       'uncaughtExceptionMonitor',
       new Error('fatal failure'),
@@ -378,15 +375,28 @@ describe('application logging', function () {
     assert.strictEqual(record.level, 'error');
     assert.strictEqual(record.operation, 'process.fatal');
     assert.strictEqual(record.context.origin, 'unhandledRejection');
-    assert.strictEqual(processTarget.listenerCount('uncaughtExceptionMonitor'), 0);
+    processTarget.emit(
+      'uncaughtExceptionMonitor',
+      new Error('after uninstall'),
+      'uncaughtException'
+    );
+    assert.strictEqual(writes.length, 1);
   });
 
-  it('installs and removes the default process monitor', function () {
-    const { logger } = createLoggerFixture();
-    const initialListeners = process.listenerCount('uncaughtExceptionMonitor');
-    const uninstall = installFatalProcessLogging(logger);
-    assert.strictEqual(process.listenerCount('uncaughtExceptionMonitor'), initialListeners + 1);
-    uninstall();
-    assert.strictEqual(process.listenerCount('uncaughtExceptionMonitor'), initialListeners);
+  it('records a fatal error without preventing normal process termination', function () {
+    const childScript = `
+      const { createApplicationLogger, installFatalProcessLogging } = require('./logging');
+      const logger = createApplicationLogger({ environment: 'test', service: 'ms-child' });
+      installFatalProcessLogging(logger);
+      setImmediate(() => { throw new Error('fatal child failure'); });
+    `;
+    const result = spawnSync(process.execPath, ['-e', childScript], {
+      cwd: path.resolve(__dirname, '..'),
+      encoding: 'utf8'
+    });
+
+    assert.notStrictEqual(result.status, 0);
+    assert.match(result.stderr, /"operation":"process\.fatal"/u);
+    assert.match(result.stderr, /fatal child failure/u);
   });
 });
