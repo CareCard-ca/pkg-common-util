@@ -1,5 +1,12 @@
 import * as assert from 'assert';
-import commonUtil from '../index.js';
+import commonUtil, {
+  type ApiError,
+  type ApiRequestContext,
+  type ApiResponse,
+  type ApiResponseMeta,
+  type CreateErrorParams,
+  type SendResponseParams
+} from '../index.js';
 const {
   util,
   error,
@@ -9,110 +16,15 @@ const {
   requestContext,
   sendResponse,
   createError,
-  caseConverter,
   keysToCamelCase,
   keysToSnakeCase
 } = commonUtil;
-import src from '../src/index.js';
 import {
   createApplicationLogger,
-  createHttpRequestLogger,
   installFatalProcessLogging,
   type ApplicationLogRecord,
   type ApplicationLogger
 } from '../logging.js';
-
-/**
- * Pagination information
- */
-export interface ApiPagination {
-  total: number;
-  page: number;
-  pageSize: number;
-  totalPages: number;
-}
-
-/**
- * Standard API response metadata.
- */
-export interface ApiResponseMeta {
-  version?: string;
-  service?: string;
-  environment?: string;
-  timestamp?: string;
-  requestId?: string;
-  traceId?: string;
-  client?: {
-    appId?: string;
-    ip?: string;
-  };
-  pagination?: ApiPagination | null;
-  [key: string]: unknown;
-}
-
-/**
- * Standard API error object.
- */
-export interface ApiError {
-  code?: string;
-  details?: unknown;
-  message?: string;
-  fields?: Record<string, unknown> | null;
-}
-
-/**
- * Standard API response body.
- */
-export interface ApiResponse<T = unknown> {
-  success: boolean;
-  status?: 'success' | 'error';
-  statusCode: number;
-  code?: string;
-  message: string;
-  data: T | null;
-  error?: ApiError | null;
-  details?: unknown;
-  meta?: ApiResponseMeta;
-}
-
-export interface ApiRequestContext {
-  requestId?: string;
-  traceId?: string;
-  client?: Record<string, unknown>;
-}
-
-export interface ApiResponseWriter {
-  status(statusCode: number): ApiResponseWriter;
-  json(body: unknown): unknown;
-  send(body?: unknown): unknown;
-}
-
-/**
- * Parameters for sendResponse utility.
- */
-export interface SendResponseParams<T = unknown> {
-  req: ApiRequestContext;
-  res: ApiResponseWriter;
-  statusCode?: number;
-  success?: boolean;
-  code?: string;
-  message?: string;
-  data?: T | null;
-  error?: ApiError | null;
-  details?: unknown;
-  pagination?: ApiPagination | null;
-  meta?: Partial<ApiResponseMeta>;
-}
-
-/**
- * Parameters for createError utility.
- */
-export interface CreateErrorParams {
-  code: string;
-  details?: unknown;
-  message?: string;
-  fields?: Record<string, unknown> | null;
-}
 
 interface ContextualError extends Error {
   userMessage?: unknown;
@@ -170,25 +82,11 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
       service: 'ms-test',
       sink: (_destination, line) => records.push(JSON.parse(line) as ApplicationLogRecord)
     });
-    const middleware = createHttpRequestLogger(logger);
     const uninstall = installFatalProcessLogging(logger);
 
     logger.info('typed message', { operation: 'type.test' });
-    assert.strictEqual(typeof middleware, 'function');
     assert.strictEqual(records[0].operation, 'type.test');
     uninstall();
-  });
-
-  it('should verify src index exports', () => {
-    assert.ok(src.util);
-    assert.ok(src.error);
-    assert.ok(src.resCode);
-    assert.ok(src.caseConverter);
-    assert.ok(src.createTracePropagationHeaders);
-    assert.ok(src.getActiveTraceMetadata);
-    assert.ok(src.requestContext);
-    assert.ok(src.sendResponse);
-    assert.ok(src.createError);
   });
 
   it('should verify caseConverter functions', () => {
@@ -198,9 +96,6 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
 
     const snake = keysToSnakeCase(camel);
     assert.deepStrictEqual(snake, { first_name: 'John' });
-
-    assert.ok(caseConverter.keysToCamelCase);
-    assert.ok(caseConverter.keysToSnakeCase);
   });
 
   it('should verify util functions', () => {

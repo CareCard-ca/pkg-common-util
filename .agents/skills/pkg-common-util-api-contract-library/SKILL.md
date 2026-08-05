@@ -7,7 +7,9 @@ Non-negotiable root-cause solution rule: Always identify and solve the verified 
 
 # Package Common Util
 
-Non-negotiable TDD rule: Always write the failing test first, run it to confirm it fails for the intended reason, then implement the code and rerun the test until it passes. Test Driven Development is required for all coding work and must not be skipped. For documentation- or skill-only edits, add or update the relevant validation check before changing the prose.
+Non-negotiable TDD rule: Always write the failing test first, run it to confirm it fails for the intended reason, then implement the code and rerun the test until it passes. Test Driven Development is required for all coding work and must not be skipped. For documentation- or skill-only edits, run the relevant focused non-test
+validation before changing the prose; do not add automated tests that inspect
+prose, files, or repository structure.
 
 Non-negotiable repository isolation rule: Every repository must run its Husky hooks and tests using only files, code, fixtures, dependencies, and services contained within that repository. Tests and Husky scripts must not import, require, read, execute, or otherwise depend on sibling repositories or paths outside the repository root. app-e2e-tests is the only exception because cross-repository end-to-end testing is its explicit responsibility.
 
@@ -49,8 +51,10 @@ CareCard common utility package for API responses, errors, request context, stat
 
 ## Testing Expectations
 
-- Write or update package tests before behavior or public API changes.
-- Include type/export compatibility tests where the package already has them.
+- Write a new failing consumer-facing test through the supported package root
+  before behavior or public API changes. Modify a pre-existing test only after
+  the user grants fresh, explicit permission for that exact change.
+- Include consumer-facing runtime and compilation tests through the supported package root. Exercise public behavior and realistic type usage without inspecting export objects, source files, or module layout.
 - Run package test, lint, type, and Husky validation commands required by the changed area.
 
 ## Safety Constraints
@@ -80,8 +84,10 @@ migrated into these skills; do not depend on that folder being present.
   compatibility objects, error helpers, response helpers, and middleware.
 - Keep source code in `src`, public CommonJS exports in `index.js`, ESM exports
   in `index.mjs`, type declarations in `index.d.ts`, and tests in `test`.
-- Use Test-Driven Development. Add or update Mocha and type tests before
-  changing behavior or the exported API.
+- Use Test-Driven Development. Add a new failing consumer-facing Mocha or type
+  test through the supported package root before changing behavior or the
+  exported API. Modify a pre-existing test only after the user grants fresh,
+  explicit permission for that exact change.
 - Never suppress errors, type errors, linter warnings, response-contract
   regressions, or failing tests. Fix the cause.
 - Do not add dependencies unless absolutely required. Ask for confirmation first
@@ -130,8 +136,10 @@ migrated into these skills; do not depend on that folder being present.
 - Keep `index.d.ts` synchronized with `index.js`, `index.mjs`, and `src`.
 - Use `unknown` for untrusted error details and narrow before reading fields.
 - Keep `src/types/response.types.ts` aligned with the public declarations.
-- When adding a direct export, add the matching CommonJS export, ESM named
-  export, type declaration, README note, and tests.
+- When adding a public capability, keep CommonJS, ESM, type declarations, and
+  documentation aligned. Functional tests must exercise its behavior through
+  each supported package root; they must not assert export existence or inspect
+  module source.
 - Preserve deprecated compatibility objects while adding or promoting direct
   exports.
 
@@ -147,12 +155,13 @@ migrated into these skills; do not depend on that folder being present.
 ## Tests
 
 - Use Mocha for runtime behavior under `test`.
-- Use `test/types.test.mts` for type coverage.
+- Compile realistic consumer code through the supported package root for externally visible type behavior.
 - Cover response creation, error helper behavior, app error middleware, request
   context propagation, trace header behavior, status helpers, and case
   conversion when those paths change.
-- Cover CommonJS, ESM, and declaration surfaces when adding or changing public
-  exports.
+- Exercise the same public behavior through supported CommonJS and ESM package
+  roots, and compile realistic consumer type usage. Do not inspect export
+  objects or declaration/source structure.
 - Keep tests deterministic and avoid external services.
 
 ## Validation
@@ -235,3 +244,22 @@ immediately when no helper remains, allow only a bounded 250 ms settlement
 window for already-stopping helpers, fail persistent descendants, preserve
 failures and output, use exit code `124` only for a real outer deadline, and
 remain a final guard rather than a substitute for explicit cleanup.
+
+## TDD And Validation
+
+Test Driven Development is a non-negotiable requirement.
+
+The sole purpose of automated tests is to verify observable functionality and externally visible behavior.
+Tests must validate what the system does through its public interfaces and expected outcomes.
+
+Tests must not assert, inspect, or depend on implementation details, including but not limited to:
+
+- The existence of specific lines of code, statements, functions, classes, files, or modules.
+- Specific algorithms, control flow, variable names, method calls, code snippets, or internal implementation choices.
+- Any internal structure that can change without changing externally observable behavior.
+
+A correct implementation may be completely rewritten or refactored without requiring changes to functional tests, provided its externally observable behavior remains unchanged.
+
+Any test that fails solely because the implementation changed while the externally observable behavior remained correct is incorrectly designed and must be rewritten or removed.
+
+This requirement is mandatory for all new tests and must be applied whenever existing tests are modified.
