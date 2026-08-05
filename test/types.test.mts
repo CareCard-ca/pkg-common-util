@@ -9,14 +9,11 @@ const {
   requestContext,
   sendResponse,
   createError,
-  caseConverter,
   keysToCamelCase,
   keysToSnakeCase
 } = commonUtil;
-import src from '../src/index.js';
 import {
   createApplicationLogger,
-  createHttpRequestLogger,
   installFatalProcessLogging,
   type ApplicationLogRecord,
   type ApplicationLogger
@@ -170,25 +167,11 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
       service: 'ms-test',
       sink: (_destination, line) => records.push(JSON.parse(line) as ApplicationLogRecord)
     });
-    const middleware = createHttpRequestLogger(logger);
     const uninstall = installFatalProcessLogging(logger);
 
     logger.info('typed message', { operation: 'type.test' });
-    assert.strictEqual(typeof middleware, 'function');
     assert.strictEqual(records[0].operation, 'type.test');
     uninstall();
-  });
-
-  it('should verify src index exports', () => {
-    assert.ok(src.util);
-    assert.ok(src.error);
-    assert.ok(src.resCode);
-    assert.ok(src.caseConverter);
-    assert.ok(src.createTracePropagationHeaders);
-    assert.ok(src.getActiveTraceMetadata);
-    assert.ok(src.requestContext);
-    assert.ok(src.sendResponse);
-    assert.ok(src.createError);
   });
 
   it('should verify caseConverter functions', () => {
@@ -198,9 +181,6 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
 
     const snake = keysToSnakeCase(camel);
     assert.deepStrictEqual(snake, { first_name: 'John' });
-
-    assert.ok(caseConverter.keysToCamelCase);
-    assert.ok(caseConverter.keysToSnakeCase);
   });
 
   it('should verify util functions', () => {

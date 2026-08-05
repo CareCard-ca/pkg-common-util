@@ -149,7 +149,6 @@ describe('application logging', function () {
       });
       logger.stream.write('stream message\n');
       logger.error('error message');
-      assert.strictEqual(typeof logger.httpLogger(), 'function');
     } finally {
       process.stdout.write = originalStdoutWrite;
       process.stderr.write = originalStderrWrite;

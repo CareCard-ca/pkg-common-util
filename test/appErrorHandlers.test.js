@@ -2,7 +2,12 @@ const { describe, it } = require('mocha');
 const request = require('supertest');
 const assert = require('assert');
 const express = require('express');
-const errHandler = require('../src/lib/appErrorHandlers');
+const commonUtil = require('../index');
+const errHandler = {
+  ...commonUtil.error,
+  appErrorHandler: commonUtil.appErrorHandler,
+  notFound404: commonUtil.notFound404
+};
 
 function testApp(throwErrorFunction) {
   const app = express();
