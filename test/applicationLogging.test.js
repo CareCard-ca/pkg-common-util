@@ -153,6 +153,7 @@ describe('application logging', function () {
       });
       logger.stream.write('stream message\n');
       logger.error('error message');
+      assert.strictEqual(typeof logger.httpLogger(), 'function');
     } finally {
       process.stdout.write = originalStdoutWrite;
       process.stderr.write = originalStderrWrite;
@@ -218,7 +219,68 @@ describe('application logging', function () {
     assert.strictEqual(fs.statSync(logFilePath).mode & 0o777, 0o600);
   });
 
-  it('records one safe HTTP completion event without query strings or client headers', async function () {
+  it('records one safe HTTP completion event without query strings or client headers', function () {
+    const { logger, writes } = createLoggerFixture();
+    const middleware = createHttpRequestLogger(logger, {
+      nowMilliseconds: (() => {
+        const values = [100, 137];
+        return () => values.shift();
+      })()
+    });
+    const response = new EventEmitter();
+    response.statusCode = 204;
+    const request = {
+      baseUrl: '/users',
+      headers: { authorization: 'Bearer token', 'user-agent': 'private-agent' },
+      method: 'GET',
+      originalUrl: '/users/123?token=secret',
+      requestId: 'request-http',
+      route: { path: '/:id' },
+      socket: { remoteAddress: '127.0.0.1' }
+    };
+    let nextCalled = false;
+
+    middleware(request, response, () => {
+      nextCalled = true;
+    });
+    response.emit('finish');
+
+    const record = JSON.parse(writes[0].line);
+    assert.strictEqual(nextCalled, true);
+    assert.deepStrictEqual(record.http, {
+      durationMs: 37,
+      method: 'GET',
+      route: '/users/:id',
+      statusCode: 204
+    });
+    assert.strictEqual(record.requestId, 'request-http');
+    assert.strictEqual(writes[0].line.includes('secret'), false);
+    assert.strictEqual(writes[0].line.includes('127.0.0.1'), false);
+    assert.strictEqual(writes[0].line.includes('private-agent'), false);
+  });
+
+  it('records client and server HTTP failures at their matching severity', function () {
+    const { logger, writes } = createLoggerFixture();
+    const middleware = createHttpRequestLogger(logger, { nowMilliseconds: () => 100 });
+
+    for (const statusCode of [404, 500]) {
+      const response = new EventEmitter();
+      response.statusCode = statusCode;
+      middleware({ method: 'POST', path: '/fallback?secret=value' }, response, () => {});
+      response.emit('finish');
+    }
+
+    assert.deepStrictEqual(
+      writes.map(({ destination, line }) => [destination, JSON.parse(line).level]),
+      [
+        ['stdout', 'warn'],
+        ['stderr', 'error']
+      ]
+    );
+    assert.strictEqual(JSON.parse(writes[0].line).http.route, '/fallback');
+  });
+
+  it('records safe HTTP completion metadata through an Express route', async function () {
     const { logger, writes } = createLoggerFixture();
     const middleware = createHttpRequestLogger(logger, {
       nowMilliseconds: (() => {
@@ -251,7 +313,7 @@ describe('application logging', function () {
     assert.strictEqual(writes[0].line.includes('private-agent'), false);
   });
 
-  it('records client and server HTTP failures at their matching severity', async function () {
+  it('records real client and server HTTP failures at their matching severity', async function () {
     const { logger, writes } = createLoggerFixture();
     const middleware = createHttpRequestLogger(logger, { nowMilliseconds: () => 100 });
     const application = express();
@@ -364,6 +426,8 @@ describe('application logging', function () {
     const processTarget = new EventEmitter();
     const uninstall = installFatalProcessLogging(logger, { processTarget });
 
+    assert.strictEqual(processTarget.listenerCount('uncaughtException'), 0);
+    assert.strictEqual(processTarget.listenerCount('uncaughtExceptionMonitor'), 1);
     processTarget.emit(
       'uncaughtExceptionMonitor',
       new Error('fatal failure'),
@@ -375,12 +439,22 @@ describe('application logging', function () {
     assert.strictEqual(record.level, 'error');
     assert.strictEqual(record.operation, 'process.fatal');
     assert.strictEqual(record.context.origin, 'unhandledRejection');
+    assert.strictEqual(processTarget.listenerCount('uncaughtExceptionMonitor'), 0);
     processTarget.emit(
       'uncaughtExceptionMonitor',
       new Error('after uninstall'),
       'uncaughtException'
     );
     assert.strictEqual(writes.length, 1);
+  });
+
+  it('installs and removes the default process monitor', function () {
+    const { logger } = createLoggerFixture();
+    const initialListeners = process.listenerCount('uncaughtExceptionMonitor');
+    const uninstall = installFatalProcessLogging(logger);
+    assert.strictEqual(process.listenerCount('uncaughtExceptionMonitor'), initialListeners + 1);
+    uninstall();
+    assert.strictEqual(process.listenerCount('uncaughtExceptionMonitor'), initialListeners);
   });
 
   it('records a fatal error without preventing normal process termination', function () {
