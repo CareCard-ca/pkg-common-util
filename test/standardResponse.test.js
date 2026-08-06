@@ -24,7 +24,7 @@ function createPublicApplication(handler) {
   return application;
 }
 
-describe('Standard Response System', function () {
+describe('Standard response system', function () {
   afterEach(function () {
     for (const [name, value] of Object.entries(originalEnvironment)) {
       restoreEnvironmentVariable(name, value);
@@ -82,6 +82,18 @@ describe('Standard Response System', function () {
         response.headers.traceparent,
         `00-${response.body.traceMetadata.traceId}-${response.body.traceMetadata.spanId}-01`
       );
+    });
+
+    it('uses the socket address when no framework or forwarded client address exists', function (done) {
+      const req = {
+        headers: {},
+        socket: { remoteAddress: '10.0.0.1' }
+      };
+
+      requestContext(req, {}, () => {
+        assert.equal(req.client.ip, '10.0.0.1');
+        done();
+      });
     });
   });
 
