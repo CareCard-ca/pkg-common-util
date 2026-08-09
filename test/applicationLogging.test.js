@@ -9,13 +9,13 @@ const os = require('os');
 const path = require('path');
 const { afterEach, describe, it } = require('mocha');
 const express = require('express');
-const request = require('supertest');
 const { requestContext } = require('../index');
 const {
   createApplicationLogger,
   createHttpRequestLogger,
   installFatalProcessLogging
 } = require('../logging');
+const { requestTestApplication } = require('./setup/requestTestApplication');
 
 const temporaryDirectories = [];
 
@@ -294,10 +294,12 @@ describe('application logging', function () {
     users.get('/:id', (_request, response) => response.status(204).send());
     application.use('/users', users);
 
-    const response = await request(application)
-      .get('/users/123?token=secret')
-      .set('authorization', 'Bearer token')
-      .set('user-agent', 'private-agent');
+    const response = await requestTestApplication(application, (client) =>
+      client
+        .get('/users/123?token=secret')
+        .set('authorization', 'Bearer token')
+        .set('user-agent', 'private-agent')
+    );
 
     assert.strictEqual(response.status, 204);
     const record = JSON.parse(writes[0].line);
@@ -321,8 +323,13 @@ describe('application logging', function () {
     application.post('/client-failure', (_request, response) => response.status(404).send());
     application.post('/server-failure', (_request, response) => response.status(500).send());
 
-    const clientFailure = await request(application).post('/client-failure?secret=value');
-    const serverFailure = await request(application).post('/server-failure?secret=value');
+    const [clientFailure, serverFailure] = await requestTestApplication(
+      application,
+      async (client) => [
+        await client.post('/client-failure?secret=value'),
+        await client.post('/server-failure?secret=value')
+      ]
+    );
 
     assert.strictEqual(clientFailure.status, 404);
     assert.strictEqual(serverFailure.status, 500);
