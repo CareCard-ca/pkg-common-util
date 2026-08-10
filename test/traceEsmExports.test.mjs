@@ -7,9 +7,25 @@ import {
 } from '../index.mjs';
 
 describe('W3C trace ESM exports', () => {
-  it('exports the complete request correlation contract', () => {
-    assert.strictEqual(typeof requestContext, 'function');
-    assert.strictEqual(typeof createTracePropagationHeaders, 'function');
-    assert.strictEqual(typeof getActiveTraceMetadata, 'function');
+  it('continues request correlation through the ESM package boundary', () => {
+    const responseHeaders = {};
+    const request = {
+      headers: {
+        traceparent: '00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01'
+      },
+      socket: { remoteAddress: '127.0.0.1' }
+    };
+    let activeMetadata;
+
+    requestContext(request, { setHeader: (name, value) => (responseHeaders[name] = value) }, () => {
+      activeMetadata = getActiveTraceMetadata();
+      assert.deepStrictEqual(createTracePropagationHeaders(), {
+        traceparent: `00-${request.traceId}-${request.spanId}-01`
+      });
+    });
+
+    assert.strictEqual(request.traceId, '4bf92f3577b34da6a3ce929d0e0e4736');
+    assert.strictEqual(activeMetadata.traceId, request.traceId);
+    assert.strictEqual(responseHeaders.traceparent, `00-${request.traceId}-${request.spanId}-01`);
   });
 });
