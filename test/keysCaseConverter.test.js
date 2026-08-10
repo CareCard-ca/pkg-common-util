@@ -1,7 +1,7 @@
 'use strict';
 
 const assert = require('assert');
-const { keysToCamelCase, keysToSnakeCase } = require('../src/lib/keysCaseConverter');
+const { keysToCamelCase, keysToSnakeCase } = require('../index');
 
 describe('keysCaseConverter', () => {
   describe('keysToCamelCase', () => {
