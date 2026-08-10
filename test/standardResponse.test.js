@@ -1,9 +1,9 @@
 const assert = require('node:assert/strict');
 const express = require('express');
 const { afterEach, describe, it } = require('mocha');
-const request = require('supertest');
 
 const { createError, getActiveTraceMetadata, requestContext, sendResponse } = require('../index');
+const { requestTestApplication } = require('./setup/requestTestApplication');
 
 const originalEnvironment = {
   API_VERSION: process.env.API_VERSION,
@@ -41,13 +41,15 @@ describe('Standard response system', function () {
         });
       });
 
-      const response = await request(application)
-        .get('/')
-        .set('traceparent', '00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01')
-        .set('x-request-id', 'caller-owned-request-id')
-        .set('x-trace-id', 'obsolete-trace-id')
-        .set('x-app-id', 'test-app-id')
-        .set('x-forwarded-for', '192.168.1.1');
+      const response = await requestTestApplication(application, (client) =>
+        client
+          .get('/')
+          .set('traceparent', '00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01')
+          .set('x-request-id', 'caller-owned-request-id')
+          .set('x-trace-id', 'obsolete-trace-id')
+          .set('x-app-id', 'test-app-id')
+          .set('x-forwarded-for', '192.168.1.1')
+      );
 
       assert.equal(response.status, 200);
       assert.match(response.body.requestId, /^[0-9a-f-]{36}$/u);
@@ -71,7 +73,7 @@ describe('Standard response system', function () {
         res.json({ requestId: req.requestId, traceMetadata: getActiveTraceMetadata() });
       });
 
-      const response = await request(application).get('/');
+      const response = await requestTestApplication(application, (client) => client.get('/'));
 
       assert.equal(response.status, 200);
       assert.match(response.body.requestId, /^[0-9a-f-]{36}$/u);
@@ -129,10 +131,12 @@ describe('Standard response system', function () {
         });
       });
 
-      const response = await request(application)
-        .get('/')
-        .set('traceparent', '00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01')
-        .set('x-app-id', 'app-789');
+      const response = await requestTestApplication(application, (client) =>
+        client
+          .get('/')
+          .set('traceparent', '00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01')
+          .set('x-app-id', 'app-789')
+      );
 
       assert.equal(response.status, 201);
       assert.equal(response.body.success, true);
@@ -160,7 +164,7 @@ describe('Standard response system', function () {
         });
       });
 
-      const response = await request(application).get('/');
+      const response = await requestTestApplication(application, (client) => client.get('/'));
 
       assert.equal(response.status, 200);
       assert.equal(response.body.meta.requestId, 'overridden-id');
@@ -187,7 +191,7 @@ describe('Standard response system', function () {
         });
       });
 
-      const response = await request(application).get('/');
+      const response = await requestTestApplication(application, (client) => client.get('/'));
 
       assert.equal(response.status, 500);
       assert.equal(response.body.success, false);
@@ -207,7 +211,7 @@ describe('Standard response system', function () {
       delete process.env.NODE_ENV;
       const application = createPublicApplication((req, res) => sendResponse({ req, res }));
 
-      const response = await request(application).get('/');
+      const response = await requestTestApplication(application, (client) => client.get('/'));
 
       assert.equal(response.status, 200);
       assert.equal(response.body.meta.version, '1.0.0');
@@ -222,7 +226,7 @@ describe('Standard response system', function () {
         sendResponse({ req, res, statusCode: 204, data: { ignored: true } });
       });
 
-      const response = await request(application).get('/');
+      const response = await requestTestApplication(application, (client) => client.get('/'));
 
       assert.equal(response.status, 204);
       assert.equal(response.text, '');

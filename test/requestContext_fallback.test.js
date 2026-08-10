@@ -1,71 +1,58 @@
 'use strict';
 
-const { describe, it, beforeEach, afterEach } = require('mocha');
-const assert = require('assert');
-const crypto = require('crypto');
+const assert = require('assert').strict;
+const { spawnSync } = require('child_process');
+const path = require('path');
+const { describe, it } = require('mocha');
+
+const packageRoot = path.resolve(__dirname, '..');
+
+function observeRequestContextFailure(randomUuidSetup) {
+  const consumerScript = `
+    const crypto = require('node:crypto');
+    ${randomUuidSetup}
+    const { requestContext } = require('.');
+    const request = { headers: {}, socket: {} };
+    let nextCalled = false;
+    try {
+      requestContext(request, {}, () => { nextCalled = true; });
+      process.stdout.write(JSON.stringify({ error: null, nextCalled, requestId: request.requestId ?? null }));
+    } catch (error) {
+      process.stdout.write(JSON.stringify({
+        error: { message: error.message, name: error.name },
+        nextCalled,
+        requestId: request.requestId ?? null
+      }));
+    }
+  `;
+  const result = spawnSync(process.execPath, ['-e', consumerScript], {
+    cwd: packageRoot,
+    encoding: 'utf8'
+  });
+
+  assert.strictEqual(result.status, 0, result.stderr);
+  return JSON.parse(result.stdout);
+}
 
 describe('requestContext failure propagation', function () {
-  const originalRandomUUID = crypto.randomUUID;
-
-  beforeEach(function () {
-    // Clear cache to ensure we're testing the module with mocked crypto
-    delete require.cache[require.resolve('../src/middleware/requestContext')];
-  });
-
-  afterEach(function () {
-    // Restore original randomUUID
-    Object.defineProperty(crypto, 'randomUUID', {
-      value: originalRandomUUID,
-      configurable: true,
-      writable: true
-    });
-    // Restore cache just in case
-    delete require.cache[require.resolve('../src/middleware/requestContext')];
-  });
-
   it('should propagate when the required crypto.randomUUID API is unavailable', function () {
-    // Mock randomUUID to be undefined
-    Object.defineProperty(crypto, 'randomUUID', {
-      value: undefined,
-      configurable: true,
-      writable: true
-    });
+    const observation = observeRequestContextFailure(
+      "Object.defineProperty(crypto, 'randomUUID', { value: undefined, configurable: true });"
+    );
 
-    const requestContext = require('../src/middleware/requestContext');
-
-    const req = { headers: {}, socket: {} };
-    const res = {};
-    let nextCalled = false;
-    const next = () => {
-      nextCalled = true;
-    };
-
-    assert.throws(() => requestContext(req, res, next), TypeError);
-    assert.strictEqual(nextCalled, false);
-    assert.strictEqual(req.requestId, undefined);
+    assert.deepStrictEqual(observation.error?.name, 'TypeError');
+    assert.match(observation.error?.message, /randomUUID/);
+    assert.strictEqual(observation.nextCalled, false);
+    assert.strictEqual(observation.requestId, null);
   });
 
   it('should propagate crypto.randomUUID failures', function () {
-    // Mock randomUUID to throw
-    Object.defineProperty(crypto, 'randomUUID', {
-      value: () => {
-        throw new Error('Mock error');
-      },
-      configurable: true,
-      writable: true
-    });
+    const observation = observeRequestContextFailure(
+      "Object.defineProperty(crypto, 'randomUUID', { value: () => { throw new Error('Mock error'); }, configurable: true });"
+    );
 
-    const requestContext = require('../src/middleware/requestContext');
-
-    const req = { headers: {}, socket: {} };
-    const res = {};
-    let nextCalled = false;
-    const next = () => {
-      nextCalled = true;
-    };
-
-    assert.throws(() => requestContext(req, res, next), /Mock error/);
-    assert.strictEqual(nextCalled, false);
-    assert.strictEqual(req.requestId, undefined);
+    assert.deepStrictEqual(observation.error, { message: 'Mock error', name: 'Error' });
+    assert.strictEqual(observation.nextCalled, false);
+    assert.strictEqual(observation.requestId, null);
   });
 });
