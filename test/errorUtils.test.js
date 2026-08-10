@@ -2,8 +2,7 @@
 
 const { describe, it } = require('mocha');
 const assert = require('assert');
-const { getApiErrorMessage } = require('../src/lib/errorUtils');
-const { ApiErrorType } = require('../src/lib/errorConstants');
+const { ApiErrorType, getApiErrorMessage } = require('../index');
 
 describe('ErrorUtils', function () {
   const t = (key) => `translated_${key}`;

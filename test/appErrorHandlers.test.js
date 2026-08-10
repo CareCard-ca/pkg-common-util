@@ -1,7 +1,7 @@
 const { describe, it } = require('mocha');
 const assert = require('assert');
 const express = require('express');
-const errHandler = require('../src/lib/appErrorHandlers');
+const errHandler = require('../index');
 const { requestTestApplication } = require('./setup/requestTestApplication');
 
 function testApp(throwErrorFunction) {

@@ -13,7 +13,6 @@ const {
   keysToCamelCase,
   keysToSnakeCase
 } = commonUtil;
-import src from '../src/index.js';
 import {
   createApplicationLogger,
   createHttpRequestLogger,
@@ -179,16 +178,25 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
     uninstall();
   });
 
-  it('should verify src index exports', () => {
-    assert.ok(src.util);
-    assert.ok(src.error);
-    assert.ok(src.resCode);
-    assert.ok(src.caseConverter);
-    assert.ok(src.createTracePropagationHeaders);
-    assert.ok(src.getActiveTraceMetadata);
-    assert.ok(src.requestContext);
-    assert.ok(src.sendResponse);
-    assert.ok(src.createError);
+  it('should execute public index behavior', () => {
+    assert.deepStrictEqual(
+      commonUtil.extractObjectWithProperties({ first: 1, second: 2 }, ['second']),
+      {
+        second: 2
+      }
+    );
+    assert.deepStrictEqual(commonUtil.keysToCamelCase({ first_name: 'CareCard' }), {
+      firstName: 'CareCard'
+    });
+    assert.deepStrictEqual(
+      commonUtil.createError({ code: 'TYPE_CONTRACT', message: 'Typed error' }),
+      {
+        code: 'TYPE_CONTRACT',
+        details: undefined,
+        fields: undefined,
+        message: 'Typed error'
+      }
+    );
   });
 
   it('should verify caseConverter functions', () => {
@@ -199,8 +207,8 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
     const snake = keysToSnakeCase(camel);
     assert.deepStrictEqual(snake, { first_name: 'John' });
 
-    assert.ok(caseConverter.keysToCamelCase);
-    assert.ok(caseConverter.keysToSnakeCase);
+    assert.deepStrictEqual(caseConverter.keysToCamelCase(input), camel);
+    assert.deepStrictEqual(caseConverter.keysToSnakeCase(camel), snake);
   });
 
   it('should verify util functions', () => {
