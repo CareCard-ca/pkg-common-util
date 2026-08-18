@@ -2,7 +2,7 @@ const { randomUUID } = require('crypto');
 const {
   createRequestTraceMetadata,
   formatTraceparent,
-  runWithTraceMetadata
+  runWithTraceMetadata,
 } = require('../lib/traceContext');
 
 /**
@@ -31,7 +31,7 @@ const requestContext = (req, res, next) => {
 
   req.client = {
     appId,
-    ip
+    ip,
   };
 
   if (typeof res?.setHeader === 'function') {

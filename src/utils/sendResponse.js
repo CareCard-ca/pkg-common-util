@@ -3,12 +3,12 @@ const { ApiErrorType } = require('../lib/errorConstants');
 
 const successCodeByStatus = {
   200: 'OK',
-  201: 'CREATED'
+  201: 'CREATED',
 };
 
 const successMessageByStatus = {
   200: 'OK',
-  201: 'Created'
+  201: 'Created',
 };
 
 function createMeta(req = {}, pagination = null, meta = {}) {
@@ -23,12 +23,12 @@ function createMeta(req = {}, pagination = null, meta = {}) {
       req?.client && typeof req.client === 'object' && req.client.constructor === Object
         ? req.client
         : {},
-    pagination
+    pagination,
   };
 
   return {
     ...standardMeta,
-    ...meta
+    ...meta,
   };
 }
 
@@ -68,7 +68,7 @@ const sendResponse = ({
   error = null,
   details = null,
   pagination = null,
-  meta = {}
+  meta = {},
 }) => {
   if (statusCode === 204) {
     return res.status(204).send();
@@ -86,7 +86,7 @@ const sendResponse = ({
         code: responseCode || ApiErrorType.UNEXPECTED_ERROR,
         message: responseMessage,
         details: responseDetails,
-        fields: error?.fields ?? null
+        fields: error?.fields ?? null,
       });
 
   const response = {
@@ -98,7 +98,7 @@ const sendResponse = ({
     data,
     error: responseError,
     details: responseDetails,
-    meta: createMeta(req, pagination, meta)
+    meta: createMeta(req, pagination, meta),
   };
 
   return res.status(statusCode).json(response);

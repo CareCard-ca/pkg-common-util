@@ -17,7 +17,9 @@ function getSafeRequestDescription(request) {
   try {
     return `${method} ${new URL(rawUrl, 'http://127.0.0.1').pathname || '/'}`;
   } catch (error) {
-    if (!(error instanceof TypeError)) throw error;
+    if (!(error instanceof TypeError)) {
+      throw error;
+    }
     return `${method} ${rawUrl.split('?')[0] || '/'}`;
   }
 }
@@ -27,9 +29,9 @@ async function getPromiseOutcomeBeforeDeadline(operation, timeoutMs) {
   let deadline;
   const operationOutcome = operation.then(
     () => ({ status: 'fulfilled' }),
-    (error) => ({ status: 'rejected', error: normalizeError(error) })
+    error => ({ status: 'rejected', error: normalizeError(error) }),
   );
-  const deadlineReached = new Promise((resolve) => {
+  const deadlineReached = new Promise(resolve => {
     deadline = setTimeout(() => resolve({ status: 'timed-out' }), timeoutMs);
   });
 
@@ -54,25 +56,24 @@ function createForcedCleanupError(cleanupTiming, requestDescriptions, socketCoun
   const requests = requestDescriptions.length > 0 ? requestDescriptions.join(', ') : 'none';
 
   return new Error(
-    `Managed HTTP test server forced cleanup ${cleanupTiming} with ${requestDescriptions.length} unfinished ${requestLabel}: ${requests}; ${socketCount} open ${socketLabel}.`
+    `Managed HTTP test server forced cleanup ${cleanupTiming} with ${requestDescriptions.length} unfinished ${requestLabel}: ${requests}; ${socketCount} open ${socketLabel}.`,
   );
 }
 
 // Pattern: Error Preservation - reports every independent teardown failure without hiding the first cause.
 function createCombinedFailure(failures) {
   const uniqueFailures = [...new Set(failures)];
-  if (uniqueFailures.length === 1) return uniqueFailures[0];
+  if (uniqueFailures.length === 1) {
+    return uniqueFailures[0];
+  }
 
-  return new AggregateError(
-    uniqueFailures,
-    uniqueFailures.map((error) => error.message).join(' | ')
-  );
+  return new AggregateError(uniqueFailures, uniqueFailures.map(error => error.message).join(' | '));
 }
 
 // Pattern: Resource Owner - gives integration suites one explicit, fail-closed HTTP server lifecycle.
 function createManagedHttpTestServer(
   requestListener,
-  { shutdownGracePeriodMs = 1000, forcedCleanupTimeoutMs = 250 } = {}
+  { shutdownGracePeriodMs = 1000, forcedCleanupTimeoutMs = 250 } = {},
 ) {
   requirePositiveTimeout('shutdownGracePeriodMs', shutdownGracePeriodMs);
   requirePositiveTimeout('forcedCleanupTimeoutMs', forcedCleanupTimeoutMs);
@@ -114,7 +115,9 @@ function createManagedHttpTestServer(
 
   // Pattern: Idempotent Lifecycle - starts the server only when it is not already listening.
   async function start() {
-    if (server.listening) return;
+    if (server.listening) {
+      return;
+    }
     if (stopOperation) {
       await stopOperation;
       stopOperation = undefined;
@@ -152,15 +155,15 @@ function createManagedHttpTestServer(
 
     const forcedCloseOutcome = await getPromiseOutcomeBeforeDeadline(
       serverClosed,
-      forcedCleanupTimeoutMs
+      forcedCleanupTimeoutMs,
     );
     if (forcedCloseOutcome.status === 'rejected') {
       cleanupFailures.push(forcedCloseOutcome.error);
     } else if (forcedCloseOutcome.status === 'timed-out') {
       cleanupFailures.push(
         new Error(
-          `Managed HTTP test server forced cleanup did not complete within ${forcedCleanupTimeoutMs}ms.`
-        )
+          `Managed HTTP test server forced cleanup did not complete within ${forcedCleanupTimeoutMs}ms.`,
+        ),
       );
     }
 
@@ -194,16 +197,18 @@ function createManagedHttpTestServer(
     const openSockets = [...sockets];
     if (requestDescriptions.length > 0) {
       shutdownFailures.push(
-        createForcedCleanupError('immediately', requestDescriptions, openSockets.length)
+        createForcedCleanupError('immediately', requestDescriptions, openSockets.length),
       );
     }
 
     if (shutdownFailures.length === 0) {
       const gracefulCloseOutcome = await getPromiseOutcomeBeforeDeadline(
         serverClosed,
-        shutdownGracePeriodMs
+        shutdownGracePeriodMs,
       );
-      if (gracefulCloseOutcome.status === 'fulfilled') return;
+      if (gracefulCloseOutcome.status === 'fulfilled') {
+        return;
+      }
       if (gracefulCloseOutcome.status === 'rejected') {
         shutdownFailures.push(gracefulCloseOutcome.error);
       } else {
@@ -211,8 +216,8 @@ function createManagedHttpTestServer(
           createForcedCleanupError(
             `after ${shutdownGracePeriodMs}ms`,
             [...activeRequests].map(({ description }) => description),
-            sockets.size
-          )
+            sockets.size,
+          ),
         );
       }
     }
@@ -223,8 +228,12 @@ function createManagedHttpTestServer(
 
   // Pattern: Shared Stop Outcome - every concurrent caller observes the same success or failure.
   function stop() {
-    if (stopOperation) return stopOperation;
-    if (!server.listening) return Promise.resolve();
+    if (stopOperation) {
+      return stopOperation;
+    }
+    if (!server.listening) {
+      return Promise.resolve();
+    }
 
     stopOperation = performStop();
     return stopOperation;
@@ -238,10 +247,10 @@ function createManagedHttpTestServer(
   return {
     getServer,
     start,
-    stop
+    stop,
   };
 }
 
 module.exports = {
-  createManagedHttpTestServer
+  createManagedHttpTestServer,
 };

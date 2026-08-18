@@ -6,7 +6,7 @@ function createHttpRequestLogger(logger, options = {}) {
   return (request, response, next) => {
     const startedAt = nowMilliseconds();
     response.once('finish', () =>
-      recordCompletedRequest(logger, request, response.statusCode, nowMilliseconds() - startedAt)
+      recordCompletedRequest(logger, request, response.statusCode, nowMilliseconds() - startedAt),
     );
     next();
   };
@@ -17,11 +17,15 @@ function recordCompletedRequest(logger, request, statusCode, durationMs) {
   const metadata = logger.getRequestMetadata(request, {
     durationMs,
     operation: 'http.request.completed',
-    statusCode
+    statusCode,
   });
-  if (statusCode >= 500) logger.error('HTTP request failed', metadata);
-  else if (statusCode >= 400) logger.warn('HTTP request completed with client error', metadata);
-  else logger.info('HTTP request completed', metadata);
+  if (statusCode >= 500) {
+    logger.error('HTTP request failed', metadata);
+  } else if (statusCode >= 400) {
+    logger.warn('HTTP request completed with client error', metadata);
+  } else {
+    logger.info('HTTP request completed', metadata);
+  }
 }
 
 module.exports = createHttpRequestLogger;

@@ -5,7 +5,7 @@ const assert = require('assert');
 const { ApiErrorType, getApiErrorMessage } = require('../index');
 
 describe('ErrorUtils', function () {
-  const t = (key) => `translated_${key}`;
+  const t = key => `translated_${key}`;
 
   describe('getApiErrorMessage', function () {
     it('should return unexpected error if errorData is null', function () {
@@ -16,8 +16,8 @@ describe('ErrorUtils', function () {
     it('should return message from errorData.error.message if available', function () {
       const errorData = {
         error: {
-          message: 'Direct error message'
-        }
+          message: 'Direct error message',
+        },
       };
       const result = getApiErrorMessage(errorData, t);
       assert.strictEqual(result, 'Direct error message');
@@ -27,8 +27,8 @@ describe('ErrorUtils', function () {
       const errorData = {
         error: {
           code: ApiErrorType.VALIDATION_FAILURE,
-          message: 'Generic English Message'
-        }
+          message: 'Generic English Message',
+        },
       };
       const result = getApiErrorMessage(errorData, t);
       assert.strictEqual(result, 'translated_errors.validation_failure');
@@ -37,15 +37,15 @@ describe('ErrorUtils', function () {
       const errorData = {
         error: {
           code: 'UNKNOWN_CODE',
-          message: 'Specific Backend Message'
-        }
+          message: 'Specific Backend Message',
+        },
       };
       const result = getApiErrorMessage(errorData, t);
       assert.strictEqual(result, 'Specific Backend Message');
     });
     it('should return top-level message if errorData.error.message is not available', function () {
       const errorData = {
-        message: 'Top-level message'
+        message: 'Top-level message',
       };
       const result = getApiErrorMessage(errorData, t);
       assert.strictEqual(result, 'Top-level message');
@@ -53,7 +53,7 @@ describe('ErrorUtils', function () {
 
     it('should return translated message based on errorData.error string', function () {
       const errorData = {
-        error: ApiErrorType.VALIDATION_FAILURE
+        error: ApiErrorType.VALIDATION_FAILURE,
       };
       const result = getApiErrorMessage(errorData, t);
       assert.strictEqual(result, 'translated_errors.validation_failure');
@@ -62,8 +62,8 @@ describe('ErrorUtils', function () {
     it('should return translated message based on errorData.error.code', function () {
       const errorData = {
         error: {
-          code: ApiErrorType.WRONG_CREDENTIALS
-        }
+          code: ApiErrorType.WRONG_CREDENTIALS,
+        },
       };
       const result = getApiErrorMessage(errorData, t);
       assert.strictEqual(result, 'translated_errors.wrong_credentials');
@@ -83,7 +83,7 @@ describe('ErrorUtils', function () {
         { code: ApiErrorType.RECORD_NOT_SAVED, expected: 'translated_errors.record_not_saved' },
         {
           code: ApiErrorType.RECORD_SAVE_FAILURE,
-          expected: 'translated_errors.record_save_failure'
+          expected: 'translated_errors.record_save_failure',
         },
         { code: ApiErrorType.APPLICATION_ERROR, expected: 'translated_errors.application_error' },
         { code: ApiErrorType.NOT_FOUND, expected: 'translated_errors.not_found' },
@@ -99,7 +99,7 @@ describe('ErrorUtils', function () {
         { code: ApiErrorType.BAD_VISITOR_TOKEN, expected: 'translated_errors.bad_visitor_token' },
         {
           code: ApiErrorType.FILE_FORMAT_NOT_SUPPORTED,
-          expected: 'translated_errors.file_format_not_supported'
+          expected: 'translated_errors.file_format_not_supported',
         },
         { code: ApiErrorType.NOT_AUTHORIZED, expected: 'translated_errors.not_authorized' },
         { code: ApiErrorType.BAD_INPUT, expected: 'translated_errors.bad_input' },
@@ -109,7 +109,7 @@ describe('ErrorUtils', function () {
         { code: ApiErrorType.UNKNOWN_ERROR, expected: 'translated_errors.unknown_error' },
         { code: ApiErrorType.PARSE_ERROR, expected: 'translated_errors.parse_error' },
         { code: ApiErrorType.UNEXPECTED_ERROR, expected: 'translated_errors.unexpected_error' },
-        { code: 'UNKNOWN_CODE', expected: 'translated_errors.unexpected_error' }
+        { code: 'UNKNOWN_CODE', expected: 'translated_errors.unexpected_error' },
       ];
 
       cases.forEach(({ code, expected }) => {

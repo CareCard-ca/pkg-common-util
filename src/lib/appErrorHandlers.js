@@ -37,7 +37,7 @@ module.exports = {
   throwBadInputError,
   throwInputNotUuidError,
   throwFileTooLargeError,
-  throwInvalidTimeValueError
+  throwInvalidTimeValueError,
 };
 
 function notFound404(req, res, next) {
@@ -51,8 +51,8 @@ function notFound404(req, res, next) {
     error: createError({
       code: ApiErrorType.NOT_FOUND,
       message: 'Not found',
-      details: null
-    })
+      details: null,
+    }),
   });
 }
 
@@ -72,8 +72,8 @@ function appErrorHandler(err, req, res, next) {
     error: createError({
       code,
       message,
-      details
-    })
+      details,
+    }),
   });
 }
 

@@ -10,9 +10,9 @@ function createSuiteTree() {
     suites: [
       { title: 'alpha', suites: [], tests: [{ title: 'one' }, { title: 'two' }] },
       { title: 'beta', suites: [], tests: [{ title: 'three' }, { title: 'four' }] },
-      { title: 'gamma', suites: [], tests: [{ title: 'five' }, { title: 'six' }] }
+      { title: 'gamma', suites: [], tests: [{ title: 'five' }, { title: 'six' }] },
     ],
-    tests: [{ title: 'root one' }, { title: 'root two' }, { title: 'root three' }]
+    tests: [{ title: 'root one' }, { title: 'root two' }, { title: 'root three' }],
   };
 }
 

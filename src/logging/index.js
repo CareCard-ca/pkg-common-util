@@ -7,5 +7,5 @@ const installFatalProcessLogging = require('./installFatalProcessLogging');
 module.exports = {
   createApplicationLogger,
   createHttpRequestLogger,
-  installFatalProcessLogging
+  installFatalProcessLogging,
 };

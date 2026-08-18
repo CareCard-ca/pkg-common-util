@@ -18,7 +18,7 @@ const reservedContextKeys = new Set([
   'spanId',
   'statusCode',
   'traceFlags',
-  'traceId'
+  'traceId',
 ]);
 
 // Pattern: Data Mapper - converts one logger call into the stable application log schema.
@@ -40,23 +40,35 @@ function createLogRecord(level, message, metadata, configuration) {
     serviceVersion: configuration.serviceVersion,
     spanId: sanitizeOptionalText(metadataRecord.spanId || traceMetadata.spanId),
     timestamp: configuration.now().toISOString(),
-    traceId: sanitizeOptionalText(metadataRecord.traceId || traceMetadata.traceId)
+    traceId: sanitizeOptionalText(metadataRecord.traceId || traceMetadata.traceId),
   });
 }
 
 // Pattern: Data Mapper - converts supported metadata inputs to a record.
 function normalizeMetadata(metadata) {
-  if (metadata instanceof Error) return { error: metadata };
-  if (metadata && typeof metadata === 'object' && !Array.isArray(metadata)) return metadata;
-  if (metadata === undefined) return {};
+  if (metadata instanceof Error) {
+    return { error: metadata };
+  }
+  if (metadata && typeof metadata === 'object' && !Array.isArray(metadata)) {
+    return metadata;
+  }
+  if (metadata === undefined) {
+    return {};
+  }
   return { value: metadata };
 }
 
 // Pattern: Pure Function - normalizes logger message inputs without leaking objects.
 function createLogMessage(message) {
-  if (typeof message === 'string') return sanitizeLogText(message.replace(/\n$/, ''));
-  if (message instanceof Error) return sanitizeLogText(message.message);
-  if (message && typeof message.message === 'string') return sanitizeLogText(message.message);
+  if (typeof message === 'string') {
+    return sanitizeLogText(message.replace(/\n$/, ''));
+  }
+  if (message instanceof Error) {
+    return sanitizeLogText(message.message);
+  }
+  if (message && typeof message.message === 'string') {
+    return sanitizeLogText(message.message);
+  }
   return sanitizeLogText(String(message));
 }
 
@@ -68,19 +80,25 @@ function createLogContext(message, metadata, configuration) {
   if (message && typeof message === 'object' && !(message instanceof Error)) {
     contextEntries.push(...Object.entries(message).filter(([key]) => key !== 'message'));
   }
-  if (contextEntries.length === 0) return undefined;
+  if (contextEntries.length === 0) {
+    return undefined;
+  }
   return sanitizeLogValue(Object.fromEntries(contextEntries), configuration);
 }
 
 // Pattern: Pure Function - returns a pseudonym only when an actor identity exists.
 function createActorIdHash(metadata, identityHmacKey) {
-  if (metadata.actorUserId === undefined || metadata.actorUserId === null) return undefined;
+  if (metadata.actorUserId === undefined || metadata.actorUserId === null) {
+    return undefined;
+  }
   return hashLogIdentity(String(metadata.actorUserId), identityHmacKey);
 }
 
 // Pattern: Data Mapper - extracts sanitized Error diagnostics from metadata.
 function createLogError(metadata, configuration) {
-  if (metadata.error === undefined) return undefined;
+  if (metadata.error === undefined) {
+    return undefined;
+  }
   return sanitizeLogValue(metadata.error, configuration);
 }
 
@@ -91,15 +109,19 @@ function createHttpMetadata(metadata, configuration) {
     durationMs: suppliedHttp.durationMs ?? metadata.durationMs,
     method: suppliedHttp.method ?? metadata.method,
     route: suppliedHttp.route ?? metadata.route ?? metadata.path,
-    statusCode: suppliedHttp.statusCode ?? metadata.statusCode
+    statusCode: suppliedHttp.statusCode ?? metadata.statusCode,
   });
-  if (Object.keys(http).length === 0) return undefined;
+  if (Object.keys(http).length === 0) {
+    return undefined;
+  }
   return sanitizeLogValue(http, configuration);
 }
 
 // Pattern: Pure Function - accepts only object-shaped HTTP metadata.
 function normalizeHttpInput(http) {
-  if (http && typeof http === 'object' && !Array.isArray(http)) return http;
+  if (http && typeof http === 'object' && !Array.isArray(http)) {
+    return http;
+  }
   return {};
 }
 
@@ -111,14 +133,16 @@ function sanitizeOptionalText(value) {
 // Pattern: Data Mapper - removes undefined values from a shallow schema object.
 function compactUndefinedProperties(value) {
   return Object.fromEntries(
-    Object.entries(value).filter(([, childValue]) => childValue !== undefined)
+    Object.entries(value).filter(([, childValue]) => childValue !== undefined),
   );
 }
 
 // Pattern: Serialization Policy - guarantees one valid bounded NDJSON line.
 function serializeLogRecord(record) {
   const serialized = JSON.stringify(record);
-  if (Buffer.byteLength(serialized) < MAX_LOG_BYTES) return `${serialized}\n`;
+  if (Buffer.byteLength(serialized) < MAX_LOG_BYTES) {
+    return `${serialized}\n`;
+  }
   const boundedRecord = createBoundedRecord(record, Buffer.byteLength(serialized));
   return `${JSON.stringify(boundedRecord)}\n`;
 }
@@ -131,13 +155,13 @@ function createBoundedRecord(record, originalBytes) {
     error: record.error
       ? {
           message: sanitizeLogText(record.error.message || 'Error diagnostics truncated'),
-          truncated: true
+          truncated: true,
         }
-      : undefined
+      : undefined,
   };
 }
 
 module.exports = {
   createLogRecord,
-  serializeLogRecord
+  serializeLogRecord,
 };

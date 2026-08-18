@@ -54,7 +54,7 @@ export const {
 
   // Constants and utils
   ApiErrorType,
-  getApiErrorMessage
+  getApiErrorMessage,
 } = commonUtil;
 
 export default commonUtil;

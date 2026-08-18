@@ -18,7 +18,8 @@ function createRequestTraceMetadata(traceparent) {
       activeOpenTelemetryMetadata?.traceId || incomingTraceMetadata?.traceId || createTraceId(),
     spanId: activeOpenTelemetryMetadata?.spanId || createSpanId(),
     parentSpanId: incomingTraceMetadata?.spanId,
-    traceFlags: activeOpenTelemetryMetadata?.traceFlags || incomingTraceMetadata?.traceFlags || '01'
+    traceFlags:
+      activeOpenTelemetryMetadata?.traceFlags || incomingTraceMetadata?.traceFlags || '01',
   };
 }
 
@@ -41,7 +42,7 @@ function getActiveOpenTelemetryMetadata() {
   return {
     traceId: spanContext.traceId,
     spanId: spanContext.spanId,
-    traceFlags: formatTraceFlags(spanContext.traceFlags)
+    traceFlags: formatTraceFlags(spanContext.traceFlags),
   };
 }
 
@@ -54,7 +55,9 @@ function loadOpenTelemetryApi() {
   try {
     openTelemetryApi = require('@opentelemetry/api');
   } catch (error) {
-    if (!isMissingOpenTelemetryApi(error)) throw error;
+    if (!isMissingOpenTelemetryApi(error)) {
+      throw error;
+    }
   }
   return openTelemetryApi;
 }
@@ -76,7 +79,7 @@ function createTracePropagationHeaders() {
   }
 
   return {
-    traceparent: formatTraceparent(traceMetadata)
+    traceparent: formatTraceparent(traceMetadata),
   };
 }
 
@@ -93,7 +96,7 @@ function parseTraceparent(value) {
   return {
     traceId: match[1],
     spanId: match[2],
-    traceFlags: match[3]
+    traceFlags: match[3],
   };
 }
 
@@ -114,7 +117,7 @@ function hasCompleteTraceMetadata(traceMetadata) {
     traceMetadata &&
     typeof traceMetadata.traceId === 'string' &&
     typeof traceMetadata.spanId === 'string' &&
-    typeof traceMetadata.traceFlags === 'string'
+    typeof traceMetadata.traceFlags === 'string',
   );
 }
 
@@ -127,5 +130,5 @@ module.exports = {
   createTracePropagationHeaders,
   formatTraceparent,
   getActiveTraceMetadata,
-  runWithTraceMetadata
+  runWithTraceMetadata,
 };

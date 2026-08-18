@@ -13,7 +13,7 @@ const { requestContext } = require('../index');
 const {
   createApplicationLogger,
   createHttpRequestLogger,
-  installFatalProcessLogging
+  installFatalProcessLogging,
 } = require('../logging');
 const { requestTestApplication } = require('./setup/requestTestApplication');
 
@@ -31,10 +31,10 @@ function createLoggerFixture(overrides = {}) {
     sink: (destination, line) => writes.push({ destination, line }),
     traceMetadataProvider: () => ({
       spanId: '0123456789abcdef',
-      traceId: '0123456789abcdef0123456789abcdef'
+      traceId: '0123456789abcdef0123456789abcdef',
     }),
     writeToConsole: false,
-    ...overrides
+    ...overrides,
   });
   return { logger, writes };
 }
@@ -53,7 +53,7 @@ describe('application logging', function () {
       actorUserId: 'user-123',
       operation: 'profile.read',
       requestId: 'request-123',
-      resultCount: 1
+      resultCount: 1,
     });
 
     assert.strictEqual(writes.length, 1);
@@ -72,18 +72,18 @@ describe('application logging', function () {
       serviceVersion: '3.15.0',
       spanId: '0123456789abcdef',
       timestamp: '2026-07-28T12:00:00.000Z',
-      traceId: '0123456789abcdef0123456789abcdef'
+      traceId: '0123456789abcdef0123456789abcdef',
     });
   });
 
   it('redacts secrets and personal data while preserving bounded error diagnostics', function () {
     const { logger, writes } = createLoggerFixture();
     const cause = Object.assign(new Error('email somebody@example.com'), {
-      password: 'database-password'
+      password: 'database-password',
     });
     const error = Object.assign(new Error('Query failed', { cause }), {
       authorization: 'Bearer secret-token',
-      code: '42501'
+      code: '42501',
     });
     const cyclicContext = { apiKey: 'secret', error };
     cyclicContext.self = cyclicContext;
@@ -113,15 +113,15 @@ describe('application logging', function () {
       writes.map(({ destination, line }) => [destination, JSON.parse(line).level]),
       [
         ['stdout', 'warn'],
-        ['stderr', 'error']
-      ]
+        ['stderr', 'error'],
+      ],
     );
   });
 
   it('rejects production logging without a strong identity HMAC key', function () {
     assert.throws(
       () => createApplicationLogger({ environment: 'production', service: 'ms-test' }),
-      /LOG_IDENTITY_HMAC_KEY must contain at least 32 characters/
+      /LOG_IDENTITY_HMAC_KEY must contain at least 32 characters/,
     );
   });
 
@@ -132,9 +132,9 @@ describe('application logging', function () {
         createApplicationLogger({
           environment: 'test',
           minimumLevel: 'verbose',
-          service: 'ms-test'
+          service: 'ms-test',
         }),
-      /LOG_LEVEL must be debug, info, warn, or error/
+      /LOG_LEVEL must be debug, info, warn, or error/,
     );
   });
 
@@ -143,13 +143,13 @@ describe('application logging', function () {
     const stderrLines = [];
     const originalStdoutWrite = process.stdout.write;
     const originalStderrWrite = process.stderr.write;
-    process.stdout.write = (line) => stdoutLines.push(String(line));
-    process.stderr.write = (line) => stderrLines.push(String(line));
+    process.stdout.write = line => stdoutLines.push(String(line));
+    process.stderr.write = line => stderrLines.push(String(line));
 
     try {
       const logger = createApplicationLogger({
         environment: 'test',
-        service: 'ms-defaults'
+        service: 'ms-defaults',
       });
       logger.stream.write('stream message\n');
       logger.error('error message');
@@ -169,7 +169,7 @@ describe('application logging', function () {
   it('replaces oversized metadata with a bounded truncation marker', function () {
     const { logger, writes } = createLoggerFixture();
     logger.info('large context', {
-      payload: Array.from({ length: 10 }, (_, index) => `${index}-${'x'.repeat(20 * 1024)}`)
+      payload: Array.from({ length: 10 }, (_, index) => `${index}-${'x'.repeat(20 * 1024)}`),
     });
 
     const record = JSON.parse(writes[0].line);
@@ -182,15 +182,15 @@ describe('application logging', function () {
     const { logger, writes } = createLoggerFixture();
     logger.error('large error', {
       error: {
-        payload: Array.from({ length: 10 }, (_, index) => `${index}-${'x'.repeat(20 * 1024)}`)
+        payload: Array.from({ length: 10 }, (_, index) => `${index}-${'x'.repeat(20 * 1024)}`),
       },
-      payload: Array.from({ length: 10 }, (_, index) => `${index}-${'y'.repeat(20 * 1024)}`)
+      payload: Array.from({ length: 10 }, (_, index) => `${index}-${'y'.repeat(20 * 1024)}`),
     });
 
     const record = JSON.parse(writes[0].line);
     assert.deepStrictEqual(record.error, {
       message: 'Error diagnostics truncated',
-      truncated: true
+      truncated: true,
     });
   });
 
@@ -204,7 +204,7 @@ describe('application logging', function () {
       filePath: logFilePath,
       fileRetentionCount: 2,
       sink: undefined,
-      traceMetadataProvider: () => ({})
+      traceMetadataProvider: () => ({}),
     });
 
     for (let index = 0; index < 8; index += 1) {
@@ -225,7 +225,7 @@ describe('application logging', function () {
       nowMilliseconds: (() => {
         const values = [100, 137];
         return () => values.shift();
-      })()
+      })(),
     });
     const response = new EventEmitter();
     response.statusCode = 204;
@@ -236,7 +236,7 @@ describe('application logging', function () {
       originalUrl: '/users/123?token=secret',
       requestId: 'request-http',
       route: { path: '/:id' },
-      socket: { remoteAddress: '127.0.0.1' }
+      socket: { remoteAddress: '127.0.0.1' },
     };
     let nextCalled = false;
 
@@ -251,7 +251,7 @@ describe('application logging', function () {
       durationMs: 37,
       method: 'GET',
       route: '/users/:id',
-      statusCode: 204
+      statusCode: 204,
     });
     assert.strictEqual(record.requestId, 'request-http');
     assert.strictEqual(writes[0].line.includes('secret'), false);
@@ -274,8 +274,8 @@ describe('application logging', function () {
       writes.map(({ destination, line }) => [destination, JSON.parse(line).level]),
       [
         ['stdout', 'warn'],
-        ['stderr', 'error']
-      ]
+        ['stderr', 'error'],
+      ],
     );
     assert.strictEqual(JSON.parse(writes[0].line).http.route, '/fallback');
   });
@@ -286,7 +286,7 @@ describe('application logging', function () {
       nowMilliseconds: (() => {
         const values = [100, 137];
         return () => values.shift();
-      })()
+      })(),
     });
     const application = express();
     const users = express.Router();
@@ -294,11 +294,11 @@ describe('application logging', function () {
     users.get('/:id', (_request, response) => response.status(204).send());
     application.use('/users', users);
 
-    const response = await requestTestApplication(application, (client) =>
+    const response = await requestTestApplication(application, client =>
       client
         .get('/users/123?token=secret')
         .set('authorization', 'Bearer token')
-        .set('user-agent', 'private-agent')
+        .set('user-agent', 'private-agent'),
     );
 
     assert.strictEqual(response.status, 204);
@@ -307,7 +307,7 @@ describe('application logging', function () {
       durationMs: 37,
       method: 'GET',
       route: '/users/:id',
-      statusCode: 204
+      statusCode: 204,
     });
     assert.match(record.requestId, /^[0-9a-f-]{36}$/u);
     assert.strictEqual(writes[0].line.includes('secret'), false);
@@ -325,10 +325,10 @@ describe('application logging', function () {
 
     const [clientFailure, serverFailure] = await requestTestApplication(
       application,
-      async (client) => [
+      async client => [
         await client.post('/client-failure?secret=value'),
-        await client.post('/server-failure?secret=value')
-      ]
+        await client.post('/server-failure?secret=value'),
+      ],
     );
 
     assert.strictEqual(clientFailure.status, 404);
@@ -337,8 +337,8 @@ describe('application logging', function () {
       writes.map(({ destination, line }) => [destination, JSON.parse(line).level]),
       [
         ['stdout', 'warn'],
-        ['stderr', 'error']
-      ]
+        ['stderr', 'error'],
+      ],
     );
     assert.strictEqual(JSON.parse(writes[0].line).http.route, '/client-failure');
   });
@@ -351,7 +351,7 @@ describe('application logging', function () {
     logger.info('supplied HTTP', {
       actorUserId: null,
       http: { durationMs: 1, method: 'PATCH', route: '/items/:id', statusCode: 202 },
-      operation: ''
+      operation: '',
     });
     logger.info('invalid HTTP', { http: ['not-an-object'] });
 
@@ -364,7 +364,7 @@ describe('application logging', function () {
       durationMs: 1,
       method: 'PATCH',
       route: '/items/:id',
-      statusCode: 202
+      statusCode: 202,
     });
     assert.strictEqual(JSON.parse(writes[4].line).http, undefined);
   });
@@ -387,7 +387,7 @@ describe('application logging', function () {
       nestedCycle,
       nullValue: null,
       symbolValue: Symbol('symbol'),
-      userId: 'user-456'
+      userId: 'user-456',
     });
 
     assert.strictEqual(sanitized.array.length, 50);
@@ -399,17 +399,17 @@ describe('application logging', function () {
     assert.strictEqual(sanitized.symbolValue, 'Symbol(symbol)');
     assert.strictEqual(
       sanitized.userId,
-      createHmac('sha256', 'test-identity-key').update('user-456').digest('hex')
+      createHmac('sha256', 'test-identity-key').update('user-456').digest('hex'),
     );
 
     const loggerWithoutIdentityKey = createApplicationLogger({
       environment: 'test',
       service: 'ms-test',
-      sink: () => {}
+      sink: () => {},
     });
     assert.strictEqual(
       loggerWithoutIdentityKey.redactSensitiveMetadata({ senderId: 'raw-user' }).senderId,
-      '[REDACTED]'
+      '[REDACTED]',
     );
   });
 
@@ -418,13 +418,13 @@ describe('application logging', function () {
     assert.strictEqual(logger.getRequestMetadata({ path: '/path?token=value' }).route, '/path');
     assert.strictEqual(
       logger.getRequestMetadata({ originalUrl: '/original?token=value' }).route,
-      '/original'
+      '/original',
     );
     assert.strictEqual(logger.getRequestMetadata({ url: '/url?token=value' }).route, '/url');
     assert.strictEqual(logger.getRequestMetadata({}).route, undefined);
     assert.strictEqual(
       logger.getRequestMetadata({ route: { path: '/:id' } }, { route: '/override' }).route,
-      '/override'
+      '/override',
     );
   });
 
@@ -438,7 +438,7 @@ describe('application logging', function () {
     processTarget.emit(
       'uncaughtExceptionMonitor',
       new Error('fatal failure'),
-      'unhandledRejection'
+      'unhandledRejection',
     );
     uninstall();
 
@@ -450,7 +450,7 @@ describe('application logging', function () {
     processTarget.emit(
       'uncaughtExceptionMonitor',
       new Error('after uninstall'),
-      'uncaughtException'
+      'uncaughtException',
     );
     assert.strictEqual(writes.length, 1);
   });
@@ -473,7 +473,7 @@ describe('application logging', function () {
     `;
     const result = spawnSync(process.execPath, ['-e', childScript], {
       cwd: path.resolve(__dirname, '..'),
-      encoding: 'utf8'
+      encoding: 'utf8',
     });
 
     assert.notStrictEqual(result.status, 0);

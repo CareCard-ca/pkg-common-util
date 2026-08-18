@@ -6,7 +6,7 @@ const path = require('path');
 // Pattern: Factory - creates a synchronous bounded development-file sink.
 function createFileLogSink(filePath, maxBytes, retentionCount) {
   prepareLogDirectory(path.dirname(filePath));
-  return (line) => {
+  return line => {
     rotateFilesWhenNeeded(filePath, Buffer.byteLength(line), maxBytes, retentionCount);
     fs.appendFileSync(filePath, line, { encoding: 'utf8', mode: 0o600 });
     fs.chmodSync(filePath, 0o600);
@@ -22,7 +22,9 @@ function prepareLogDirectory(directoryPath) {
 // Pattern: Rotation Policy - rotates only when appending would exceed the byte cap.
 function rotateFilesWhenNeeded(filePath, incomingBytes, maxBytes, retentionCount) {
   const currentBytes = fs.existsSync(filePath) ? fs.statSync(filePath).size : 0;
-  if (currentBytes === 0 || currentBytes + incomingBytes <= maxBytes) return;
+  if (currentBytes === 0 || currentBytes + incomingBytes <= maxBytes) {
+    return;
+  }
   rotateRetainedFiles(filePath, retentionCount);
 }
 
@@ -38,12 +40,16 @@ function rotateRetainedFiles(filePath, retentionCount) {
 // Pattern: Filesystem Boundary - deletes only the oldest configured log generation.
 function removeOldestRetainedFile(filePath, retentionCount) {
   const oldestPath = `${filePath}.${retentionCount}`;
-  if (fs.existsSync(oldestPath)) fs.rmSync(oldestPath);
+  if (fs.existsSync(oldestPath)) {
+    fs.rmSync(oldestPath);
+  }
 }
 
 // Pattern: Filesystem Boundary - renames a known log generation when present.
 function renameWhenPresent(sourcePath, destinationPath) {
-  if (fs.existsSync(sourcePath)) fs.renameSync(sourcePath, destinationPath);
+  if (fs.existsSync(sourcePath)) {
+    fs.renameSync(sourcePath, destinationPath);
+  }
 }
 
 module.exports = createFileLogSink;

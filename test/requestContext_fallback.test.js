@@ -27,7 +27,7 @@ function observeRequestContextFailure(randomUuidSetup) {
   `;
   const result = spawnSync(process.execPath, ['-e', consumerScript], {
     cwd: packageRoot,
-    encoding: 'utf8'
+    encoding: 'utf8',
   });
 
   assert.strictEqual(result.status, 0, result.stderr);
@@ -37,7 +37,7 @@ function observeRequestContextFailure(randomUuidSetup) {
 describe('requestContext failure propagation', function () {
   it('should propagate when the required crypto.randomUUID API is unavailable', function () {
     const observation = observeRequestContextFailure(
-      "Object.defineProperty(crypto, 'randomUUID', { value: undefined, configurable: true });"
+      "Object.defineProperty(crypto, 'randomUUID', { value: undefined, configurable: true });",
     );
 
     assert.deepStrictEqual(observation.error?.name, 'TypeError');
@@ -48,7 +48,7 @@ describe('requestContext failure propagation', function () {
 
   it('should propagate crypto.randomUUID failures', function () {
     const observation = observeRequestContextFailure(
-      "Object.defineProperty(crypto, 'randomUUID', { value: () => { throw new Error('Mock error'); }, configurable: true });"
+      "Object.defineProperty(crypto, 'randomUUID', { value: () => { throw new Error('Mock error'); }, configurable: true });",
     );
 
     assert.deepStrictEqual(observation.error, { message: 'Mock error', name: 'Error' });
