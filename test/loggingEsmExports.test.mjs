@@ -4,7 +4,7 @@ import { describe, it } from 'mocha';
 import {
   createApplicationLogger,
   createHttpRequestLogger,
-  installFatalProcessLogging
+  installFatalProcessLogging,
 } from '../logging.mjs';
 
 describe('application logging ESM exports', () => {
@@ -14,7 +14,7 @@ describe('application logging ESM exports', () => {
       environment: 'test',
       service: 'esm-consumer',
       sink: (_destination, line) => writes.push(JSON.parse(line)),
-      writeToConsole: false
+      writeToConsole: false,
     });
     const response = new EventEmitter();
     response.statusCode = 200;
@@ -26,7 +26,7 @@ describe('application logging ESM exports', () => {
       response,
       () => {
         nextCalled = true;
-      }
+      },
     );
     response.emit('finish');
 

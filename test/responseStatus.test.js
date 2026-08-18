@@ -11,7 +11,7 @@ describe('ResponseStatus', function () {
     },
     set(obj) {
       this.header = obj;
-    }
+    },
   };
 
   afterEach(() => (res.statusCode = null));

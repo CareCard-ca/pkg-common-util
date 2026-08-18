@@ -5,7 +5,7 @@ const { describe, it } = require('mocha');
 const {
   createTracePropagationHeaders,
   getActiveTraceMetadata,
-  requestContext
+  requestContext,
 } = require('../index');
 
 const firstTraceparent = '00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01';
@@ -24,7 +24,7 @@ describe('W3C trace context', function () {
 
     requestContext(req, createResponse(), () => {
       assert.deepStrictEqual(createTracePropagationHeaders(), {
-        traceparent: `00-${req.traceId}-${req.spanId}-01`
+        traceparent: `00-${req.traceId}-${req.spanId}-01`,
       });
       done();
     });
@@ -33,7 +33,7 @@ describe('W3C trace context', function () {
   it('keeps concurrent asynchronous request contexts isolated', async function () {
     const [firstMetadata, secondMetadata] = await Promise.all([
       readMetadataAfterAsyncBoundary(firstTraceparent),
-      readMetadataAfterAsyncBoundary(secondTraceparent)
+      readMetadataAfterAsyncBoundary(secondTraceparent),
     ]);
 
     assert.strictEqual(firstMetadata.traceId, '4bf92f3577b34da6a3ce929d0e0e4736');
@@ -47,7 +47,7 @@ describe('W3C trace context', function () {
     '00-00000000000000000000000000000000-00f067aa0ba902b7-01',
     '00-4bf92f3577b34da6a3ce929d0e0e4736-0000000000000000-01',
     'ff-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01',
-    'not-a-traceparent'
+    'not-a-traceparent',
   ]) {
     it(`starts a new trace for invalid traceparent ${invalidTraceparent}`, function (done) {
       const req = createRequest(invalidTraceparent);
@@ -66,13 +66,13 @@ function createRequest(traceparent) {
   return {
     headers: { traceparent },
     ip: '127.0.0.1',
-    socket: {}
+    socket: {},
   };
 }
 
 function createResponse() {
   return {
-    setHeader() {}
+    setHeader() {},
   };
 }
 

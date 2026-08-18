@@ -12,7 +12,7 @@ function resolveParallelJobCount(
   configuredJobCount,
   testFileCount,
   defaultMaximum = DEFAULT_MAX_PARALLEL_JOBS,
-  availableJobCount = availableParallelism()
+  availableJobCount = availableParallelism(),
 ) {
   const requestedJobCount =
     configuredJobCount === undefined
@@ -35,7 +35,7 @@ function buildMochaArguments(testFiles, jobCount) {
     String(jobCount),
     '--require',
     resolve('scripts/testOrder/randomizeTestOrder.cjs'),
-    ...testFiles
+    ...testFiles,
   ];
 }
 
@@ -49,9 +49,9 @@ function runIndexedMochaTests(testFiles) {
   const child = spawn(process.execPath, buildMochaArguments(testFiles, jobCount), {
     env: {
       ...process.env,
-      NODE_ENV: 'test'
+      NODE_ENV: 'test',
     },
-    stdio: 'inherit'
+    stdio: 'inherit',
   });
 
   return new Promise((resolveExit, rejectExit) => {
@@ -69,5 +69,5 @@ function runIndexedMochaTests(testFiles) {
 module.exports = {
   buildMochaArguments,
   resolveParallelJobCount,
-  runIndexedMochaTests
+  runIndexedMochaTests,
 };

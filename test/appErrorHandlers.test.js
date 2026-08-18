@@ -20,7 +20,7 @@ describe('AppErrorHandlers', function () {
     // Act
     const response = await requestTestApplication(
       testApp(errHandler.throwAccountSuspendedError),
-      (client) => client.get('/').expect(403)
+      client => client.get('/').expect(403),
     );
 
     // Assert
@@ -31,7 +31,7 @@ describe('AppErrorHandlers', function () {
     // Act
     const response = await requestTestApplication(
       testApp(errHandler.throwAccountBlockedError),
-      (client) => client.get('/').expect(403)
+      client => client.get('/').expect(403),
     );
 
     // Assert
@@ -42,7 +42,7 @@ describe('AppErrorHandlers', function () {
     // Act
     const response = await requestTestApplication(
       testApp(errHandler.throwAccountInactiveError),
-      (client) => client.get('/').expect(403)
+      client => client.get('/').expect(403),
     );
 
     // Assert
@@ -53,7 +53,7 @@ describe('AppErrorHandlers', function () {
     // Act
     const response = await requestTestApplication(
       testApp(errHandler.throwValidationFailureError),
-      (client) => client.get('/').expect(401)
+      client => client.get('/').expect(401),
     );
 
     // Assert
@@ -64,7 +64,7 @@ describe('AppErrorHandlers', function () {
     // Act
     const response = await requestTestApplication(
       testApp(errHandler.throwRecordExistError),
-      (client) => client.get('/').expect(409)
+      client => client.get('/').expect(409),
     );
 
     // Assert
@@ -75,7 +75,7 @@ describe('AppErrorHandlers', function () {
     // Act
     const response = await requestTestApplication(
       testApp(errHandler.throwWrongCredentialsError),
-      (client) => client.get('/').expect(401)
+      client => client.get('/').expect(401),
     );
 
     // Assert
@@ -86,7 +86,7 @@ describe('AppErrorHandlers', function () {
     // Act
     const response = await requestTestApplication(
       testApp(errHandler.throwLoginRequiredError),
-      (client) => client.get('/').expect(401)
+      client => client.get('/').expect(401),
     );
 
     // Assert
@@ -97,7 +97,7 @@ describe('AppErrorHandlers', function () {
     // Act
     const response = await requestTestApplication(
       testApp(errHandler.throwRecordNotFoundError),
-      (client) => client.get('/').expect(404)
+      client => client.get('/').expect(404),
     );
 
     // Assert
@@ -108,7 +108,7 @@ describe('AppErrorHandlers', function () {
     // Act
     const response = await requestTestApplication(
       testApp(errHandler.throwRecordNotSavedError),
-      (client) => client.get('/').expect(400)
+      client => client.get('/').expect(400),
     );
 
     // Assert
@@ -119,7 +119,7 @@ describe('AppErrorHandlers', function () {
     // Act
     const response = await requestTestApplication(
       testApp(errHandler.throwUpdateFailedError),
-      (client) => client.get('/').expect(400)
+      client => client.get('/').expect(400),
     );
 
     // Assert
@@ -130,7 +130,7 @@ describe('AppErrorHandlers', function () {
     // Act
     const response = await requestTestApplication(
       testApp(errHandler.throwTransactionFailedError),
-      (client) => client.get('/').expect(400)
+      client => client.get('/').expect(400),
     );
 
     // Assert
@@ -139,9 +139,8 @@ describe('AppErrorHandlers', function () {
 
   it('throwUsedTokenError', async function () {
     // Act
-    const response = await requestTestApplication(
-      testApp(errHandler.throwUsedTokenError),
-      (client) => client.get('/').expect(401)
+    const response = await requestTestApplication(testApp(errHandler.throwUsedTokenError), client =>
+      client.get('/').expect(401),
     );
 
     // Assert
@@ -152,7 +151,7 @@ describe('AppErrorHandlers', function () {
     // Act
     const response = await requestTestApplication(
       testApp(errHandler.throwBadVisitorTokenError),
-      (client) => client.get('/').expect(401)
+      client => client.get('/').expect(401),
     );
 
     // Assert
@@ -163,7 +162,7 @@ describe('AppErrorHandlers', function () {
     // Act
     const response = await requestTestApplication(
       testApp(errHandler.throwFileFormatNotSupportedError),
-      (client) => client.get('/').expect(415)
+      client => client.get('/').expect(415),
     );
 
     // Assert
@@ -174,7 +173,7 @@ describe('AppErrorHandlers', function () {
     // Act
     const response = await requestTestApplication(
       testApp(errHandler.throwNotAuthorizedError),
-      (client) => client.get('/').expect(401)
+      client => client.get('/').expect(401),
     );
 
     // Assert
@@ -183,9 +182,8 @@ describe('AppErrorHandlers', function () {
 
   it('throwBadInputError', async function () {
     // Act
-    const response = await requestTestApplication(
-      testApp(errHandler.throwBadInputError),
-      (client) => client.get('/').expect(400)
+    const response = await requestTestApplication(testApp(errHandler.throwBadInputError), client =>
+      client.get('/').expect(400),
     );
 
     // Assert
@@ -196,7 +194,7 @@ describe('AppErrorHandlers', function () {
     // Act
     const response = await requestTestApplication(
       testApp(errHandler.throwInputNotUuidError),
-      (client) => client.get('/').expect(400)
+      client => client.get('/').expect(400),
     );
 
     // Assert
@@ -207,7 +205,7 @@ describe('AppErrorHandlers', function () {
     // Act
     const response = await requestTestApplication(
       testApp(errHandler.throwFileTooLargeError),
-      (client) => client.get('/').expect(413)
+      client => client.get('/').expect(413),
     );
 
     // Assert
@@ -218,7 +216,7 @@ describe('AppErrorHandlers', function () {
     // Act
     const response = await requestTestApplication(
       testApp(errHandler.throwInvalidTimeValueError),
-      (client) => client.get('/').expect(403)
+      client => client.get('/').expect(403),
     );
 
     // Assert
@@ -227,9 +225,8 @@ describe('AppErrorHandlers', function () {
 
   it('throwNotFoundError', async function () {
     // Act
-    const response = await requestTestApplication(
-      testApp(errHandler.throwNotFoundError),
-      (client) => client.get('/').expect(404)
+    const response = await requestTestApplication(testApp(errHandler.throwNotFoundError), client =>
+      client.get('/').expect(404),
     );
 
     // Assert
@@ -240,7 +237,7 @@ describe('AppErrorHandlers', function () {
     // Act
     const response = await requestTestApplication(
       testApp(errHandler.throwRecordSaveFailureError),
-      (client) => client.get('/').expect(500)
+      client => client.get('/').expect(500),
     );
 
     // Assert
@@ -251,7 +248,7 @@ describe('AppErrorHandlers', function () {
     // Act
     const response = await requestTestApplication(
       testApp(errHandler.throwApplicationError),
-      (client) => client.get('/').expect(500)
+      client => client.get('/').expect(500),
     );
 
     // Assert
@@ -260,8 +257,8 @@ describe('AppErrorHandlers', function () {
 
   it('throwNetworkError', async function () {
     // Act
-    const response = await requestTestApplication(testApp(errHandler.throwNetworkError), (client) =>
-      client.get('/').expect(500)
+    const response = await requestTestApplication(testApp(errHandler.throwNetworkError), client =>
+      client.get('/').expect(500),
     );
 
     // Assert
@@ -272,7 +269,7 @@ describe('AppErrorHandlers', function () {
     // Act
     const response = await requestTestApplication(
       testApp(errHandler.throwUnexpectedError),
-      (client) => client.get('/').expect(500)
+      client => client.get('/').expect(500),
     );
 
     // Assert
@@ -283,8 +280,8 @@ describe('AppErrorHandlers', function () {
     const app = express();
     app.use(errHandler.notFound404);
 
-    const response = await requestTestApplication(app, (client) =>
-      client.get('/some-random-route').expect(404)
+    const response = await requestTestApplication(app, client =>
+      client.get('/some-random-route').expect(404),
     );
 
     assert.deepStrictEqual(response?.body?.error?.code, 'NOT_FOUND');
@@ -299,7 +296,7 @@ describe('AppErrorHandlers', function () {
     });
     app.use(errHandler.appErrorHandler);
 
-    const response = await requestTestApplication(app, (client) => client.get('/').expect(500));
+    const response = await requestTestApplication(app, client => client.get('/').expect(500));
 
     assert.strictEqual(response?.statusCode, 500);
     assert.deepStrictEqual(response?.body?.error?.code, 'UNKNOWN_ERROR');
@@ -313,7 +310,7 @@ describe('AppErrorHandlers', function () {
     });
     app.use(errHandler.appErrorHandler);
 
-    const response = await requestTestApplication(app, (client) => client.get('/').expect(500));
+    const response = await requestTestApplication(app, client => client.get('/').expect(500));
 
     assert.strictEqual(response?.statusCode, 500);
     assert.deepStrictEqual(response?.body?.error?.code, 'UNEXPECTED_ERROR');
@@ -327,7 +324,7 @@ describe('AppErrorHandlers', function () {
     });
     app.use(errHandler.appErrorHandler);
 
-    const response = await requestTestApplication(app, (client) => client.get('/').expect(500));
+    const response = await requestTestApplication(app, client => client.get('/').expect(500));
 
     assert.strictEqual(response?.body?.message, 'Internal server error');
   });
@@ -341,7 +338,7 @@ describe('AppErrorHandlers', function () {
     });
     app.use(errHandler.appErrorHandler);
 
-    const response = await requestTestApplication(app, (client) => client.get('/').expect(409));
+    const response = await requestTestApplication(app, client => client.get('/').expect(409));
 
     assert.strictEqual(response?.statusCode, 409);
     assert.deepStrictEqual(response?.body?.error?.code, 'RECORD_EXIST');
@@ -354,13 +351,13 @@ describe('AppErrorHandlers', function () {
       err.code = '42501';
       err.details = {
         sql: 'INSERT INTO institutions.user_roles ...',
-        table: 'institutions.user_roles'
+        table: 'institutions.user_roles',
       };
       next(err);
     });
     app.use(errHandler.appErrorHandler);
 
-    const response = await requestTestApplication(app, (client) => client.get('/').expect(403));
+    const response = await requestTestApplication(app, client => client.get('/').expect(403));
 
     assert.strictEqual(response?.statusCode, 403);
     assert.deepStrictEqual(response?.body?.error?.code, 'NOT_AUTHORIZED');
@@ -375,13 +372,13 @@ describe('AppErrorHandlers', function () {
     app.use((req, res, next) => {
       const err = new Error('42501');
       err.details = {
-        sql: 'SELECT * FROM audit.change_log'
+        sql: 'SELECT * FROM audit.change_log',
       };
       next(err);
     });
     app.use(errHandler.appErrorHandler);
 
-    const response = await requestTestApplication(app, (client) => client.get('/').expect(403));
+    const response = await requestTestApplication(app, client => client.get('/').expect(403));
 
     assert.strictEqual(response?.statusCode, 403);
     assert.deepStrictEqual(response?.body?.error?.code, 'NOT_AUTHORIZED');
@@ -413,7 +410,7 @@ describe('AppErrorHandlers', function () {
       { message: 'Not found', expectedStatus: 404 },
       { message: 'File_Format_Not_Supported', expectedStatus: 415 },
       { message: 'File too large', expectedStatus: 413 },
-      { message: '42501', expectedStatus: 403 }
+      { message: '42501', expectedStatus: 403 },
     ];
 
     legacyCases.forEach(({ message, expectedStatus }) => {
@@ -424,7 +421,7 @@ describe('AppErrorHandlers', function () {
         });
         app.use(errHandler.appErrorHandler);
 
-        await requestTestApplication(app, (client) => client.get('/').expect(expectedStatus));
+        await requestTestApplication(app, client => client.get('/').expect(expectedStatus));
       });
     });
   });
@@ -452,17 +449,17 @@ describe('AppErrorHandlers', function () {
         errHandler.throwRecordSaveFailureError,
         errHandler.throwApplicationError,
         errHandler.throwNetworkError,
-        errHandler.throwUnexpectedError
+        errHandler.throwUnexpectedError,
       ];
 
-      throwFunctions.forEach((fn) => {
+      throwFunctions.forEach(fn => {
         assert.throws(
           () => fn({ userMessage: 'test message', details: { foo: 'bar' } }),
-          (error) => {
+          error => {
             assert.strictEqual(error.userMessage, 'test message');
             assert.deepStrictEqual(error.details, { foo: 'bar' });
             return true;
-          }
+          },
         );
       });
     });
@@ -470,20 +467,20 @@ describe('AppErrorHandlers', function () {
     it('should cover throwNotAuthorizedError with params', function () {
       assert.throws(
         () => errHandler.throwNotAuthorizedError({ userMessage: 'test', details: 'test' }),
-        (error) => {
+        error => {
           assert.strictEqual(error.userMessage, 'test');
           return true;
-        }
+        },
       );
     });
 
     it('should cover throwFileFormatNotSupportedError with params', function () {
       assert.throws(
         () => errHandler.throwFileFormatNotSupportedError({ userMessage: 'test', details: 'test' }),
-        (error) => {
+        error => {
           assert.strictEqual(error.userMessage, 'test');
           return true;
-        }
+        },
       );
     });
   });

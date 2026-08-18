@@ -152,5 +152,5 @@ function translateCode(errorCode, t) {
 }
 
 module.exports = {
-  getApiErrorMessage
+  getApiErrorMessage,
 };

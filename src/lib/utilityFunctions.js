@@ -6,7 +6,7 @@ function extractObjectWithProperties(obj, arrayOfProperties) {
     return returnObj;
   }
 
-  arrayOfProperties.forEach((nameOfProperty) => {
+  arrayOfProperties.forEach(nameOfProperty => {
     if (Object.prototype.hasOwnProperty.call(obj, nameOfProperty)) {
       returnObj[nameOfProperty] = obj[nameOfProperty];
     }
@@ -16,5 +16,5 @@ function extractObjectWithProperties(obj, arrayOfProperties) {
 }
 
 module.exports = {
-  extractObjectWithProperties
+  extractObjectWithProperties,
 };

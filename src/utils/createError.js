@@ -13,7 +13,7 @@ const createError = ({ code, details, message, fields }) => {
     code,
     details,
     message,
-    fields
+    fields,
   };
 };
 

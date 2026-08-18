@@ -12,11 +12,11 @@ export const packageTasks = Object.freeze({
     { command: 'mocha', arguments: ['test/config/repositoryIsolation.audit.js'] },
     { command: 'mocha', arguments: ['test/config/tddGuidanceDocs.audit.js'] },
     { command: 'mocha', arguments: ['test/srcIndex.audit.js'] },
-    { command: 'mocha', arguments: ['test/traceDocumentation.audit.js'] }
+    { command: 'mocha', arguments: ['test/traceDocumentation.audit.js'] },
   ],
   test: [
     { command: 'npm', arguments: ['run', 'test:order'] },
-    { command: 'node', arguments: ['test/index.test.js'] }
+    { command: 'node', arguments: ['test/index.test.js'] },
   ],
   'test:types': [
     { command: 'npm', arguments: ['run', 'test:order'] },
@@ -28,21 +28,21 @@ export const packageTasks = Object.freeze({
         './scripts/testOrder/randomizeTestOrder.cjs',
         '-r',
         'ts-node/register',
-        'test/types.test.mts'
-      ]
-    }
+        'test/types.test.mts',
+      ],
+    },
   ],
   'test:coverage': [
     { command: 'npm', arguments: ['run', 'validate:audits'] },
     { command: 'npm', arguments: ['run', 'test:order'] },
     { command: 'tsc', arguments: ['--noEmit'] },
-    { command: 'nyc', arguments: ['node', 'test/index.test.js'] }
+    { command: 'nyc', arguments: ['node', 'test/index.test.js'] },
   ],
   'test:All': [
     { command: 'npm', arguments: ['run', 'validate:audits'] },
     { command: 'npm', arguments: ['run', 'test'] },
-    { command: 'npm', arguments: ['run', 'test:types'] }
-  ]
+    { command: 'npm', arguments: ['run', 'test:types'] },
+  ],
 });
 
 export function createTaskEnvironment(overrides = {}, inheritedEnvironment = process.env) {
@@ -50,10 +50,18 @@ export function createTaskEnvironment(overrides = {}, inheritedEnvironment = pro
 }
 
 function getTaskExitCode(result) {
-  if (result.error) throw result.error;
-  if (typeof result.status === 'number') return result.status;
-  if (result.signal === 'SIGINT') return 130;
-  if (result.signal === 'SIGTERM') return 143;
+  if (result.error) {
+    throw result.error;
+  }
+  if (typeof result.status === 'number') {
+    return result.status;
+  }
+  if (result.signal === 'SIGINT') {
+    return 130;
+  }
+  if (result.signal === 'SIGTERM') {
+    return 143;
+  }
   return 1;
 }
 
@@ -66,7 +74,7 @@ export function executeTaskStep(taskStep) {
   const result = spawnSync(taskStep.command, taskStep.arguments ?? [], {
     env: createTaskEnvironment(taskStep.environment),
     shell: false,
-    stdio: 'inherit'
+    stdio: 'inherit',
   });
   return getTaskExitCode(result);
 }
@@ -79,21 +87,29 @@ export function runPackageTask(
   taskName,
   executeTask = executeTaskStep,
   taskDefinitions = packageTasks,
-  pathExists = existsSync
+  pathExists = existsSync,
 ) {
   const taskSteps = taskDefinitions[taskName];
-  if (!Array.isArray(taskSteps)) throw new Error('Unknown package task.');
+  if (!Array.isArray(taskSteps)) {
+    throw new Error('Unknown package task.');
+  }
 
   for (const taskStep of taskSteps) {
-    if (!shouldRunTaskStep(taskStep, pathExists)) continue;
+    if (!shouldRunTaskStep(taskStep, pathExists)) {
+      continue;
+    }
     const exitCode = executeTask(taskStep);
-    if (exitCode !== 0) return exitCode;
+    if (exitCode !== 0) {
+      return exitCode;
+    }
   }
   return 0;
 }
 
 function isDirectExecution() {
-  if (!process.argv[1]) return false;
+  if (!process.argv[1]) {
+    return false;
+  }
   return resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 }
 
@@ -108,4 +124,6 @@ function runCommandLineTask() {
   process.exitCode = runPackageTask(taskName);
 }
 
-if (isDirectExecution()) runCommandLineTask();
+if (isDirectExecution()) {
+  runCommandLineTask();
+}

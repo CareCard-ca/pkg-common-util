@@ -5,7 +5,7 @@ const { getActiveTraceMetadata } = require('../lib/traceContext');
 const {
   DEFAULT_FILE_MAX_BYTES,
   DEFAULT_FILE_RETENTION_COUNT,
-  LOG_LEVEL_PRIORITIES
+  LOG_LEVEL_PRIORITIES,
 } = require('./constants');
 const { createLogRecord, serializeLogRecord } = require('./createLogRecord');
 const createFileLogSink = require('./fileLogSink');
@@ -17,9 +17,9 @@ function createApplicationLogger(options) {
   const writeLine = createLineWriter(configuration);
   const logger = createLoggerMethods(configuration, writeLine);
   logger.getRequestMetadata = (request, metadata) => createRequestMetadata(request, metadata);
-  logger.redactSensitiveMetadata = (value) => sanitizeLogValue(value, configuration);
+  logger.redactSensitiveMetadata = value => sanitizeLogValue(value, configuration);
   logger.httpLogger = () => require('./createHttpRequestLogger')(logger);
-  logger.stream = { write: (message) => logger.info(message) };
+  logger.stream = { write: message => logger.info(message) };
   return logger;
 }
 
@@ -42,7 +42,7 @@ function createLoggerConfiguration(options = {}) {
     serviceVersion: options.serviceVersion || process.env.MS_VERSION || 'unknown',
     sink: options.sink,
     traceMetadataProvider: options.traceMetadataProvider || getActiveTraceMetadata,
-    writeToConsole: options.writeToConsole !== false
+    writeToConsole: options.writeToConsole !== false,
   };
 }
 
@@ -61,13 +61,15 @@ function validateLoggerConfiguration(service, environment, identityHmacKey, mini
 
 // Pattern: Strategy - chooses the environment-specific output boundary.
 function createLineWriter(configuration) {
-  if (configuration.sink) return configuration.sink;
+  if (configuration.sink) {
+    return configuration.sink;
+  }
   const fileSink =
     configuration.environment === 'development'
       ? createFileLogSink(
           configuration.filePath,
           configuration.fileMaxBytes,
-          configuration.fileRetentionCount
+          configuration.fileRetentionCount,
         )
       : undefined;
   return (destination, line) => writeDefaultLine(destination, line, fileSink, configuration);
@@ -79,7 +81,9 @@ function writeDefaultLine(destination, line, fileSink, configuration) {
     const stream = destination === 'stderr' ? process.stderr : process.stdout;
     stream.write(line);
   }
-  if (fileSink) fileSink(line);
+  if (fileSink) {
+    fileSink(line);
+  }
 }
 
 // Pattern: Factory - creates level methods sharing one emission policy.
@@ -94,7 +98,9 @@ function createLoggerMethods(configuration, writeLine) {
 
 // Pattern: Pipeline - filters, maps, serializes, and writes one log record.
 function emitLogRecord(level, message, metadata, configuration, writeLine) {
-  if (!shouldWriteLevel(level, configuration.minimumLevel)) return;
+  if (!shouldWriteLevel(level, configuration.minimumLevel)) {
+    return;
+  }
   const record = createLogRecord(level, message, metadata, configuration);
   const destination = level === 'error' ? 'stderr' : 'stdout';
   writeLine(destination, serializeLogRecord(record), record);
@@ -114,13 +120,15 @@ function createRequestMetadata(request, metadata = {}) {
     route: createRequestRoute(request),
     statusCode: request?.res?.statusCode,
     traceId: request?.traceId,
-    ...metadata
+    ...metadata,
   };
 }
 
 // Pattern: Pure Function - returns the templated route or a query-free path.
 function createRequestRoute(request) {
-  if (request?.route?.path) return `${request.baseUrl || ''}${request.route.path}`;
+  if (request?.route?.path) {
+    return `${request.baseUrl || ''}${request.route.path}`;
+  }
   const candidate = request?.path || request?.originalUrl || request?.url;
   return typeof candidate === 'string' ? candidate.split('?')[0] : undefined;
 }

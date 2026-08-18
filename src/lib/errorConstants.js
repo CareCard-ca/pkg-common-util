@@ -33,9 +33,9 @@ const ApiErrorType = {
   FILE_TOO_LARGE: 'FILE_TOO_LARGE',
   INVALID_TIME_VALUE: 'INVALID_TIME_VALUE',
   UNKNOWN_ERROR: 'UNKNOWN_ERROR',
-  PARSE_ERROR: 'PARSE_ERROR'
+  PARSE_ERROR: 'PARSE_ERROR',
 };
 
 module.exports = {
-  ApiErrorType
+  ApiErrorType,
 };

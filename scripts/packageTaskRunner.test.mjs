@@ -9,16 +9,16 @@ test('runs task steps in order and stops at the first failure', async () => {
   const { runPackageTask } = await loadPackageTaskRunner();
   const executedCommands = [];
   const fixtureTasks = {
-    fixture: [{ command: 'first' }, { command: 'second' }, { command: 'third' }]
+    fixture: [{ command: 'first' }, { command: 'second' }, { command: 'third' }],
   };
 
   const exitCode = runPackageTask(
     'fixture',
-    (step) => {
+    step => {
       executedCommands.push(step.command);
       return step.command === 'second' ? 7 : 0;
     },
-    fixtureTasks
+    fixtureTasks,
   );
 
   assert.equal(exitCode, 7);
@@ -29,17 +29,17 @@ test('runs conditional steps only when their required output is missing', async 
   const { runPackageTask } = await loadPackageTaskRunner();
   const executedCommands = [];
   const fixtureTasks = {
-    fixture: [{ command: 'build', whenMissing: 'dist/runtime.js' }, { command: 'execute' }]
+    fixture: [{ command: 'build', whenMissing: 'dist/runtime.js' }, { command: 'execute' }],
   };
 
   const exitCode = runPackageTask(
     'fixture',
-    (step) => {
+    step => {
       executedCommands.push(step.command);
       return 0;
     },
     fixtureTasks,
-    () => true
+    () => true,
   );
 
   assert.equal(exitCode, 0);
@@ -52,13 +52,13 @@ test('merges task environment overrides without mutating inherited values', asyn
 
   const environment = createTaskEnvironment(
     { NODE_ENV: 'production', DB_ENV: 'privileged' },
-    inheritedEnvironment
+    inheritedEnvironment,
   );
 
   assert.deepEqual(environment, {
     NODE_ENV: 'production',
     PATH: '/bin',
-    DB_ENV: 'privileged'
+    DB_ENV: 'privileged',
   });
   assert.deepEqual(inheritedEnvironment, { NODE_ENV: 'test', PATH: '/bin' });
 });

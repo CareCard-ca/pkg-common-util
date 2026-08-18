@@ -8,7 +8,7 @@ const TEST_ORDER_INVARIANCE_RULE =
 
 function listRepositoryFiles() {
   return execFileSync('git', ['ls-files', '--cached', '--others', '--exclude-standard'], {
-    encoding: 'utf8'
+    encoding: 'utf8',
   })
     .trim()
     .split('\n')
@@ -22,7 +22,7 @@ function isRequiredTestGuidance(filePath) {
     filePath === '.junie/guidelines.md' ||
     filePath === '.agents/skills/carecard-workspace-standards/SKILL.md' ||
     /^\.agents\/skills\/[^/]*(?:test|testing)[^/]*\/(?:SKILL\.md|references\/[^/]*(?:test|testing|coding-principles)[^/]*\.md)$/i.test(
-      filePath
+      filePath,
     )
   );
 }
@@ -35,7 +35,7 @@ test('keeps the non-negotiable test order rule in repository guidance', () => {
     const normalizedGuidance = readFileSync(guidanceFile, 'utf8').replace(/\s+/g, ' ').trim();
     assert.ok(
       normalizedGuidance.includes(TEST_ORDER_INVARIANCE_RULE),
-      `${guidanceFile} must document the non-negotiable test order invariance rule.`
+      `${guidanceFile} must document the non-negotiable test order invariance rule.`,
     );
   }
 });
@@ -48,7 +48,7 @@ test('keeps default package scripts on the test framework ordinary ordering', ()
     assert.doesNotMatch(
       command,
       /--test-randomize|--test-random-seed/,
-      `${scriptName} must not force randomized test ordering.`
+      `${scriptName} must not force randomized test ordering.`,
     );
   }
 });

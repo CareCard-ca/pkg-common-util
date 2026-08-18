@@ -71,5 +71,5 @@ function setBadRequest400ClientError(res) {
 module.exports = {
   setOk200,
   setCreated201,
-  setBadRequest400ClientError
+  setBadRequest400ClientError,
 };

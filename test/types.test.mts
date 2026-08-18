@@ -11,14 +11,14 @@ const {
   createError,
   caseConverter,
   keysToCamelCase,
-  keysToSnakeCase
+  keysToSnakeCase,
 } = commonUtil;
 import {
   createApplicationLogger,
   createHttpRequestLogger,
   installFatalProcessLogging,
   type ApplicationLogRecord,
-  type ApplicationLogger
+  type ApplicationLogger,
 } from '../logging.js';
 
 /**
@@ -157,7 +157,7 @@ function createMockResponse() {
     json(body: unknown) {
       this.body = body;
       return this;
-    }
+    },
   };
 }
 
@@ -167,7 +167,7 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
     const logger: ApplicationLogger = createApplicationLogger({
       environment: 'test',
       service: 'ms-test',
-      sink: (_destination, line) => records.push(JSON.parse(line) as ApplicationLogRecord)
+      sink: (_destination, line) => records.push(JSON.parse(line) as ApplicationLogRecord),
     });
     const middleware = createHttpRequestLogger(logger);
     const uninstall = installFatalProcessLogging(logger);
@@ -182,11 +182,11 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
     assert.deepStrictEqual(
       commonUtil.extractObjectWithProperties({ first: 1, second: 2 }, ['second']),
       {
-        second: 2
-      }
+        second: 2,
+      },
     );
     assert.deepStrictEqual(commonUtil.keysToCamelCase({ first_name: 'CareCard' }), {
-      firstName: 'CareCard'
+      firstName: 'CareCard',
     });
     assert.deepStrictEqual(
       commonUtil.createError({ code: 'TYPE_CONTRACT', message: 'Typed error' }),
@@ -194,8 +194,8 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
         code: 'TYPE_CONTRACT',
         details: undefined,
         fields: undefined,
-        message: 'Typed error'
-      }
+        message: 'Typed error',
+      },
     );
   });
 
@@ -216,7 +216,7 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
     const result: Record<string, unknown> = util.extractObjectWithProperties(source, [
       'a',
       'c',
-      'nonexistent'
+      'nonexistent',
     ]);
     assert.deepStrictEqual(result, { a: 1, c: 3 });
 
@@ -246,7 +246,7 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
         ['throwBadInputError', error.throwBadInputError],
         ['throwInputNotUuidError', error.throwInputNotUuidError],
         ['throwFileTooLargeError', error.throwFileTooLargeError],
-        ['throwInvalidTimeValueError', error.throwInvalidTimeValueError]
+        ['throwInvalidTimeValueError', error.throwInvalidTimeValueError],
       ];
 
       throwers.forEach(([name, fn]) => {
@@ -260,7 +260,7 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
               err.details.foo === 'bar'
             );
           },
-          `Failed to verify ${String(name)}`
+          `Failed to verify ${String(name)}`,
         );
 
         // Test without params to cover default values and branches
@@ -269,7 +269,7 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
           (err: unknown) => {
             return isContextualError(err) && err.userMessage === null && err.details === null;
           },
-          `Failed to verify ${String(name)} without params`
+          `Failed to verify ${String(name)} without params`,
         );
       });
     });
@@ -289,7 +289,7 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
         message: 'Account_Suspended',
         code: 'ACCOUNT_SUSPENDED',
         userMessage: 'suspended',
-        details: { id: 1 }
+        details: { id: 1 },
       };
       error.appErrorHandler(err, {}, res, () => {});
       assert.strictEqual(res.statusCode, 403);
@@ -341,7 +341,7 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
         { message: 'Bad_Input', expectedStatus: 400 },
         { message: 'Input_Not_Uuid', expectedStatus: 400 },
         { message: 'File too large', expectedStatus: 413 },
-        { message: 'Invalid time value', expectedStatus: 403 }
+        { message: 'Invalid time value', expectedStatus: 403 },
       ];
 
       cases.forEach(({ message, expectedStatus }) => {
@@ -364,7 +364,7 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
         return this;
       },
       headers: {} as Record<string, string>,
-      statusCode: 0
+      statusCode: 0,
     };
 
     it('should verify setOk200', () => {
@@ -394,7 +394,7 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
     it('should verify requestContext middleware', (done: Mocha.Done) => {
       const req: RequestContextFixture = {
         headers: {},
-        socket: { remoteAddress: '127.0.0.1' }
+        socket: { remoteAddress: '127.0.0.1' },
       };
       const responseHeaders: Record<string, string> = {};
       requestContext(
@@ -402,7 +402,7 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
         {
           setHeader(name: string, value: string) {
             responseHeaders[name] = value;
-          }
+          },
         },
         () => {
           assert.ok(req.requestId);
@@ -410,10 +410,10 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
           assert.strictEqual(getActiveTraceMetadata().traceId, req.traceId);
           assert.strictEqual(
             createTracePropagationHeaders().traceparent,
-            responseHeaders.traceparent
+            responseHeaders.traceparent,
           );
           done();
-        }
+        },
       );
     });
 
@@ -426,8 +426,8 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
         res,
         message: 'Test',
         meta: {
-          pagination: { page: 1, pageSize: 10, total: 100, totalPages: 10 }
-        }
+          pagination: { page: 1, pageSize: 10, total: 100, totalPages: 10 },
+        },
       };
 
       sendResponse(params);
@@ -441,7 +441,7 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
         page: 1,
         pageSize: 10,
         total: 100,
-        totalPages: 10
+        totalPages: 10,
       });
       done();
     });
@@ -469,9 +469,15 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
       assert.deepStrictEqual(res.body.meta?.client, {});
 
       // Restore env
-      if (oldApiVersion) process.env.API_VERSION = oldApiVersion;
-      if (oldServiceName) process.env.SERVICE_NAME = oldServiceName;
-      if (oldNodeEnv) process.env.NODE_ENV = oldNodeEnv;
+      if (oldApiVersion) {
+        process.env.API_VERSION = oldApiVersion;
+      }
+      if (oldServiceName) {
+        process.env.SERVICE_NAME = oldServiceName;
+      }
+      if (oldNodeEnv) {
+        process.env.NODE_ENV = oldNodeEnv;
+      }
       done();
     });
 
@@ -479,7 +485,7 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
       const params: CreateErrorParams = {
         code: 'TEST_ERR',
         details: 'test',
-        fields: { field1: 'invalid' }
+        fields: { field1: 'invalid' },
       };
       const err: ApiError = createError(params);
       assert.strictEqual(err.code, 'TEST_ERR');
@@ -497,15 +503,15 @@ describe('pkg-common-util TypeScript Type Definitions', () => {
         traceId: 'tid',
         client: {
           appId: 'aid',
-          ip: '1.2.3.4'
+          ip: '1.2.3.4',
         },
         pagination: {
           page: 1,
           pageSize: 10,
           total: 100,
-          totalPages: 10
+          totalPages: 10,
         },
-        customField: 'customValue'
+        customField: 'customValue',
       };
       assert.strictEqual(meta.customField, 'customValue');
     });

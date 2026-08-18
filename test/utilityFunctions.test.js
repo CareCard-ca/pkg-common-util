@@ -42,7 +42,7 @@ describe('UtilityFunctions', function () {
         'zero',
         'emptyStr',
         'isFalse',
-        'isNull'
+        'isNull',
       ]);
 
       assert.deepStrictEqual(output, expectedOutput);

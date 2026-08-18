@@ -8,12 +8,15 @@ const { requestTestApplication } = require('./setup/requestTestApplication');
 const originalEnvironment = {
   API_VERSION: process.env.API_VERSION,
   NODE_ENV: process.env.NODE_ENV,
-  SERVICE_NAME: process.env.SERVICE_NAME
+  SERVICE_NAME: process.env.SERVICE_NAME,
 };
 
 function restoreEnvironmentVariable(name, value) {
-  if (value === undefined) delete process.env[name];
-  else process.env[name] = value;
+  if (value === undefined) {
+    delete process.env[name];
+  } else {
+    process.env[name] = value;
+  }
 }
 
 function createPublicApplication(handler) {
@@ -37,18 +40,18 @@ describe('Standard response system', function () {
         res.json({
           client: req.client,
           requestId: req.requestId,
-          traceMetadata: getActiveTraceMetadata()
+          traceMetadata: getActiveTraceMetadata(),
         });
       });
 
-      const response = await requestTestApplication(application, (client) =>
+      const response = await requestTestApplication(application, client =>
         client
           .get('/')
           .set('traceparent', '00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01')
           .set('x-request-id', 'caller-owned-request-id')
           .set('x-trace-id', 'obsolete-trace-id')
           .set('x-app-id', 'test-app-id')
-          .set('x-forwarded-for', '192.168.1.1')
+          .set('x-forwarded-for', '192.168.1.1'),
       );
 
       assert.equal(response.status, 200);
@@ -56,7 +59,7 @@ describe('Standard response system', function () {
       assert.notEqual(response.body.requestId, 'caller-owned-request-id');
       assert.deepEqual(response.body.client, {
         appId: 'test-app-id',
-        ip: '192.168.1.1'
+        ip: '192.168.1.1',
       });
       assert.equal(response.body.traceMetadata.traceId, '4bf92f3577b34da6a3ce929d0e0e4736');
       assert.equal(response.body.traceMetadata.parentSpanId, '00f067aa0ba902b7');
@@ -64,7 +67,7 @@ describe('Standard response system', function () {
       assert.match(response.body.traceMetadata.spanId, /^[0-9a-f]{16}$/u);
       assert.equal(
         response.headers.traceparent,
-        `00-${response.body.traceMetadata.traceId}-${response.body.traceMetadata.spanId}-01`
+        `00-${response.body.traceMetadata.traceId}-${response.body.traceMetadata.spanId}-01`,
       );
     });
 
@@ -73,7 +76,7 @@ describe('Standard response system', function () {
         res.json({ requestId: req.requestId, traceMetadata: getActiveTraceMetadata() });
       });
 
-      const response = await requestTestApplication(application, (client) => client.get('/'));
+      const response = await requestTestApplication(application, client => client.get('/'));
 
       assert.equal(response.status, 200);
       assert.match(response.body.requestId, /^[0-9a-f-]{36}$/u);
@@ -82,14 +85,14 @@ describe('Standard response system', function () {
       assert.equal(response.body.traceMetadata.parentSpanId, undefined);
       assert.equal(
         response.headers.traceparent,
-        `00-${response.body.traceMetadata.traceId}-${response.body.traceMetadata.spanId}-01`
+        `00-${response.body.traceMetadata.traceId}-${response.body.traceMetadata.spanId}-01`,
       );
     });
 
     it('uses the socket address when no framework or forwarded client address exists', function (done) {
       const req = {
         headers: {},
-        socket: { remoteAddress: '10.0.0.1' }
+        socket: { remoteAddress: '10.0.0.1' },
       };
 
       requestContext(req, {}, () => {
@@ -104,14 +107,14 @@ describe('Standard response system', function () {
       const error = createError({
         code: 'VALIDATION_ERROR',
         details: 'Invalid input',
-        fields: { email: 'Invalid format' }
+        fields: { email: 'Invalid format' },
       });
 
       assert.deepEqual(error, {
         code: 'VALIDATION_ERROR',
         details: 'Invalid input',
         message: undefined,
-        fields: { email: 'Invalid format' }
+        fields: { email: 'Invalid format' },
       });
     });
   });
@@ -127,15 +130,15 @@ describe('Standard response system', function () {
           res,
           statusCode: 201,
           message: 'Resource created',
-          data: { id: 1 }
+          data: { id: 1 },
         });
       });
 
-      const response = await requestTestApplication(application, (client) =>
+      const response = await requestTestApplication(application, client =>
         client
           .get('/')
           .set('traceparent', '00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01')
-          .set('x-app-id', 'app-789')
+          .set('x-app-id', 'app-789'),
       );
 
       assert.equal(response.status, 201);
@@ -159,12 +162,12 @@ describe('Standard response system', function () {
           res,
           meta: {
             requestId: 'overridden-id',
-            pagination: { page: 1, pageSize: 10, total: 100, totalPages: 10 }
-          }
+            pagination: { page: 1, pageSize: 10, total: 100, totalPages: 10 },
+          },
         });
       });
 
-      const response = await requestTestApplication(application, (client) => client.get('/'));
+      const response = await requestTestApplication(application, client => client.get('/'));
 
       assert.equal(response.status, 200);
       assert.equal(response.body.meta.requestId, 'overridden-id');
@@ -172,7 +175,7 @@ describe('Standard response system', function () {
         page: 1,
         pageSize: 10,
         total: 100,
-        totalPages: 10
+        totalPages: 10,
       });
     });
 
@@ -186,12 +189,12 @@ describe('Standard response system', function () {
           message: 'An error occurred',
           error: createError({
             code: 'INTERNAL_ERROR',
-            details: 'Database connection failed'
-          })
+            details: 'Database connection failed',
+          }),
         });
       });
 
-      const response = await requestTestApplication(application, (client) => client.get('/'));
+      const response = await requestTestApplication(application, client => client.get('/'));
 
       assert.equal(response.status, 500);
       assert.equal(response.body.success, false);
@@ -200,7 +203,7 @@ describe('Standard response system', function () {
         code: 'INTERNAL_ERROR',
         details: 'Database connection failed',
         message: 'An error occurred',
-        fields: null
+        fields: null,
       });
       assert.equal(response.body.data, null);
     });
@@ -211,7 +214,7 @@ describe('Standard response system', function () {
       delete process.env.NODE_ENV;
       const application = createPublicApplication((req, res) => sendResponse({ req, res }));
 
-      const response = await requestTestApplication(application, (client) => client.get('/'));
+      const response = await requestTestApplication(application, client => client.get('/'));
 
       assert.equal(response.status, 200);
       assert.equal(response.body.meta.version, '1.0.0');
@@ -226,7 +229,7 @@ describe('Standard response system', function () {
         sendResponse({ req, res, statusCode: 204, data: { ignored: true } });
       });
 
-      const response = await requestTestApplication(application, (client) => client.get('/'));
+      const response = await requestTestApplication(application, client => client.get('/'));
 
       assert.equal(response.status, 204);
       assert.equal(response.text, '');
