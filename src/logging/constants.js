@@ -4,7 +4,7 @@ const LOG_LEVEL_PRIORITIES = Object.freeze({
   debug: 10,
   info: 20,
   warn: 30,
-  error: 40
+  error: 40,
 });
 
 module.exports = {
@@ -16,5 +16,5 @@ module.exports = {
   MAX_OBJECT_ENTRIES: 100,
   MAX_SANITIZE_DEPTH: 6,
   MAX_STRING_LENGTH: 16 * 1024,
-  SCHEMA_VERSION: 1
+  SCHEMA_VERSION: 1,
 };

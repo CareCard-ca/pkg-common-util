@@ -14,15 +14,15 @@ const parallelTestFiles = [
   'test/traceEsmExports.test.mjs',
   'test/loggingEsmExports.test.mjs',
   'test/openTelemetryBridge.test.js',
-  'test/utilityFunctions.test.js'
+  'test/utilityFunctions.test.js',
 ];
 
 if (require.main === module) {
   runIndexedMochaTests(parallelTestFiles)
-    .then((exitCode) => {
+    .then(exitCode => {
       process.exitCode = exitCode;
     })
-    .catch((error) => {
+    .catch(error => {
       console.error(error);
       process.exitCode = 1;
     });

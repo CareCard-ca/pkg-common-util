@@ -12,14 +12,14 @@ async function loadPackageTaskRunner() {
 
 test('delegates composed package tasks to the repository runner', async () => {
   const runnerCommands = Object.entries(packageJson.scripts ?? {}).filter(([, command]) =>
-    runnerCommandPattern.test(command)
+    runnerCommandPattern.test(command),
   );
 
   for (const [scriptName, command] of Object.entries(packageJson.scripts ?? {})) {
     assert.doesNotMatch(
       command,
       composedCommandPattern,
-      `${scriptName} must delegate composition to runPackageTask.mjs`
+      `${scriptName} must delegate composition to runPackageTask.mjs`,
     );
   }
 

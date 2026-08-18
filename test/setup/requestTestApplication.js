@@ -16,5 +16,5 @@ async function requestTestApplication(application, configureRequest) {
 }
 
 module.exports = {
-  requestTestApplication
+  requestTestApplication,
 };

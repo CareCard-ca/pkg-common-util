@@ -39,7 +39,7 @@ export interface ApplicationLogRecord {
 export type ApplicationLogSink = (
   destination: LogDestination,
   line: string,
-  record: ApplicationLogRecord
+  record: ApplicationLogRecord,
 ) => void;
 
 export interface TraceMetadataProviderResult {
@@ -94,7 +94,7 @@ export interface ApplicationLogger {
 export type HttpRequestLogger = (
   request: LogHttpRequest,
   response: LogHttpResponse,
-  next: () => void
+  next: () => void,
 ) => void;
 
 export interface CreateHttpRequestLoggerOptions {
@@ -115,11 +115,11 @@ export interface InstallFatalProcessLoggingOptions {
 export function createApplicationLogger(options: CreateApplicationLoggerOptions): ApplicationLogger;
 export function createHttpRequestLogger(
   logger: ApplicationLogger,
-  options?: CreateHttpRequestLoggerOptions
+  options?: CreateHttpRequestLoggerOptions,
 ): HttpRequestLogger;
 export function installFatalProcessLogging(
   logger: ApplicationLogger,
-  options?: InstallFatalProcessLoggingOptions
+  options?: InstallFatalProcessLoggingOptions,
 ): () => void;
 
 declare const logging: {

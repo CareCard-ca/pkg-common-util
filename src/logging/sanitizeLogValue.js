@@ -5,7 +5,7 @@ const {
   MAX_ARRAY_ITEMS,
   MAX_OBJECT_ENTRIES,
   MAX_SANITIZE_DEPTH,
-  MAX_STRING_LENGTH
+  MAX_STRING_LENGTH,
 } = require('./constants');
 
 const emailPattern = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi;
@@ -39,26 +39,41 @@ function getErrorDiagnosticEntries(error) {
     ['code', error.code],
     ['message', error.message],
     ['stack', error.stack],
-    ['cause', error.cause]
+    ['cause', error.cause],
   ];
 }
 
 // Pattern: Recursive Sanitizer - bounds and redacts untrusted log metadata.
 function sanitizeLogValue(value, options = {}, state = createSanitizeState()) {
-  if (state.depth > MAX_SANITIZE_DEPTH) return '[MAX_DEPTH]';
-  if (sensitiveKeyPattern.test(state.key)) return '[REDACTED]';
-  if (identityKeyPattern.test(state.key))
+  if (state.depth > MAX_SANITIZE_DEPTH) {
+    return '[MAX_DEPTH]';
+  }
+  if (sensitiveKeyPattern.test(state.key)) {
+    return '[REDACTED]';
+  }
+  if (identityKeyPattern.test(state.key)) {
     return hashLogIdentity(String(value), options.identityHmacKey);
-  if (typeof value === 'string') return sanitizeLogText(value);
-  if (value === null || typeof value !== 'object') return normalizePrimitive(value);
-  if (state.ancestors.has(value)) return '[CIRCULAR]';
+  }
+  if (typeof value === 'string') {
+    return sanitizeLogText(value);
+  }
+  if (value === null || typeof value !== 'object') {
+    return normalizePrimitive(value);
+  }
+  if (state.ancestors.has(value)) {
+    return '[CIRCULAR]';
+  }
   return sanitizeObjectValue(value, options, state);
 }
 
 // Pattern: Pure Function - converts unsupported JSON primitives to safe text.
 function normalizePrimitive(value) {
-  if (typeof value === 'bigint') return value.toString();
-  if (typeof value === 'symbol' || typeof value === 'function') return String(value);
+  if (typeof value === 'bigint') {
+    return value.toString();
+  }
+  if (typeof value === 'symbol' || typeof value === 'function') {
+    return String(value);
+  }
   return value;
 }
 
@@ -66,10 +81,13 @@ function normalizePrimitive(value) {
 function sanitizeObjectValue(value, options, state) {
   state.ancestors.add(value);
   let result;
-  if (value instanceof Error)
+  if (value instanceof Error) {
     result = sanitizeEntries(getErrorDiagnosticEntries(value), options, state);
-  else if (Array.isArray(value)) result = sanitizeArray(value, options, state);
-  else result = sanitizeEntries(Object.entries(value), options, state);
+  } else if (Array.isArray(value)) {
+    result = sanitizeArray(value, options, state);
+  } else {
+    result = sanitizeEntries(Object.entries(value), options, state);
+  }
   state.ancestors.delete(value);
   return result;
 }
@@ -79,7 +97,7 @@ function sanitizeArray(values, options, state) {
   return values
     .slice(0, MAX_ARRAY_ITEMS)
     .map((value, index) =>
-      sanitizeLogValue(value, options, createChildState(state, String(index)))
+      sanitizeLogValue(value, options, createChildState(state, String(index))),
     );
 }
 
@@ -89,7 +107,7 @@ function sanitizeEntries(entries, options, state) {
     entries
       .slice(0, MAX_OBJECT_ENTRIES)
       .map(([key, value]) => [key, sanitizeLogValue(value, options, createChildState(state, key))])
-      .filter(([, value]) => value !== undefined)
+      .filter(([, value]) => value !== undefined),
   );
 }
 
@@ -106,5 +124,5 @@ function createChildState(state, key) {
 module.exports = {
   hashLogIdentity,
   sanitizeLogText,
-  sanitizeLogValue
+  sanitizeLogValue,
 };

@@ -7,7 +7,7 @@ function installFatalProcessLogging(logger, options = {}) {
     logger.error('Fatal process error observed', {
       error,
       operation: 'process.fatal',
-      origin
+      origin,
     });
   };
   processTarget.on('uncaughtExceptionMonitor', monitorFatalError);

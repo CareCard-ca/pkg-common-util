@@ -31,5 +31,5 @@ module.exports = {
 
   // Error system
   ApiErrorType: errorConstants.ApiErrorType,
-  getApiErrorMessage: errorUtils.getApiErrorMessage
+  getApiErrorMessage: errorUtils.getApiErrorMessage,
 };

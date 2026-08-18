@@ -10,13 +10,13 @@ describe('keysCaseConverter', () => {
         first_name: 'John',
         last_name: 'Doe',
         'middle-name': 'Quincy',
-        Age: 30
+        Age: 30,
       };
       const expected = {
         firstName: 'John',
         lastName: 'Doe',
         middleName: 'Quincy',
-        age: 30
+        age: 30,
       };
       assert.deepStrictEqual(keysToCamelCase(input), expected);
     });
@@ -26,17 +26,17 @@ describe('keysCaseConverter', () => {
         user_info: {
           first_name: 'John',
           contact_details: {
-            phone_number: '1234567890'
-          }
-        }
+            phone_number: '1234567890',
+          },
+        },
       };
       const expected = {
         userInfo: {
           firstName: 'John',
           contactDetails: {
-            phoneNumber: '1234567890'
-          }
-        }
+            phoneNumber: '1234567890',
+          },
+        },
       };
       assert.deepStrictEqual(keysToCamelCase(input), expected);
     });
@@ -54,10 +54,10 @@ describe('keysCaseConverter', () => {
             first_name: 'John',
             tags: ['tag_1', 'tag_2'],
             meta_data: {
-              last_login: '2023-01-01'
-            }
-          }
-        ]
+              last_login: '2023-01-01',
+            },
+          },
+        ],
       };
       const expected = {
         userList: [
@@ -65,10 +65,10 @@ describe('keysCaseConverter', () => {
             firstName: 'John',
             tags: ['tag_1', 'tag_2'],
             metaData: {
-              lastLogin: '2023-01-01'
-            }
-          }
-        ]
+              lastLogin: '2023-01-01',
+            },
+          },
+        ],
       };
       assert.deepStrictEqual(keysToCamelCase(input), expected);
     });
@@ -100,13 +100,13 @@ describe('keysCaseConverter', () => {
         firstName: 'John',
         lastName: 'Doe',
         'middle-name': 'Quincy',
-        Age: 30
+        Age: 30,
       };
       const expected = {
         first_name: 'John',
         last_name: 'Doe',
         middle_name: 'Quincy',
-        age: 30
+        age: 30,
       };
       assert.deepStrictEqual(keysToSnakeCase(input), expected);
     });
@@ -116,17 +116,17 @@ describe('keysCaseConverter', () => {
         userInfo: {
           firstName: 'John',
           contactDetails: {
-            phoneNumber: '1234567890'
-          }
-        }
+            phoneNumber: '1234567890',
+          },
+        },
       };
       const expected = {
         user_info: {
           first_name: 'John',
           contact_details: {
-            phone_number: '1234567890'
-          }
-        }
+            phone_number: '1234567890',
+          },
+        },
       };
       assert.deepStrictEqual(keysToSnakeCase(input), expected);
     });
@@ -135,7 +135,7 @@ describe('keysCaseConverter', () => {
       const input = {
         XMLHttpRequest: 'test',
         ABCKey: 'val',
-        'Some-Other_Key': 'foo'
+        'Some-Other_Key': 'foo',
       };
       const result = keysToSnakeCase(input);
       // Based on implementation:

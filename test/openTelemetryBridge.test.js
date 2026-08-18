@@ -8,14 +8,14 @@ const { after, before, describe, it } = require('mocha');
 const {
   createTracePropagationHeaders,
   getActiveTraceMetadata,
-  requestContext
+  requestContext,
 } = require('../index');
 
 const activeSpanContext = {
   isRemote: false,
   spanId: '00f067aa0ba902b7',
   traceFlags: TraceFlags.SAMPLED,
-  traceId: '4bf92f3577b34da6a3ce929d0e0e4736'
+  traceId: '4bf92f3577b34da6a3ce929d0e0e4736',
 };
 
 describe('OpenTelemetry trace context bridge', function () {
@@ -43,10 +43,10 @@ describe('OpenTelemetry trace context bridge', function () {
         assert.deepEqual(getActiveTraceMetadata(), {
           spanId: activeSpanContext.spanId,
           traceFlags: '01',
-          traceId: activeSpanContext.traceId
+          traceId: activeSpanContext.traceId,
         });
         assert.deepEqual(createTracePropagationHeaders(), {
-          traceparent: '00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01'
+          traceparent: '00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01',
         });
         assert.equal(request.traceId, activeSpanContext.traceId);
         assert.equal(request.spanId, activeSpanContext.spanId);
@@ -61,10 +61,10 @@ describe('OpenTelemetry trace context bridge', function () {
 function createRequest() {
   return {
     headers: {
-      traceparent: '00-7bf92f3577b34da6a3ce929d0e0e4739-10f067aa0ba902b8-00'
+      traceparent: '00-7bf92f3577b34da6a3ce929d0e0e4739-10f067aa0ba902b8-00',
     },
     ip: '127.0.0.1',
-    socket: {}
+    socket: {},
   };
 }
 
@@ -73,6 +73,6 @@ function createResponse(responseHeaders) {
   return {
     setHeader(name, value) {
       responseHeaders[name] = value;
-    }
+    },
   };
 }

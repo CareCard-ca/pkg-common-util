@@ -7,10 +7,10 @@
  */
 function toCamelCase(str) {
   return str
-    .replace(/([-_][a-z0-9])/gi, ($1) => {
+    .replace(/([-_][a-z0-9])/gi, $1 => {
       return $1.toUpperCase().replace('-', '').replace('_', '');
     })
-    .replace(/^[A-Z]/, (char) => char.toLowerCase());
+    .replace(/^[A-Z]/, char => char.toLowerCase());
 }
 
 /**
@@ -76,5 +76,5 @@ function keysToSnakeCase(input) {
 
 module.exports = {
   keysToCamelCase,
-  keysToSnakeCase
+  keysToSnakeCase,
 };
