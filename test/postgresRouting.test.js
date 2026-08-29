@@ -38,6 +38,30 @@ describe('PostgreSQL read/write routing', function () {
     });
   });
 
+  it('never invokes recovery-only PostgreSQL functions while validating a primary', async function () {
+    const runtime = createRoutingRuntime({
+      behaviors: { 'primary-write': { rejectRecoveryOnlyFunctions: true } },
+    });
+
+    assert.equal(await querySelectedRole(runtime), 'primary-write');
+  });
+
+  it('falls back when a replica is promoted between its recovery and replay probes', async function () {
+    const runtime = createRoutingRuntime({
+      behaviors: { 'replica-read': { rejectRecoveryOnlyFunctions: true } },
+    });
+
+    const selectedRole = await runtime.executionContext.runReplicaRead(() =>
+      querySelectedRole(runtime),
+    );
+
+    assert.equal(selectedRole, 'primary-read-fallback');
+    assert.match(
+      runtime.router.getPoolMetrics(),
+      /carecard_postgres_read_fallback_total\{service="ms-example",reason="role"\} 1/u,
+    );
+  });
+
   it('falls back before dispatch when replica acquisition fails and emits bounded telemetry', async function () {
     const events = [];
     const runtime = createRoutingRuntime({
@@ -255,6 +279,7 @@ class FakePool extends EventEmitter {
       inRecovery: role === 'replica-read',
       lagBytes: 0,
       replayPaused: false,
+      rejectRecoveryOnlyFunctions: false,
       reuseClient: false,
       userQueryErrors: [],
       ...behavior,
@@ -298,6 +323,15 @@ class FakeClient extends EventEmitter {
   // Pattern: Protocol Fake - exposes role, WAL, and user-query outcomes.
   async query(query) {
     const text = typeof query === 'string' ? query : query.text;
+    if (
+      this.pool.behavior.rejectRecoveryOnlyFunctions &&
+      /pg_(?:is_wal_replay_paused|last_wal_replay_lsn)/u.test(text)
+    ) {
+      throw createError('55000');
+    }
+    if (/pg_(?:is_wal_replay_paused|last_wal_replay_lsn)/u.test(text)) {
+      return this.createReplayResult();
+    }
     if (/pg_is_in_recovery/u.test(text)) {
       return this.createRoleResult();
     }
@@ -315,10 +349,14 @@ class FakeClient extends EventEmitter {
 
   // Pattern: Test Projection - returns the observable PostgreSQL recovery state.
   createRoleResult() {
+    return { rows: [{ in_recovery: this.pool.behavior.inRecovery }] };
+  }
+
+  // Pattern: Test Projection - returns recovery-only replay state for a verified replica.
+  createReplayResult() {
     return {
       rows: [
         {
-          in_recovery: this.pool.behavior.inRecovery,
           replay_lsn: this.pool.behavior.inRecovery ? '0/1000000' : null,
           replay_paused: this.pool.behavior.replayPaused,
         },

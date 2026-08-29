@@ -161,17 +161,33 @@ async function initializeSessionSettings(client, definition, searchPath) {
 
 // Pattern: Fail-Closed Validation - rejects an endpoint serving the wrong PostgreSQL role.
 async function validateEndpointRole(client, endpoint) {
-  const result = await client.query(
-    'SELECT pg_is_in_recovery() AS in_recovery, ' +
-      'pg_is_wal_replay_paused() AS replay_paused, ' +
-      'pg_last_wal_replay_lsn()::text AS replay_lsn',
-  );
+  const result = await client.query('SELECT pg_is_in_recovery() AS in_recovery');
   const roleState = result?.rows?.[0];
-  if (roleState?.in_recovery === endpoint.definition.expectedInRecovery) {
+  if (roleState?.in_recovery !== endpoint.definition.expectedInRecovery) {
+    endpoint.roleValidationFailures += 1;
+    throw createRoutingError('DATABASE_ROLE_MISMATCH', 'PostgreSQL endpoint role mismatch');
+  }
+  if (!roleState.in_recovery) {
     return roleState;
   }
-  endpoint.roleValidationFailures += 1;
-  throw createRoutingError('DATABASE_ROLE_MISMATCH', 'PostgreSQL endpoint role mismatch');
+  return loadReplicaReplayState(client, endpoint, roleState);
+}
+
+// Pattern: Recovery-Safe Probe - invokes replay-only functions only after recovery is confirmed.
+async function loadReplicaReplayState(client, endpoint, roleState) {
+  try {
+    const result = await client.query(
+      'SELECT pg_is_wal_replay_paused() AS replay_paused, ' +
+        'pg_last_wal_replay_lsn()::text AS replay_lsn',
+    );
+    return { ...roleState, ...result?.rows?.[0] };
+  } catch (error) {
+    if (error?.code !== '55000') {
+      throw error;
+    }
+    endpoint.roleValidationFailures += 1;
+    throw createRoutingError('DATABASE_ROLE_MISMATCH', 'PostgreSQL endpoint role mismatch');
+  }
 }
 
 // Pattern: Replica Safety Gate - rejects paused, uninitialized, or excessively lagging replay.
