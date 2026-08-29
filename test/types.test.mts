@@ -20,6 +20,11 @@ import {
   type ApplicationLogRecord,
   type ApplicationLogger,
 } from '../logging.js';
+import {
+  createDatabaseExecutionContext,
+  createPostgresRoutingConfig,
+  type PostgresRoutingConfig,
+} from '../postgres-routing.js';
 
 /**
  * Pagination information
@@ -162,6 +167,26 @@ function createMockResponse() {
 }
 
 describe('pkg-common-util TypeScript Type Definitions', () => {
+  it('should verify PostgreSQL routing type definitions', async () => {
+    const routingConfig: PostgresRoutingConfig = createPostgresRoutingConfig({
+      mode: 'replica-preferred',
+      poolMaximum: 20,
+      primaryConnectionConfig: {
+        application_name: 'ms-example:server',
+        host: 'ms-example-db-rw',
+        max: 20,
+      },
+      readHost: 'ms-example-db-ro',
+      searchPath: ['example', 'public'],
+      serviceName: 'ms-example',
+    });
+    const executionContext = createDatabaseExecutionContext();
+    const selectedRole = await executionContext.runReplicaRead(() => executionContext.getRole());
+
+    assert.strictEqual(routingConfig.replicaRead?.connectionConfig.max, 8);
+    assert.strictEqual(selectedRole, 'replica-read');
+  });
+
   it('should verify application logging type definitions', () => {
     const records: ApplicationLogRecord[] = [];
     const logger: ApplicationLogger = createApplicationLogger({
