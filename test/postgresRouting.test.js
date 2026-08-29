@@ -98,13 +98,15 @@ describe('PostgreSQL read/write routing', function () {
     assert.equal(runtime.pools.get('replica-read').userQueries, 1);
   });
 
-  it('rejects unsafe application budgets and replica lag thresholds at startup', function () {
+  it('rejects unsafe replica budgets while preserving bounded primary-only rollout settings', function () {
     assert.throws(
       () => createRoutingConfig({ maxReplicaLagBytes: -1 }),
       error => error.code === 'Configuration_Error',
     );
+    const primaryOnlyConfig = createRoutingConfig({ mode: 'primary-only', poolMaximum: 19 });
+    assert.equal(primaryOnlyConfig.primaryWrite.connectionConfig.max, 19);
     assert.throws(
-      () => createRoutingConfig({ mode: 'primary-only', poolMaximum: 19 }),
+      () => createRoutingConfig({ mode: 'replica-preferred', poolMaximum: 19 }),
       error => error.code === 'Configuration_Error',
     );
     assert.doesNotThrow(() =>
