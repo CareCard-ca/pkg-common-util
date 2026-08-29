@@ -1,6 +1,6 @@
 {
   "name": "@carecard/common-util",
-  "version": "3.20.0",
+  "version": "3.21.0",
   "description": "Standardized API response and utility functions for Express.js and Next.js microservices",
   "main": "index.js",
   "module": "index.mjs",
@@ -15,6 +15,11 @@
       "import": "./logging.mjs",
       "require": "./logging.js",
       "types": "./logging.d.ts"
+    },
+    "./postgres-routing": {
+      "import": "./postgres-routing.mjs",
+      "require": "./postgres-routing.js",
+      "types": "./postgres-routing.d.ts"
     }
   },
   "files": [
@@ -24,6 +29,9 @@
     "logging.js",
     "logging.mjs",
     "logging.d.ts",
+    "postgres-routing.js",
+    "postgres-routing.mjs",
+    "postgres-routing.d.ts",
     "src"
   ],
   "engines": {

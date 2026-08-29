@@ -61,8 +61,8 @@ const response = await fetch('http://ms-auth/api/v1/app-auth/server-auth/jwt/int
   method: 'POST',
   headers: {
     ...createTracePropagationHeaders(),
-    authorization: serviceAuthorization
-  }
+    authorization: serviceAuthorization,
+  },
 });
 ```
 
@@ -84,8 +84,8 @@ app.get('/api/users', (req, res) => {
     message: 'Users fetched successfully',
     data: users,
     meta: {
-      pagination: { page: 1, limit: 10, total: 1 }
-    }
+      pagination: { page: 1, limit: 10, total: 1 },
+    },
   });
 });
 ```
@@ -126,7 +126,7 @@ export default function handler(req, res) {
     req,
     res,
     message: 'Hello from Next.js!',
-    data: { greeting: 'Welcome' }
+    data: { greeting: 'Welcome' },
   });
 }
 ```
@@ -143,7 +143,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     req,
     res,
     message: 'Typed response',
-    data: { status: 'ok' }
+    data: { status: 'ok' },
   });
 }
 ```
@@ -159,12 +159,12 @@ bundles never include Node.js filesystem or crypto modules:
 const {
   createApplicationLogger,
   createHttpRequestLogger,
-  installFatalProcessLogging
+  installFatalProcessLogging,
 } = require('@carecard/common-util/logging');
 
 const logger = createApplicationLogger({
   service: 'ms-example',
-  serviceVersion: process.env.MS_VERSION
+  serviceVersion: process.env.MS_VERSION,
 });
 
 app.use(createHttpRequestLogger(logger));
@@ -188,6 +188,35 @@ authorized operator can correlate an actor without recovering the source ID.
 `installFatalProcessLogging` uses Node.js `uncaughtExceptionMonitor`; it observes
 fatal errors without installing an exception handler or changing the process
 crash contract.
+
+### PostgreSQL read/write routing
+
+Import the server-only routing contract from
+`@carecard/common-util/postgres-routing`. It owns three independently bounded
+pools for an application process: 11 primary-write connections, 8
+replica-read connections, and 1 read-only primary-fallback connection. The
+aggregate ceiling is exactly 20. Primary-only database jobs use one explicitly
+smaller pool and never construct a replica pool.
+
+Callers declare replica-tolerant work with `runReplicaRead`; missing intent,
+writes, migrations, locks, and consistency-sensitive reads remain primary by
+default. `runPrimaryWrite` makes a nested execution context primary-sticky, so
+later work cannot return to a replica. A transaction must acquire one client
+after selecting its context and retain that client until commit or rollback.
+
+Replica sessions are initialized read-only and checked for recovery role,
+paused replay, and byte lag before each lease. A verified pre-dispatch
+availability or lag failure may acquire the one-connection read-only primary
+fallback pool. Authentication, authorization, configuration, and dispatched
+query failures fail closed and are never replayed. A 30-second physical
+connection lifetime lets Kubernetes distribute new sessions across all healthy
+endpoints behind a read Service.
+
+The router exposes Prometheus text for connection counts by pool role, query
+routing, replica acquisition failures, primary fallbacks, role mismatches,
+circuit state, observer failures, and domain-reported stale reads. Supply
+structured logging observers for session and fallback events; never attach SQL,
+credentials, hostnames, or personal data to those events.
 
 ### `sendResponse({ req, res, statusCode, success, code, message, data, error, details, pagination, meta })`
 

@@ -14,6 +14,8 @@ const parallelTestFiles = [
   'test/traceEsmExports.test.mjs',
   'test/loggingEsmExports.test.mjs',
   'test/openTelemetryBridge.test.js',
+  'test/postgresRouting.test.js',
+  'test/postgresRoutingEsmExports.test.mjs',
   'test/utilityFunctions.test.js',
 ];
 
