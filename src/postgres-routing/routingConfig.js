@@ -33,6 +33,10 @@ function validateBaseOptions(options) {
 
 // Pattern: Guard Clause - enforces the reviewed twenty-connection application budget.
 function validateReplicaPreferredOptions(options) {
+  const maximum = options.poolMaximum ?? options.primaryConnectionConfig.max;
+  if (maximum !== APPLICATION_POOL_MAXIMUM) {
+    throw configurationError('poolMaximum');
+  }
   validateDatabaseHost(options.readHost);
 }
 
@@ -51,13 +55,10 @@ function createPrimaryOnlyConfig(options) {
   };
 }
 
-// Pattern: Capacity Guard - enforces one application budget while permitting smaller database jobs.
+// Pattern: Capacity Guard - permits bounded primary-only pools during a coordinated rollout.
 function validatePoolMaximum(options) {
   const maximum = options.poolMaximum ?? options.primaryConnectionConfig.max;
   if (!Number.isInteger(maximum) || maximum < 1 || maximum > APPLICATION_POOL_MAXIMUM) {
-    throw configurationError('poolMaximum');
-  }
-  if (!options.databaseJob && maximum !== APPLICATION_POOL_MAXIMUM) {
     throw configurationError('poolMaximum');
   }
 }
