@@ -1,6 +1,6 @@
 {
   "name": "@carecard/common-util",
-  "version": "3.21.2",
+  "version": "3.22.0",
   "description": "Standardized API response and utility functions for Express.js and Next.js microservices",
   "main": "index.js",
   "module": "index.mjs",
