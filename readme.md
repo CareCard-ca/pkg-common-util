@@ -6,6 +6,11 @@ Non-negotiable root-cause solution rule: Always identify and solve the verified 
 
 Standardized API response system, request context middleware, and utility functions for Express.js and Next.js microservices.
 
+## Runtime requirement
+
+Use Node.js 24.20.0. The package accepts compatible Node.js releases from
+24.20.0 up to, but not including, Node.js 25.
+
 ## Development Rule
 
 Non-negotiable TDD rule: Always write the failing test first, run it to confirm it fails for the intended reason, then implement the code and rerun the test until it passes. Test Driven Development is required for all coding work and must not be skipped. For documentation- or skill-only edits, run the relevant focused non-test
