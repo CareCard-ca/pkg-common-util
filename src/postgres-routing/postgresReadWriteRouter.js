@@ -246,10 +246,10 @@ async function calculateReplicaLag(client, primaryLsn, replayLsn) {
     values: [primaryLsn, replayLsn],
   });
   const lagBytes = Number(result?.rows?.[0]?.lag_bytes);
-  if (!Number.isFinite(lagBytes) || lagBytes < 0) {
+  if (!Number.isFinite(lagBytes)) {
     throw createRoutingError('DATABASE_REPLICA_REPLAY_UNAVAILABLE', 'Replica lag unavailable');
   }
-  return lagBytes;
+  return Math.max(0, lagBytes);
 }
 
 // Pattern: Metadata Adapter - identifies the acquired endpoint without exposing connection details.
