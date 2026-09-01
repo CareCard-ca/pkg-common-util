@@ -104,6 +104,23 @@ describe('PostgreSQL read/write routing', function () {
     }
   });
 
+  it('keeps reads on a replica that advances beyond the earlier primary WAL sample', async function () {
+    const runtime = createRoutingRuntime({
+      behaviors: { 'replica-read': { lagBytes: -384 } },
+    });
+
+    const selectedRole = await runtime.executionContext.runReplicaRead(() =>
+      querySelectedRole(runtime),
+    );
+
+    assert.equal(selectedRole, 'replica-read');
+    assert.equal(runtime.pools.get('replica-read').userQueries, 1);
+    assert.doesNotMatch(
+      runtime.router.getPoolMetrics(),
+      /carecard_postgres_read_fallback_total\{service="ms-example",reason="replay"\} [1-9]/u,
+    );
+  });
+
   it('revalidates a reused replica before every user-query lease', async function () {
     const replicaBehavior = { lagBytes: 0, reuseClient: true };
     const runtime = createRoutingRuntime({
