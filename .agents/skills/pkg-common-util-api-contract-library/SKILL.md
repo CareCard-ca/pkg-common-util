@@ -106,6 +106,8 @@ migrated into these skills; do not depend on that folder being present.
 - `src/lib/keysCaseConverter.js` owns camelCase and snake_case conversion.
 - `index.js` is the CommonJS public export surface.
 - `index.mjs` is the ESM public export surface.
+- `case-converter.*` and `errors.*` are focused browser-safe entrypoints for
+  consumers that must not load server-only request context or trace storage.
 - `index.d.ts` and `src/types/response.types.ts` must stay aligned with runtime
   exports and response shapes.
 - Keep deprecated export objects available unless the user explicitly requests a
@@ -140,6 +142,8 @@ migrated into these skills; do not depend on that folder being present.
   documentation aligned. Functional tests must exercise its behavior through
   each supported package root; they must not assert export existence or inspect
   module source.
+- Keep focused browser-safe entrypoints free of Node-only tracing, logging,
+  filesystem, and request-context dependencies.
 - Preserve deprecated compatibility objects while adding or promoting direct
   exports.
 

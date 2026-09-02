@@ -25,6 +25,8 @@ import {
   createPostgresRoutingConfig,
   type PostgresRoutingConfig,
 } from '../postgres-routing.js';
+import { keysToSnakeCase as keysToSnakeCaseForValidation } from '../case-converter.js';
+import { throwBadInputError as throwValidationBadInputError } from '../errors.js';
 
 /**
  * Pagination information
@@ -167,6 +169,12 @@ function createMockResponse() {
 }
 
 describe('pkg-common-util TypeScript Type Definitions', () => {
+  it('should verify validation support entrypoint type definitions', () => {
+    const normalized = keysToSnakeCaseForValidation({ requestedByEmail: 'person@example.com' });
+    assert.deepStrictEqual(normalized, { requested_by_email: 'person@example.com' });
+    assert.throws(() => throwValidationBadInputError({ userMessage: 'Invalid email' }));
+  });
+
   it('should verify PostgreSQL routing type definitions', async () => {
     const routingConfig: PostgresRoutingConfig = createPostgresRoutingConfig({
       mode: 'replica-preferred',
