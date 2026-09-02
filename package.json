@@ -1,6 +1,6 @@
 {
   "name": "@carecard/common-util",
-  "version": "3.27.0",
+  "version": "3.28.0",
   "description": "Standardized API response and utility functions for Express.js and Next.js microservices",
   "main": "index.js",
   "module": "index.mjs",
@@ -20,6 +20,16 @@
       "import": "./postgres-routing.mjs",
       "require": "./postgres-routing.js",
       "types": "./postgres-routing.d.ts"
+    },
+    "./case-converter": {
+      "import": "./case-converter.mjs",
+      "require": "./case-converter.js",
+      "types": "./case-converter.d.ts"
+    },
+    "./errors": {
+      "import": "./errors.mjs",
+      "require": "./errors.js",
+      "types": "./errors.d.ts"
     }
   },
   "files": [
@@ -32,6 +42,12 @@
     "postgres-routing.js",
     "postgres-routing.mjs",
     "postgres-routing.d.ts",
+    "case-converter.js",
+    "case-converter.mjs",
+    "case-converter.d.ts",
+    "errors.js",
+    "errors.mjs",
+    "errors.d.ts",
     "src"
   ],
   "engines": {

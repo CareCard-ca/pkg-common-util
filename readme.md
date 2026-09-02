@@ -155,6 +155,18 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
 ## API Reference
 
+### Browser-safe validation support
+
+Browser code and shared validation packages must import case conversion and
+bad-input errors from their focused entrypoints. These entrypoints preserve the
+same public behavior without loading the root package's server-only request
+context and trace storage:
+
+```javascript
+const { keysToSnakeCase } = require('@carecard/common-util/case-converter');
+const { throwBadInputError } = require('@carecard/common-util/errors');
+```
+
 ### Centralized application logging
 
 Import the server-only logging contract from its dedicated subpath so browser
