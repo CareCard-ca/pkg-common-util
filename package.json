@@ -1,6 +1,6 @@
 {
   "name": "@carecard/common-util",
-  "version": "3.28.0",
+  "version": "3.29.0",
   "description": "Standardized API response and utility functions for Express.js and Next.js microservices",
   "main": "index.js",
   "module": "index.mjs",
@@ -125,6 +125,6 @@
     "diff": "8.0.4",
     "minimatch": "10.2.6",
     "serialize-javascript": "7.0.5",
-    "js-yaml": "4.3.1"
+    "js-yaml": "4.3.2"
   }
 }
