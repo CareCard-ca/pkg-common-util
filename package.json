@@ -1,6 +1,6 @@
 {
   "name": "@carecard/common-util",
-  "version": "3.32.0",
+  "version": "3.33.0",
   "description": "Standardized API response and utility functions for Express.js and Next.js microservices",
   "main": "index.js",
   "module": "index.mjs",
@@ -121,7 +121,7 @@
   },
   "overrides": {
     "body-parser": "2.3.0",
-    "brace-expansion": "5.0.9",
+    "brace-expansion": "5.0.12",
     "diff": "8.0.4",
     "minimatch": "10.2.6",
     "serialize-javascript": "7.0.5",
