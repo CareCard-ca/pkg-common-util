@@ -28,7 +28,7 @@ function createRuntimeState(options) {
 function registerPoolObservers(state) {
   state.pool.on('connect', client => handlePoolConnection(state, client));
   state.pool.on('error', error => handlePoolError(state, error));
-  state.pool.on('remove', () => handlePoolRemoval(state));
+  state.pool.on('remove', client => handlePoolRemoval(state, client));
 }
 
 // Pattern: Event Observer - records a new physical connection.
@@ -44,7 +44,8 @@ function handlePoolError(state, error) {
 }
 
 // Pattern: Event Observer - records a removed physical connection.
-function handlePoolRemoval(state) {
+function handlePoolRemoval(state, client) {
+  state.checkedOutClients.delete(client);
   state.connectionsRemoved += 1;
   notifyPoolObserver(state, state.onRemove);
 }
@@ -92,25 +93,23 @@ async function acquireClient(state, initializeClient) {
 
 // Pattern: Ownership Tracking - removes a client from shutdown ownership when it is released.
 function trackCheckedOutClient(state, client) {
-  const tracker = getClientReleaseTracker(client);
-  tracker.state = state;
+  const releaseClient = getClientReleaseBoundary(client);
+  client.release = destroy => {
+    const result = releaseClient(destroy);
+    state.checkedOutClients.delete(client);
+    return result;
+  };
+  CLIENT_RELEASE_TRACKERS.set(client, { release: client.release, releaseClient });
   state.checkedOutClients.add(client);
 }
 
-// Pattern: Idempotent Decorator - installs one release wrapper per physical pg client.
-function getClientReleaseTracker(client) {
-  let tracker = CLIENT_RELEASE_TRACKERS.get(client);
-  if (tracker) {
-    return tracker;
+// Pattern: Lease Boundary - honors pg's new release function on every checkout without stacking wrappers.
+function getClientReleaseBoundary(client) {
+  const tracker = CLIENT_RELEASE_TRACKERS.get(client);
+  if (client.release === tracker?.release) {
+    return tracker.releaseClient;
   }
-  tracker = { client, releaseClient: client.release.bind(client), state: undefined };
-  client.release = destroy => {
-    tracker.state?.checkedOutClients.delete(client);
-    tracker.state = undefined;
-    return tracker.releaseClient(destroy);
-  };
-  CLIENT_RELEASE_TRACKERS.set(client, tracker);
-  return tracker;
+  return client.release.bind(client);
 }
 
 // Pattern: Failure Cleanup - destroys a client whose acquisition or session setup failed.

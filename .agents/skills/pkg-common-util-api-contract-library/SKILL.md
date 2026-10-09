@@ -158,6 +158,12 @@ migrated into these skills; do not depend on that folder being present.
 
 ## Tests
 
+For PostgreSQL lifecycle changes, cover repeated physical-client reuse through
+the public routing entrypoint. Returned or destroyed leases must leave no
+forced-shutdown work; an old release must not remove ownership of an active
+lease. Assert callable results and connection usability rather than inspecting
+tracking sets or release wrappers.
+
 - Use Mocha for runtime behavior under `test`.
 - Compile realistic consumer code through the supported package root for externally visible type behavior.
 - Cover response creation, error helper behavior, app error middleware, request
