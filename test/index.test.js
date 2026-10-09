@@ -10,6 +10,7 @@ const parallelTestFiles = [
   'test/requestContext_fallback.test.js',
   'test/responseStatus.test.js',
   'test/standardResponse.test.js',
+  'test/trustedClientAddress.test.js',
   'test/traceContext.test.js',
   'test/traceEsmExports.test.mjs',
   'test/loggingEsmExports.test.mjs',
