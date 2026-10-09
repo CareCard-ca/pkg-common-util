@@ -243,6 +243,11 @@ query failures fail closed and are never replayed. A 30-second physical
 connection lifetime lets Kubernetes distribute new sessions across all healthy
 endpoints behind a read Service.
 
+Connection ownership follows each checkout's release boundary. Returning or
+destroying a reused connection removes it from shutdown ownership, and a closed
+connection is never retained for a later shutdown. Calling an already-used
+release leaves a newly checked-out lease intact and preserves pg's error.
+
 The router exposes Prometheus text for connection counts by pool role, query
 routing, replica acquisition failures, primary fallbacks, role mismatches,
 circuit state, observer failures, and domain-reported stale reads. Supply
