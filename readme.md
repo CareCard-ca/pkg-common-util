@@ -272,6 +272,12 @@ Middleware that attaches:
 Request IDs are never accepted as cross-service correlation identifiers. Use
 the W3C trace ID to correlate responses and centralized logs across services.
 
+With Express, client IP metadata follows the application's trusted-proxy
+resolution. Untrusted socket addresses cannot be replaced by forwarded headers
+through malformed IPv6 trust subnets. Keep the Express dependency tree on
+`proxy-addr` 2.0.8 or later; the HTTP regression also verifies correctly scoped
+trusted forwarding.
+
 ### `createError({ code, message, details, fields })`
 
 Helper to create a standardized error object for `sendResponse`.

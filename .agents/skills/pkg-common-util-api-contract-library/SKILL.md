@@ -103,6 +103,9 @@ migrated into these skills; do not depend on that folder being present.
   creation, throwing, not-found handling, and app error handling.
 - `src/middleware/requestContext.js` owns `requestId`, `traceId`, and client
   context propagation.
+  Preserve the public HTTP trusted-client-address regression when updating the
+  Express peer dependency tree, including malformed IPv6 trust subnets and
+  correctly scoped trusted forwarding.
 - `src/lib/keysCaseConverter.js` owns camelCase and snake_case conversion.
 - `index.js` is the CommonJS public export surface.
 - `index.mjs` is the ESM public export surface.
