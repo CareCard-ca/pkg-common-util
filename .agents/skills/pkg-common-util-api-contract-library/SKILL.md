@@ -157,6 +157,9 @@ migrated into these skills; do not depend on that folder being present.
 - Preserve request ID and trace propagation semantics.
 - Keep case conversion behavior predictable for nested objects, arrays, nulls,
   primitives, and already-converted keys.
+- Preserve every converted JSON key as an own data property. Reserved-looking
+  keys must stay inert and serializable rather than changing inheritance or
+  disappearing; exercise both root and browser-safe entrypoints.
 - Add focused tests before changing conversion edge cases.
 
 ## Tests

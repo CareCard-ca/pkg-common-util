@@ -7,6 +7,7 @@ const parallelTestFiles = [
   'test/applicationLogging.test.js',
   'test/errorUtils.test.js',
   'test/keysCaseConverter.test.js',
+  'test/keysCaseConverterSecurity.test.mjs',
   'test/requestContext_fallback.test.js',
   'test/responseStatus.test.js',
   'test/standardResponse.test.js',

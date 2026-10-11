@@ -181,6 +181,11 @@ const { keysToSnakeCase } = require('@carecard/common-util/case-converter');
 const { throwBadInputError } = require('@carecard/common-util/errors');
 ```
 
+Case conversion preserves nested JSON properties as enumerable own data
+properties. Reserved-looking keys such as `__proto__`, `constructor`, and
+`prototype` do not create inherited properties. Keep extensible metadata as
+data; never use its display values as authorization or executable input.
+
 ### Centralized application logging
 
 Import the server-only logging contract from its dedicated subpath so browser
