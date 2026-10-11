@@ -26,6 +26,15 @@ function toSnakeCase(str) {
     .toLowerCase();
 }
 
+function defineConvertedDataProperty(result, key, value) {
+  Object.defineProperty(result, key, {
+    value,
+    enumerable: true,
+    writable: true,
+    configurable: true,
+  });
+}
+
 /**
  * Converts all keys of an object or array of objects to camelCase.
  * Handles nested objects and arrays.
@@ -44,7 +53,7 @@ function keysToCamelCase(input) {
   const result = {};
 
   for (const [key, value] of Object.entries(input)) {
-    result[toCamelCase(key)] = keysToCamelCase(value);
+    defineConvertedDataProperty(result, toCamelCase(key), keysToCamelCase(value));
   }
 
   return result;
@@ -68,7 +77,7 @@ function keysToSnakeCase(input) {
   const result = {};
 
   for (const [key, value] of Object.entries(input)) {
-    result[toSnakeCase(key)] = keysToSnakeCase(value);
+    defineConvertedDataProperty(result, toSnakeCase(key), keysToSnakeCase(value));
   }
 
   return result;
