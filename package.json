@@ -1,6 +1,6 @@
 {
   "name": "@carecard/common-util",
-  "version": "3.40.0",
+  "version": "3.41.0",
   "description": "Standardized API response and utility functions for Express.js and Next.js microservices",
   "main": "index.js",
   "module": "index.mjs",
@@ -51,7 +51,7 @@
     "src"
   ],
   "engines": {
-    "node": ">=24.20.0 <25"
+    "node": ">=24.21.0 <25"
   },
   "sideEffects": false,
   "repository": {
@@ -89,22 +89,22 @@
   "author": "CareCard team",
   "license": "ISC",
   "devDependencies": {
-    "@eslint/js": "9.39.5",
+    "@eslint/js": "10.0.1",
     "@istanbuljs/nyc-config-typescript": "1.0.2",
     "@opentelemetry/api": "1.9.1",
-    "@opentelemetry/context-async-hooks": "2.11.0",
+    "@opentelemetry/context-async-hooks": "2.12.0",
     "@types/express": "5.0.6",
     "@types/mocha": "10.0.10",
-    "@types/node": "25.9.9",
-    "@typescript-eslint/parser": "8.71.0",
-    "eslint": "9.39.5",
-    "express": "5.2.1",
+    "@types/node": "24.19.2",
+    "@typescript-eslint/parser": "8.71.1",
+    "eslint": "10.12.0",
+    "express": "5.3.0",
     "globals": "17.13.0",
     "husky": "9.1.7",
     "lint-staged": "17.6.0",
-    "mocha": "11.8.0",
+    "mocha": "12.0.3",
     "nyc": "18.0.0",
-    "prettier": "3.9.9",
+    "prettier": "3.9.10",
     "source-map-support": "0.5.21",
     "supertest": "7.3.1",
     "ts-node": "10.9.2",
@@ -122,9 +122,9 @@
   "overrides": {
     "body-parser": "2.3.0",
     "brace-expansion": "5.0.12",
-    "diff": "8.0.4",
+    "diff": "9.0.0",
     "minimatch": "10.2.6",
     "serialize-javascript": "7.1.2",
-    "js-yaml": "4.3.2"
+    "js-yaml": "5.4.3"
   }
 }
