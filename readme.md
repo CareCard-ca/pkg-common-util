@@ -22,8 +22,8 @@ Standardized API response system, request context middleware, and utility functi
 
 ## Runtime requirement
 
-Use Node.js 24.20.0. The package accepts compatible Node.js releases from
-24.20.0 up to, but not including, Node.js 25.
+Use Node.js 24.21.0. The package accepts compatible Node.js releases from
+24.21.0 up to, but not including, Node.js 25.
 
 ## Development Rule
 
