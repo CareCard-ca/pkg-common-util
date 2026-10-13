@@ -322,20 +322,20 @@ Helper to create a standardized error object for `sendResponse`.
 
 ## Auth And RLS Error Boundaries
 
-Services should use shared response/error helpers without exposing auth-table
-or SQL internals. `ms-auth` now enforces its auth tables with forced RLS:
-normal users are self-row only, JWT `roles: ["ad"]` is the auth super-admin
-signal, and public auth flows use narrow system contexts. Error responses
-should report safe authentication or authorization failures without leaking RLS
-policy details, JWT payloads, or database context values.
+Response and error helpers expose a stable technical HTTP contract. Callers
+own authentication, authorization, database policies, and business error
+selection. The package never interprets custom token claims or role codes.
+Responses must not expose credentials, query text, or private caller context.
 PostgreSQL RLS failures with SQLSTATE `42501` are reported as
 `NOT_AUTHORIZED` with the user-facing message
 `Not permitted to perform the action` and no response details.
 
-Docs that mention `ms-auth` controller internals should use concise action
-names such as `loginUser`, `registerUser`, `getUserDetail`, and `renewJwt`.
-Access level is conveyed by route middleware and endpoint placement, not by
-`public`/`protected`/`admin`/`Handler` suffixes.
+## Package Independence
+
+This library is independent of service and application business rules. It owns
+reusable response, error, logging, trace, case-conversion, and PostgreSQL
+routing mechanisms. Callers provide data and configuration; service schemas,
+roles, permissions, routes, and workflow policy stay with their owners.
 
 ## License
 
