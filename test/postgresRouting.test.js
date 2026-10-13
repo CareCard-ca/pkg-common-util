@@ -10,6 +10,17 @@ const {
 } = require('../postgres-routing');
 
 describe('PostgreSQL read/write routing', function () {
+  it('accepts caller-owned operational identities without service naming assumptions', function () {
+    for (const serviceName of ['worker', 'app-example', 'backend.example', 'ms-example']) {
+      assert.equal(createRoutingConfig({ serviceName }).serviceName, serviceName);
+    }
+    for (const serviceName of ['', 'bad\nname', 'bad"name', 'x'.repeat(256)]) {
+      assert.throws(
+        () => createRoutingConfig({ serviceName }),
+        error => error.code === 'Configuration_Error',
+      );
+    }
+  });
   it('enforces one aggregate twenty-connection application budget', function () {
     const config = createRoutingConfig();
 
