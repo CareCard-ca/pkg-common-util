@@ -161,7 +161,7 @@ function validateSearchPath(searchPath) {
 
 // Pattern: Input Validation - accepts low-cardinality service metric labels only.
 function isServiceName(serviceName) {
-  return typeof serviceName === 'string' && /^ms-[a-z0-9-]+$/u.test(serviceName);
+  return typeof serviceName === 'string' && /^[A-Za-z0-9][A-Za-z0-9._-]{0,254}$/u.test(serviceName);
 }
 
 // Pattern: Safe Error Factory - reports only the invalid setting name.
