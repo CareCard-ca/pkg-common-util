@@ -18,6 +18,7 @@ const parallelTestFiles = [
   'test/openTelemetryBridge.test.js',
   'test/postgresRouting.test.js',
   'test/postgresPoolLeaseLifecycle.test.js',
+  'test/postgresPoolConnectionRecovery.test.js',
   'test/postgresRoutingEsmExports.test.mjs',
   'test/validationSupportEntrypoints.test.mjs',
   'test/utilityFunctions.test.js',

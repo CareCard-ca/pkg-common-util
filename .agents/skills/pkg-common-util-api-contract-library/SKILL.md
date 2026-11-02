@@ -7,6 +7,12 @@ Non-negotiable root-cause solution rule: Always identify and solve the verified 
 
 # Package Common Util
 
+For PostgreSQL connection lifecycle changes, follow
+[connection recovery](../../../docs/postgres-connection-recovery.md). Preserve
+query failures, caller-owned sanitized error reporting, failed-lease disposal
+and subsequent connection usability through the public routing entrypoint.
+Never replay a dispatched query or add application policy to the package.
+
 Non-negotiable TDD rule: Always write the failing test first, run it to confirm it fails for the intended reason, then implement the code and rerun the test until it passes. Test Driven Development is required for all coding work and must not be skipped. For documentation- or skill-only edits, run the relevant focused non-test
 validation before changing the prose; do not add automated tests that inspect
 prose, files, or repository structure.

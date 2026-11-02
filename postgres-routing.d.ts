@@ -13,6 +13,7 @@ export interface PostgresQueryResult<
 }
 
 export interface PostgresClientLike {
+  on?(event: 'error', listener: (error: unknown) => void): unknown;
   query<Row extends Record<string, unknown> = Record<string, unknown>>(
     query: PostgresQueryConfig | string,
   ): Promise<PostgresQueryResult<Row>>;
