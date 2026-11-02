@@ -2,7 +2,7 @@
 
 const ACQUIRE_DURATION_BUCKETS = [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2];
 const CLIENT_RELEASE_TRACKERS = new WeakMap();
-const POOL_ERROR_SOURCES = new Set(['idle', 'listener']);
+const POOL_ERROR_SOURCES = new Set(['client', 'idle', 'listener']);
 
 // Pattern: Runtime State - owns counters and checked-out clients for one process-local pool.
 function createRuntimeState(options) {
@@ -16,7 +16,8 @@ function createRuntimeState(options) {
     closePromise: undefined,
     connectionsOpened: 0,
     connectionsRemoved: 0,
-    errors: { idle: 0, listener: 0 },
+    disconnectedClients: new WeakSet(),
+    errors: { client: 0, idle: 0, listener: 0 },
     listenerConnected: undefined,
     listenerReconnectAttempts: 0,
     markError: options.markError ?? (error => error),
@@ -34,7 +35,23 @@ function registerPoolObservers(state) {
 // Pattern: Event Observer - records a new physical connection.
 function handlePoolConnection(state, client) {
   state.connectionsOpened += 1;
+  observeCheckedOutClientErrors(state, client);
   notifyPoolObserver(state, state.onConnect, client);
+}
+
+// Pattern: Client Error Boundary - pg delegates checked-out connection errors to the borrower.
+function observeCheckedOutClientErrors(state, client) {
+  if (typeof client.on !== 'function') {
+    return;
+  }
+  client.on('error', error => {
+    if (!state.checkedOutClients.has(client)) {
+      return;
+    }
+    state.disconnectedClients.add(client);
+    recordPoolError(state, 'client', error);
+    notifyPoolObserver(state, state.onPoolError, error);
+  });
 }
 
 // Pattern: Resilience Boundary - marks and reports an idle pool error without exiting.
@@ -95,7 +112,7 @@ async function acquireClient(state, initializeClient) {
 function trackCheckedOutClient(state, client) {
   const releaseClient = getClientReleaseBoundary(client);
   client.release = destroy => {
-    const result = releaseClient(destroy);
+    const result = releaseClient(destroy || state.disconnectedClients.has(client));
     state.checkedOutClients.delete(client);
     return result;
   };
@@ -201,6 +218,7 @@ function renderCounterMetrics(state) {
     `carecard_postgres_pool_connections_removed_total{${label}} ${state.connectionsRemoved}`,
     '# HELP carecard_postgres_pool_errors_total PostgreSQL pool and listener errors.',
     '# TYPE carecard_postgres_pool_errors_total counter',
+    `carecard_postgres_pool_errors_total{${label},source="client"} ${state.errors.client}`,
     `carecard_postgres_pool_errors_total{${label},source="idle"} ${state.errors.idle}`,
     `carecard_postgres_pool_errors_total{${label},source="listener"} ${state.errors.listener}`,
     '# HELP carecard_postgres_pool_acquire_failures_total Failed PostgreSQL pool acquisitions.',
